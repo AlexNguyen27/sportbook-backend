@@ -22,7 +22,7 @@ const migration = {
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
     },
-    status: {
+    orderStatus: {
       type: DataTypes.ENUM(orderStatus),
     },
     createdAt: {
