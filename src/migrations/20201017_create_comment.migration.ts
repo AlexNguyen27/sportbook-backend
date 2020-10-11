@@ -29,6 +29,16 @@ const migration = {
     },
     parentId: {
       type: DataTypes.UUID,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+      references: {
+        model: 'COMMENT',
+        key: 'id',
+      },
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
     },
     groundId: {
       type: DataTypes.UUID,

@@ -2,10 +2,12 @@ import { Model, DataTypes } from 'sequelize';
 
 import { sequelize } from './sequelize';
 
-class Category extends Model {
+class Benefit extends Model {
   public id: string;
 
-  public name: string;
+  public title: string;
+
+  public description: string;
 
   public createdAt: Date;
 
@@ -17,13 +19,16 @@ class Category extends Model {
   }
 }
 
-Category.init({
+Benefit.init({
   id: {
     type: DataTypes.UUID,
     primaryKey: true,
     defaultValue: DataTypes.UUIDV4,
   },
-  name: {
+  title: {
+    type: DataTypes.STRING,
+  },
+  description: {
     type: DataTypes.STRING,
   },
   createdAt: {
@@ -31,8 +36,8 @@ Category.init({
   },
 }, {
   sequelize,
-  modelName: 'CATEGORY',
+  modelName: 'BENEFIT',
   updatedAt: false,
 });
 
-export default Category;
+export default Benefit;

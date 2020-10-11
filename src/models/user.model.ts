@@ -1,11 +1,74 @@
-import { QueryInterface, DataTypes } from 'sequelize';
+import { Model, DataTypes } from 'sequelize';
+
+import { sequelize } from './sequelize';
 import { ROLE, GENDER, FAVORITE_FOOT } from '../components/constants';
+import Ground from './ground.model';
+import Comment from './comment.model';
+import Order from './order.model';
+import Rating from './rating.model';
 
 const genderType: any = Object.values(GENDER);
 const role: any = Object.values(ROLE);
 const favoriteFoot: any = Object.values(FAVORITE_FOOT);
-const migration = {
-  up: (queryInterface: QueryInterface) => queryInterface.sequelize.transaction((t) => queryInterface.createTable('USER', {
+class User extends Model {
+  public id: string;
+
+  public firstName: string;
+
+  public lastName: string;
+
+  public email: string;
+
+  public phone: string;
+
+  public address: string;
+
+  public gender: string;
+
+  public dob: string;
+
+  public password: string;
+
+  public avatar: string;
+
+  public favoriteFoot: string;
+
+  public playRole: string;
+
+  public role: string;
+
+  public createdAt: Date;
+
+  public updatedAt: Date;
+
+  static associate() {
+    this.hasMany(Ground, {
+      as: 'grounds',
+      foreignKey: 'userId',
+    });
+    this.hasMany(Comment, {
+      as: 'comments',
+      foreignKey: 'userId',
+    });
+    this.hasMany(Order, {
+      as: 'orders',
+      foreignKey: 'userId',
+    });
+    // https://sequelize.org/master/manual/assocs.html
+    this.belongsToMany(Ground, {
+      foreignKey: 'userId',
+      through: Rating,
+    });
+
+    // this.belongsToMany(Post, {
+    //   foreignKey: 'reportedBy',
+    //   through: Report,
+    // });
+  }
+}
+
+User.init(
+  {
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
@@ -20,9 +83,14 @@ const migration = {
     email: {
       type: DataTypes.TEXT,
       validate: {
-        isEmail: true,
+        isEmail: {
+          msg: 'Email is invalid',
+        },
       },
-      unique: true,
+      unique: {
+        name: 'email',
+        msg: 'Email is already exits',
+      },
     },
     phone: {
       type: DataTypes.STRING,
@@ -79,10 +147,11 @@ const migration = {
       type: DataTypes.DATE,
       allowNull: false,
     },
-  }, {
-    transaction: t,
-  })),
-  down: (queryInterface: QueryInterface) => queryInterface.dropTable('USER'),
-};
+  },
+  {
+    sequelize,
+    modelName: 'USER',
+  }
+);
 
-export default migration;
+export default User;
