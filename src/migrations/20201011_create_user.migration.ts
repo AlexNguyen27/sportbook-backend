@@ -22,6 +22,7 @@ const migration = {
       validate: {
         isEmail: true,
       },
+      allowNull: false,
       unique: true,
     },
     phone: {

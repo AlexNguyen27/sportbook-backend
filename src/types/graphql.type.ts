@@ -9,14 +9,45 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** Use JavaScript Date object for date/time fields. */
+  /** A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
+  Date: any;
+  /** A time string at UTC, such as 10:15:30Z, compliant with the `full-time` format outlined in section 5.6 of the RFC 3339profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
+  Time: any;
+  /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
   DateTime: any;
+  /** The javascript `Date` as integer. Type represents date and time as number of milliseconds from start of UNIX epoch. */
+  Timestamp: any;
+  /** A field whose value is a UTC Offset: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones */
+  UtcOffset: any;
+  /**
+   *
+   *     A string representing a duration conforming to the ISO8601 standard,
+   *     such as: P1W1DT13H23M34S
+   *     P is the duration designator (for period) placed at the start of the duration representation.
+   *     Y is the year designator that follows the value for the number of years.
+   *     M is the month designator that follows the value for the number of months.
+   *     W is the week designator that follows the value for the number of weeks.
+   *     D is the day designator that follows the value for the number of days.
+   *     T is the time designator that precedes the time components of the representation.
+   *     H is the hour designator that follows the value for the number of hours.
+   *     M is the minute designator that follows the value for the number of minutes.
+   *     S is the second designator that follows the value for the number of seconds.
+   *
+   *     Note the time designator, T, that precedes the time value.
+   *
+   *     Matches moment.js, Luxon and DateFns implementations
+   *     ,/. is valid for decimal places and +/- is a valid prefix
+   *
+   */
+  ISO8601Duration: any;
   /** A field whose value conforms to the standard internet email address format as specified in RFC822: https://www.w3.org/Protocols/rfc822/. */
   EmailAddress: any;
   /** Floats that will have a value less than 0. */
   NegativeFloat: any;
   /** Integers that will have a value less than 0. */
   NegativeInt: any;
+  /** A string that cannot be passed as an empty value */
+  NonEmptyString: any;
   /** Floats that will have a value of 0 or more. */
   NonNegativeFloat: any;
   /** Integers that will have a value of 0 or more. */
@@ -43,7 +74,11 @@ export type Scalars = {
   BigInt: any;
   /** The `BigInt` scalar type represents non-fractional signed whole numeric values. */
   Long: any;
-  /** A field whose value is a generic Globally Unique Identifier: https://en.wikipedia.org/wiki/Universally_unique_identifier. */
+  /** The `Byte` scalar type represents byte value as a Buffer */
+  Byte: any;
+  /** A field whose value is a generic Universally Unique Identifier: https://en.wikipedia.org/wiki/Universally_unique_identifier. */
+  UUID: any;
+  /** A field whose value is a generic Universally Unique Identifier: https://en.wikipedia.org/wiki/Universally_unique_identifier. */
   GUID: any;
   /** A field whose value is a hexadecimal: https://en.wikipedia.org/wiki/Hexadecimal. */
   Hexadecimal: any;
@@ -67,8 +102,12 @@ export type Scalars = {
   RGB: any;
   /** A field whose value is a CSS RGBA color: https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#rgb()_and_rgba(). */
   RGBA: any;
+  /** The `SafeInt` scalar type represents non-fractional signed whole numeric values that are considered safe as defined by the ECMAScript specification. */
+  SafeInt: any;
   /** A currency string, such as $21.25 */
   USCurrency: any;
+  /** A field whose value is a Currency: https://en.wikipedia.org/wiki/ISO_4217. */
+  Currency: any;
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSON: any;
   /** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
@@ -77,6 +116,8 @@ export type Scalars = {
   IBAN: any;
   /** A field whose value conforms with the standard mongodb object ID as described here: https://docs.mongodb.com/manual/reference/method/ObjectId/#ObjectId. Example: 5e5677d71bdc2ae76344968c */
   ObjectID: any;
+  /** Represents NULL values */
+  Void: any;
 };
 
 
@@ -113,34 +154,16 @@ export type Scalars = {
 
 
 
-export type Query = {
-  __typename?: 'Query';
-  cats?: Maybe<Array<Maybe<Cat>>>;
-  categories?: Maybe<Array<Maybe<Category>>>;
-};
 
 
-export type QueryCatsArgs = {
-  id?: Maybe<Scalars['String']>;
-};
-
-export type Mutation = {
-  __typename?: 'Mutation';
-  createCat?: Maybe<Cat>;
-  createCategory?: Maybe<Category>;
-};
 
 
-export type MutationCreateCatArgs = {
-  name: Scalars['String'];
-  color?: Maybe<Scalars['String']>;
-  categoryId: Scalars['String'];
-};
 
 
-export type MutationCreateCategoryArgs = {
-  name: Scalars['String'];
-};
+
+
+
+
 
 export type Cat = {
   __typename?: 'Cat';
@@ -158,6 +181,126 @@ export type Category = {
   id?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   cats?: Maybe<Array<Maybe<Cat>>>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type SuccessMessage = {
+  __typename?: 'SuccessMessage';
+  status?: Maybe<Scalars['Int']>;
+  message?: Maybe<Scalars['String']>;
+};
+
+export type Query = {
+  __typename?: 'Query';
+  users?: Maybe<Array<Maybe<User>>>;
+  login?: Maybe<LoginOutput>;
+  cats?: Maybe<Array<Maybe<Cat>>>;
+  categories?: Maybe<Array<Maybe<Category>>>;
+};
+
+
+export type QueryLoginArgs = {
+  email: Scalars['String'];
+  password: Scalars['String'];
+};
+
+
+export type QueryCatsArgs = {
+  id?: Maybe<Scalars['String']>;
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  createUser?: Maybe<User>;
+  updateUser?: Maybe<User>;
+  deleteUser?: Maybe<SuccessMessage>;
+  changePassword?: Maybe<SuccessMessage>;
+  createCat?: Maybe<Cat>;
+  createCategory?: Maybe<Category>;
+};
+
+
+export type MutationCreateUserArgs = {
+  email: Scalars['String'];
+  password: Scalars['String'];
+  role: Scalars['String'];
+};
+
+
+export type MutationUpdateUserArgs = {
+  id?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  phone?: Maybe<Scalars['String']>;
+  gender?: Maybe<Scalars['String']>;
+  address?: Maybe<Scalars['String']>;
+  dob?: Maybe<Scalars['String']>;
+  avatar?: Maybe<Scalars['String']>;
+  favoriteFoot?: Maybe<Scalars['String']>;
+  playRole?: Maybe<Scalars['String']>;
+  role?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationDeleteUserArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationChangePasswordArgs = {
+  id?: Maybe<Scalars['String']>;
+  currentPassword: Scalars['String'];
+  newPassword: Scalars['String'];
+  confirmPassword: Scalars['String'];
+};
+
+
+export type MutationCreateCatArgs = {
+  name: Scalars['String'];
+  color?: Maybe<Scalars['String']>;
+  categoryId: Scalars['String'];
+};
+
+
+export type MutationCreateCategoryArgs = {
+  name: Scalars['String'];
+};
+
+export type User = {
+  __typename?: 'User';
+  id?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  phone?: Maybe<Scalars['String']>;
+  gender?: Maybe<Scalars['String']>;
+  address?: Maybe<Scalars['String']>;
+  dob?: Maybe<Scalars['String']>;
+  avatar?: Maybe<Scalars['String']>;
+  favoriteFoot?: Maybe<Scalars['String']>;
+  playRole?: Maybe<Scalars['String']>;
+  role?: Maybe<Scalars['String']>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type LoginOutput = {
+  __typename?: 'LoginOutput';
+  id?: Maybe<Scalars['String']>;
+  token?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  phone?: Maybe<Scalars['String']>;
+  gender?: Maybe<Scalars['String']>;
+  address?: Maybe<Scalars['String']>;
+  dob?: Maybe<Scalars['String']>;
+  avatar?: Maybe<Scalars['String']>;
+  favoriteFoot?: Maybe<Scalars['String']>;
+  playRole?: Maybe<Scalars['String']>;
+  role?: Maybe<Scalars['String']>;
   createdAt?: Maybe<Scalars['DateTime']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
@@ -227,7 +370,7 @@ export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
   info: GraphQLResolveInfo
 ) => Maybe<TTypes> | Promise<Maybe<TTypes>>;
 
-export type IsTypeOfResolverFn<T = {}> = (obj: T, info: GraphQLResolveInfo) => boolean | Promise<boolean>;
+export type IsTypeOfResolverFn<T = {}, TContext = {}> = (obj: T, context: TContext, info: GraphQLResolveInfo) => boolean | Promise<boolean>;
 
 export type NextResolverFn<T> = () => Promise<T>;
 
@@ -241,10 +384,16 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
+  Date: ResolverTypeWrapper<Scalars['Date']>;
+  Time: ResolverTypeWrapper<Scalars['Time']>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
+  Timestamp: ResolverTypeWrapper<Scalars['Timestamp']>;
+  UtcOffset: ResolverTypeWrapper<Scalars['UtcOffset']>;
+  ISO8601Duration: ResolverTypeWrapper<Scalars['ISO8601Duration']>;
   EmailAddress: ResolverTypeWrapper<Scalars['EmailAddress']>;
   NegativeFloat: ResolverTypeWrapper<Scalars['NegativeFloat']>;
   NegativeInt: ResolverTypeWrapper<Scalars['NegativeInt']>;
+  NonEmptyString: ResolverTypeWrapper<Scalars['NonEmptyString']>;
   NonNegativeFloat: ResolverTypeWrapper<Scalars['NonNegativeFloat']>;
   NonNegativeInt: ResolverTypeWrapper<Scalars['NonNegativeInt']>;
   NonPositiveFloat: ResolverTypeWrapper<Scalars['NonPositiveFloat']>;
@@ -258,6 +407,8 @@ export type ResolversTypes = ResolversObject<{
   URL: ResolverTypeWrapper<Scalars['URL']>;
   BigInt: ResolverTypeWrapper<Scalars['BigInt']>;
   Long: ResolverTypeWrapper<Scalars['Long']>;
+  Byte: ResolverTypeWrapper<Scalars['Byte']>;
+  UUID: ResolverTypeWrapper<Scalars['UUID']>;
   GUID: ResolverTypeWrapper<Scalars['GUID']>;
   Hexadecimal: ResolverTypeWrapper<Scalars['Hexadecimal']>;
   HexColorCode: ResolverTypeWrapper<Scalars['HexColorCode']>;
@@ -270,25 +421,38 @@ export type ResolversTypes = ResolversObject<{
   Port: ResolverTypeWrapper<Scalars['Port']>;
   RGB: ResolverTypeWrapper<Scalars['RGB']>;
   RGBA: ResolverTypeWrapper<Scalars['RGBA']>;
+  SafeInt: ResolverTypeWrapper<Scalars['SafeInt']>;
   USCurrency: ResolverTypeWrapper<Scalars['USCurrency']>;
+  Currency: ResolverTypeWrapper<Scalars['Currency']>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   JSONObject: ResolverTypeWrapper<Scalars['JSONObject']>;
   IBAN: ResolverTypeWrapper<Scalars['IBAN']>;
   ObjectID: ResolverTypeWrapper<Scalars['ObjectID']>;
-  Query: ResolverTypeWrapper<{}>;
-  String: ResolverTypeWrapper<Scalars['String']>;
-  Mutation: ResolverTypeWrapper<{}>;
+  Void: ResolverTypeWrapper<Scalars['Void']>;
   Cat: ResolverTypeWrapper<Cat>;
+  String: ResolverTypeWrapper<Scalars['String']>;
   Category: ResolverTypeWrapper<Category>;
+  SuccessMessage: ResolverTypeWrapper<SuccessMessage>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
+  Query: ResolverTypeWrapper<{}>;
+  Mutation: ResolverTypeWrapper<{}>;
+  User: ResolverTypeWrapper<User>;
+  LoginOutput: ResolverTypeWrapper<LoginOutput>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
+  Date: Scalars['Date'];
+  Time: Scalars['Time'];
   DateTime: Scalars['DateTime'];
+  Timestamp: Scalars['Timestamp'];
+  UtcOffset: Scalars['UtcOffset'];
+  ISO8601Duration: Scalars['ISO8601Duration'];
   EmailAddress: Scalars['EmailAddress'];
   NegativeFloat: Scalars['NegativeFloat'];
   NegativeInt: Scalars['NegativeInt'];
+  NonEmptyString: Scalars['NonEmptyString'];
   NonNegativeFloat: Scalars['NonNegativeFloat'];
   NonNegativeInt: Scalars['NonNegativeInt'];
   NonPositiveFloat: Scalars['NonPositiveFloat'];
@@ -302,6 +466,8 @@ export type ResolversParentTypes = ResolversObject<{
   URL: Scalars['URL'];
   BigInt: Scalars['BigInt'];
   Long: Scalars['Long'];
+  Byte: Scalars['Byte'];
+  UUID: Scalars['UUID'];
   GUID: Scalars['GUID'];
   Hexadecimal: Scalars['Hexadecimal'];
   HexColorCode: Scalars['HexColorCode'];
@@ -314,21 +480,48 @@ export type ResolversParentTypes = ResolversObject<{
   Port: Scalars['Port'];
   RGB: Scalars['RGB'];
   RGBA: Scalars['RGBA'];
+  SafeInt: Scalars['SafeInt'];
   USCurrency: Scalars['USCurrency'];
+  Currency: Scalars['Currency'];
   JSON: Scalars['JSON'];
   JSONObject: Scalars['JSONObject'];
   IBAN: Scalars['IBAN'];
   ObjectID: Scalars['ObjectID'];
-  Query: {};
-  String: Scalars['String'];
-  Mutation: {};
+  Void: Scalars['Void'];
   Cat: Cat;
+  String: Scalars['String'];
   Category: Category;
+  SuccessMessage: SuccessMessage;
+  Int: Scalars['Int'];
+  Query: {};
+  Mutation: {};
+  User: User;
+  LoginOutput: LoginOutput;
   Boolean: Scalars['Boolean'];
 }>;
 
+export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
+  name: 'Date';
+}
+
+export interface TimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Time'], any> {
+  name: 'Time';
+}
+
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
   name: 'DateTime';
+}
+
+export interface TimestampScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Timestamp'], any> {
+  name: 'Timestamp';
+}
+
+export interface UtcOffsetScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['UtcOffset'], any> {
+  name: 'UtcOffset';
+}
+
+export interface Iso8601DurationScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ISO8601Duration'], any> {
+  name: 'ISO8601Duration';
 }
 
 export interface EmailAddressScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['EmailAddress'], any> {
@@ -341,6 +534,10 @@ export interface NegativeFloatScalarConfig extends GraphQLScalarTypeConfig<Resol
 
 export interface NegativeIntScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['NegativeInt'], any> {
   name: 'NegativeInt';
+}
+
+export interface NonEmptyStringScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['NonEmptyString'], any> {
+  name: 'NonEmptyString';
 }
 
 export interface NonNegativeFloatScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['NonNegativeFloat'], any> {
@@ -395,6 +592,14 @@ export interface LongScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
   name: 'Long';
 }
 
+export interface ByteScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Byte'], any> {
+  name: 'Byte';
+}
+
+export interface UuidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['UUID'], any> {
+  name: 'UUID';
+}
+
 export interface GuidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['GUID'], any> {
   name: 'GUID';
 }
@@ -443,8 +648,16 @@ export interface RgbaScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
   name: 'RGBA';
 }
 
+export interface SafeIntScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['SafeInt'], any> {
+  name: 'SafeInt';
+}
+
 export interface UsCurrencyScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['USCurrency'], any> {
   name: 'USCurrency';
+}
+
+export interface CurrencyScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Currency'], any> {
+  name: 'Currency';
 }
 
 export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
@@ -463,15 +676,9 @@ export interface ObjectIdScalarConfig extends GraphQLScalarTypeConfig<ResolversT
   name: 'ObjectID';
 }
 
-export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  cats?: Resolver<Maybe<Array<Maybe<ResolversTypes['Cat']>>>, ParentType, ContextType, RequireFields<QueryCatsArgs, never>>;
-  categories?: Resolver<Maybe<Array<Maybe<ResolversTypes['Category']>>>, ParentType, ContextType>;
-}>;
-
-export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
-  createCat?: Resolver<Maybe<ResolversTypes['Cat']>, ParentType, ContextType, RequireFields<MutationCreateCatArgs, 'name' | 'categoryId'>>;
-  createCategory?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<MutationCreateCategoryArgs, 'name'>>;
-}>;
+export interface VoidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Void'], any> {
+  name: 'Void';
+}
 
 export type CatResolvers<ContextType = any, ParentType extends ResolversParentTypes['Cat'] = ResolversParentTypes['Cat']> = ResolversObject<{
   id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -481,7 +688,7 @@ export type CatResolvers<ContextType = any, ParentType extends ResolversParentTy
   category?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType>;
   createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type CategoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Category'] = ResolversParentTypes['Category']> = ResolversObject<{
@@ -490,14 +697,79 @@ export type CategoryResolvers<ContextType = any, ParentType extends ResolversPar
   cats?: Resolver<Maybe<Array<Maybe<ResolversTypes['Cat']>>>, ParentType, ContextType>;
   createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type SuccessMessageResolvers<ContextType = any, ParentType extends ResolversParentTypes['SuccessMessage'] = ResolversParentTypes['SuccessMessage']> = ResolversObject<{
+  status?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  message?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
+  login?: Resolver<Maybe<ResolversTypes['LoginOutput']>, ParentType, ContextType, RequireFields<QueryLoginArgs, 'email' | 'password'>>;
+  cats?: Resolver<Maybe<Array<Maybe<ResolversTypes['Cat']>>>, ParentType, ContextType, RequireFields<QueryCatsArgs, never>>;
+  categories?: Resolver<Maybe<Array<Maybe<ResolversTypes['Category']>>>, ParentType, ContextType>;
+}>;
+
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
+  createUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'email' | 'password' | 'role'>>;
+  updateUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, never>>;
+  deleteUser?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'id'>>;
+  changePassword?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'currentPassword' | 'newPassword' | 'confirmPassword'>>;
+  createCat?: Resolver<Maybe<ResolversTypes['Cat']>, ParentType, ContextType, RequireFields<MutationCreateCatArgs, 'name' | 'categoryId'>>;
+  createCategory?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<MutationCreateCategoryArgs, 'name'>>;
+}>;
+
+export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
+  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  firstName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  phone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  gender?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  address?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  dob?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  favoriteFoot?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  playRole?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  role?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type LoginOutputResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoginOutput'] = ResolversParentTypes['LoginOutput']> = ResolversObject<{
+  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  token?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  firstName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  phone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  gender?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  address?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  dob?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  favoriteFoot?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  playRole?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  role?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type Resolvers<ContextType = any> = ResolversObject<{
+  Date?: GraphQLScalarType;
+  Time?: GraphQLScalarType;
   DateTime?: GraphQLScalarType;
+  Timestamp?: GraphQLScalarType;
+  UtcOffset?: GraphQLScalarType;
+  ISO8601Duration?: GraphQLScalarType;
   EmailAddress?: GraphQLScalarType;
   NegativeFloat?: GraphQLScalarType;
   NegativeInt?: GraphQLScalarType;
+  NonEmptyString?: GraphQLScalarType;
   NonNegativeFloat?: GraphQLScalarType;
   NonNegativeInt?: GraphQLScalarType;
   NonPositiveFloat?: GraphQLScalarType;
@@ -511,6 +783,8 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   URL?: GraphQLScalarType;
   BigInt?: GraphQLScalarType;
   Long?: GraphQLScalarType;
+  Byte?: GraphQLScalarType;
+  UUID?: GraphQLScalarType;
   GUID?: GraphQLScalarType;
   Hexadecimal?: GraphQLScalarType;
   HexColorCode?: GraphQLScalarType;
@@ -523,15 +797,21 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Port?: GraphQLScalarType;
   RGB?: GraphQLScalarType;
   RGBA?: GraphQLScalarType;
+  SafeInt?: GraphQLScalarType;
   USCurrency?: GraphQLScalarType;
+  Currency?: GraphQLScalarType;
   JSON?: GraphQLScalarType;
   JSONObject?: GraphQLScalarType;
   IBAN?: GraphQLScalarType;
   ObjectID?: GraphQLScalarType;
-  Query?: QueryResolvers<ContextType>;
-  Mutation?: MutationResolvers<ContextType>;
+  Void?: GraphQLScalarType;
   Cat?: CatResolvers<ContextType>;
   Category?: CategoryResolvers<ContextType>;
+  SuccessMessage?: SuccessMessageResolvers<ContextType>;
+  Query?: QueryResolvers<ContextType>;
+  Mutation?: MutationResolvers<ContextType>;
+  User?: UserResolvers<ContextType>;
+  LoginOutput?: LoginOutputResolvers<ContextType>;
 }>;
 
 

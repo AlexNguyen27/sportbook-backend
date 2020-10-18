@@ -82,6 +82,7 @@ User.init(
     },
     email: {
       type: DataTypes.TEXT,
+      allowNull: false,
       validate: {
         isEmail: {
           msg: 'Email is invalid',
