@@ -15,7 +15,8 @@ const sequelize = new Sequelize({
   // eslint-disable-next-line no-console
   logging: config.nodeEnv === 'development' ? console.log : false,
   define: {
-    underscored: true,
+    underscored: false,
+    freezeTableName: true,
   },
 });
 

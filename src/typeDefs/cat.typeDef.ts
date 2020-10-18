@@ -1,9 +1,9 @@
 const typeDef = `
-  type Query {
+  extend type Query {
     cats(id: String): [Cat]
   }
 
-  type Mutation {
+  extend type Mutation {
     createCat(name: String!, color: String, categoryId: String!): Cat
   }
 

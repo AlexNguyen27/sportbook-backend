@@ -69,9 +69,8 @@ export class DatabaseValidationError extends BusinessError {
     error.errors.forEach((item: SequelizeValidationErrorItem) => {
       // https://github.com/sequelize/sequelize/issues/11926
       const {
-        // @ts-ignore
         path, message, value, validatorKey, validatorArgs,
-      } = item;
+      }: any = item;
       payload = {
         ...payload,
         [path]: {
@@ -85,5 +84,27 @@ export class DatabaseValidationError extends BusinessError {
       };
     });
     this.extensions.payload = payload;
+  }
+}
+
+export class AuthenticationError extends BusinessError {
+  constructor(message = 'You need to authenicate to access this resource') {
+    super(message);
+    this.type = 'AuthenticationError';
+    this.status = 401;
+  }
+}
+
+export class AuthorizationError extends BusinessError {
+  constructor(message = 'You are not authorized to access this resource') {
+    super(message);
+    this.type = 'AuthorizationError';
+    this.status = 403;
+  }
+}
+
+export class ExistsError extends BusinessError {
+  constructor(message = 'There is exists error happened') {
+    super(message);
   }
 }

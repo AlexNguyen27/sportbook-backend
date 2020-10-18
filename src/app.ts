@@ -15,6 +15,15 @@ const app = () => {
   const server = new ApolloServer({
     schema,
     formatError,
+    context: (params) => {
+      const { token } = params.req.headers;
+      return {
+        ...params,
+        token,
+      };
+    },
+    introspection: true,
+    playground: true,
   });
 
   server

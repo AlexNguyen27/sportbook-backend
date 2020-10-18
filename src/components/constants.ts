@@ -7,7 +7,6 @@ export const ROLE = {
 export const GENDER = {
   male: 'male',
   female: 'female',
-  other: 'other',
 };
 
 export const FAVORITE_FOOT = {
