@@ -193,10 +193,13 @@ export type SuccessMessage = {
 export type Ground = {
   __typename?: 'Ground';
   id?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  color?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  phone?: Maybe<Scalars['String']>;
+  address?: Maybe<Scalars['String']>;
+  benefit?: Maybe<Scalars['String']>;
+  image?: Maybe<Scalars['String']>;
   categoryId?: Maybe<Scalars['String']>;
-  category?: Maybe<Category>;
   createdAt?: Maybe<Scalars['DateTime']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
@@ -207,7 +210,7 @@ export type Query = {
   login?: Maybe<LoginOutput>;
   cats?: Maybe<Array<Maybe<Cat>>>;
   categories?: Maybe<Array<Maybe<Category>>>;
-  ground?: Maybe<Array<Maybe<Ground>>>;
+  grounds?: Maybe<Array<Maybe<Ground>>>;
 };
 
 
@@ -222,7 +225,7 @@ export type QueryCatsArgs = {
 };
 
 
-export type QueryGroundArgs = {
+export type QueryGroundsArgs = {
   id?: Maybe<Scalars['String']>;
 };
 
@@ -234,7 +237,9 @@ export type Mutation = {
   changePassword?: Maybe<SuccessMessage>;
   createCat?: Maybe<Cat>;
   createCategory?: Maybe<Category>;
-  createGround?: Maybe<Cat>;
+  createGround?: Maybe<Ground>;
+  updateGround?: Maybe<Ground>;
+  deleteGround?: Maybe<SuccessMessage>;
 };
 
 
@@ -287,9 +292,30 @@ export type MutationCreateCategoryArgs = {
 
 
 export type MutationCreateGroundArgs = {
-  name: Scalars['String'];
-  color?: Maybe<Scalars['String']>;
-  categoryId: Scalars['String'];
+  title: Scalars['String'];
+  description: Scalars['String'];
+  phone?: Maybe<Scalars['String']>;
+  address?: Maybe<Scalars['String']>;
+  benefit?: Maybe<Scalars['String']>;
+  image?: Maybe<Scalars['String']>;
+  categoryId?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationUpdateGroundArgs = {
+  id?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  phone?: Maybe<Scalars['String']>;
+  address?: Maybe<Scalars['String']>;
+  benefit?: Maybe<Scalars['String']>;
+  image?: Maybe<Scalars['String']>;
+  categoryId?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationDeleteGroundArgs = {
+  id: Scalars['String'];
 };
 
 export type User = {
@@ -733,10 +759,13 @@ export type SuccessMessageResolvers<ContextType = any, ParentType extends Resolv
 
 export type GroundResolvers<ContextType = any, ParentType extends ResolversParentTypes['Ground'] = ResolversParentTypes['Ground']> = ResolversObject<{
   id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  color?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  phone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  address?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  benefit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   categoryId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  category?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType>;
   createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -747,7 +776,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   login?: Resolver<Maybe<ResolversTypes['LoginOutput']>, ParentType, ContextType, RequireFields<QueryLoginArgs, 'email' | 'password'>>;
   cats?: Resolver<Maybe<Array<Maybe<ResolversTypes['Cat']>>>, ParentType, ContextType, RequireFields<QueryCatsArgs, never>>;
   categories?: Resolver<Maybe<Array<Maybe<ResolversTypes['Category']>>>, ParentType, ContextType>;
-  ground?: Resolver<Maybe<Array<Maybe<ResolversTypes['Ground']>>>, ParentType, ContextType, RequireFields<QueryGroundArgs, never>>;
+  grounds?: Resolver<Maybe<Array<Maybe<ResolversTypes['Ground']>>>, ParentType, ContextType, RequireFields<QueryGroundsArgs, never>>;
 }>;
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
@@ -757,7 +786,9 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   changePassword?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'currentPassword' | 'newPassword' | 'confirmPassword'>>;
   createCat?: Resolver<Maybe<ResolversTypes['Cat']>, ParentType, ContextType, RequireFields<MutationCreateCatArgs, 'name' | 'categoryId'>>;
   createCategory?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<MutationCreateCategoryArgs, 'name'>>;
-  createGround?: Resolver<Maybe<ResolversTypes['Cat']>, ParentType, ContextType, RequireFields<MutationCreateGroundArgs, 'name' | 'categoryId'>>;
+  createGround?: Resolver<Maybe<ResolversTypes['Ground']>, ParentType, ContextType, RequireFields<MutationCreateGroundArgs, 'title' | 'description'>>;
+  updateGround?: Resolver<Maybe<ResolversTypes['Ground']>, ParentType, ContextType, RequireFields<MutationUpdateGroundArgs, never>>;
+  deleteGround?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteGroundArgs, 'id'>>;
 }>;
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{

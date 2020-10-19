@@ -1,6 +1,6 @@
 const typeDef = `
   extend type Query {
-    ground(id: String): [Ground]
+    grounds(id: String): [Ground]
   }
 
   extend type Mutation {
@@ -13,6 +13,19 @@ const typeDef = `
       image: String,
       categoryId: String
     ): Ground
+
+    updateGround(
+      id: String
+      title: String
+      description: String
+      phone: String
+      address: String,
+      benefit: String
+      image: String,
+      categoryId: String
+    ): Ground
+
+    deleteGround(id: String!): SuccessMessage
   }
 
   type Ground {
@@ -23,6 +36,9 @@ const typeDef = `
     address: String,
     benefit: String
     image: String,
+    user: User
+    category: Category
+    subGrounds: [SubGround]
     categoryId: String
     createdAt: DateTime
     updatedAt: DateTime
