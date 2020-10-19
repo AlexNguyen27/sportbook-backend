@@ -30,10 +30,10 @@ class GroundService {
     });
   }
 
-  static findGroundById({ id }: { id: string }) {
+  static async findGroundById({ id }: { id: string }) {
     let ground: any;
     try {
-      ground = GroundModel.findOne({
+      ground = await GroundModel.findOne({
         where: { id },
         include: [
           {
@@ -60,6 +60,11 @@ class GroundService {
             as: 'ratings',
             required: false,
           },
+          {
+            model: SubGround,
+            as: 'subGrounds',
+            required: false,
+          },
         ],
       });
       return { ...ground.toJSON() };
@@ -72,12 +77,11 @@ class GroundService {
   // ADMIN CAN NOT CREATE GROUND FOR OTHER ROLES
   static async createGround(data: MutationCreateGroundArgs, userId: any): Promise<Ground> {
     const { categoryId } = data;
-
     // CHECK IF USER AND CATEGORY EXITS
     await UserService.findUserById(userId);
     await CategoryService.findCategoryById(categoryId);
 
-    const newGround = await GroundModel.create({ ...data });
+    const newGround = await GroundModel.create({ ...data, userId });
 
     return this.findGroundById({ id: newGround.id });
   }
@@ -104,7 +108,7 @@ class GroundService {
 
   static async deleteGround(id: string, user: any) {
     const ground = await this.findGroundById({ id });
-    if (ground.userId !== user.userId && user.role === ROLE.owner) {
+    if (ground.userId !== user.userId && [ROLE.owner, ROLE.user].includes(user.role)) {
       throw new AuthenticationError('Your role is not allowed');
     }
     await GroundModel.destroy({ where: { id } });
