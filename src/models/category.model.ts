@@ -1,6 +1,7 @@
 import { Model, DataTypes } from 'sequelize';
 
 import { sequelize } from './sequelize';
+import Ground from './ground.model';
 
 class Category extends Model {
   public id: string;
@@ -10,10 +11,10 @@ class Category extends Model {
   public createdAt: Date;
 
   static associate() {
-    // this.hasMany(Cat, {
-    //   as: 'cats',
-    //   foreignKey: 'categoryId',
-    // });
+    this.hasMany(Ground, {
+      as: 'grounds',
+      foreignKey: 'categoryId',
+    });
   }
 }
 

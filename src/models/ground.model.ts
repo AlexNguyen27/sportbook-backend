@@ -5,6 +5,7 @@ import Category from './category.model';
 import User from './user.model';
 import Rating from './rating.model';
 import Comment from './comment.model';
+import SubGround from './subGround.model';
 
 class Ground extends Model {
   public id: string;
@@ -42,7 +43,12 @@ class Ground extends Model {
     });
 
     this.hasMany(Rating, {
-      as: 'rating',
+      as: 'ratings',
+      foreignKey: 'groundId',
+    });
+
+    this.hasMany(SubGround, {
+      as: 'subGrounds',
       foreignKey: 'groundId',
     });
 

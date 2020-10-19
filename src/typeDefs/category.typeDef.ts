@@ -10,9 +10,8 @@ const typeDef = `
   type Category {
     id: String
     name: String
-    cats: [Cat]
+    grounds: [Ground]
     createdAt: DateTime
-    updatedAt: DateTime
   }
 `;
 
