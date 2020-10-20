@@ -30,7 +30,7 @@ class GroundService {
     });
   }
 
-  static async findGroundById({ id }: { id: string }) {
+  static async findGroundById({ id }: { id: any }) {
     let ground: any;
     try {
       ground = await GroundModel.findOne({
