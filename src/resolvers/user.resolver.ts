@@ -25,7 +25,7 @@ const resolver: Resolvers = {
     updateUser: middleware(
       tokenValidation(ROLE.admin, ROLE.owner, ROLE.user),
       schemaValidation({
-        id: joi.string().required(),
+        id: joi.string().uuid().required(),
         email: joi.string(),
         firstName: joi.string(),
         lastName: joi.string(),
@@ -42,14 +42,14 @@ const resolver: Resolvers = {
     deleteUser: middleware(
       tokenValidation(ROLE.admin),
       schemaValidation({
-        id: joi.string(),
+        id: joi.string().uuid(),
       }),
       (_: any, args: MutationDeleteUserArgs) => UserService.deleteUser(args),
     ),
     changePassword: middleware(
       tokenValidation(ROLE.admin, ROLE.user),
       schemaValidation({
-        id: joi.string(),
+        id: joi.string().uuid(),
         currentPassword: joi.string(),
         newPassword: joi.string(),
         confirmPassword: joi.string(),

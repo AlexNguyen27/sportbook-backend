@@ -28,7 +28,7 @@ const resolver: Resolvers = {
     updateGround: middleware(
       tokenValidation(ROLE.owner, ROLE.admin),
       schemaValidation({
-        id: joi.string(),
+        id: joi.string().uuid(),
         title: joi.string(),
         description: joi.string(),
         phone: joi.string(),
@@ -42,7 +42,7 @@ const resolver: Resolvers = {
     deleteGround: middleware(
       tokenValidation(ROLE.owner, ROLE.admin),
       schemaValidation({
-        id: joi.string(),
+        id: joi.string().uuid(),
       }),
       (_: any, args: MutationDeleteGroundArgs, { user }: any) => GroundService.deleteGround(args.id, user),
     ),

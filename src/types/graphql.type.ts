@@ -215,6 +215,13 @@ export type Ground = {
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
+export type Reaction = {
+  __typename?: 'Reaction';
+  userId?: Maybe<Scalars['String']>;
+  point: Scalars['Float'];
+  groundId?: Maybe<Scalars['String']>;
+};
+
 export type SubGround = {
   __typename?: 'SubGround';
   id?: Maybe<Scalars['String']>;
@@ -265,7 +272,7 @@ export type Mutation = {
   updateUser?: Maybe<User>;
   deleteUser?: Maybe<SuccessMessage>;
   changePassword?: Maybe<SuccessMessage>;
-  createBenefit?: Maybe<Category>;
+  createBenefit?: Maybe<Benefit>;
   updateBenefit?: Maybe<Benefit>;
   deleteBenefit?: Maybe<SuccessMessage>;
   createCat?: Maybe<Cat>;
@@ -275,6 +282,8 @@ export type Mutation = {
   createGround?: Maybe<Ground>;
   updateGround?: Maybe<Ground>;
   deleteGround?: Maybe<SuccessMessage>;
+  createRating?: Maybe<SuccessMessage>;
+  updateRating?: Maybe<SuccessMessage>;
   createSubGround?: Maybe<SubGround>;
   updateSubGround?: Maybe<SubGround>;
   deleteSubGround?: Maybe<SuccessMessage>;
@@ -383,6 +392,20 @@ export type MutationUpdateGroundArgs = {
 
 export type MutationDeleteGroundArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationCreateRatingArgs = {
+  userId: Scalars['String'];
+  groundId: Scalars['String'];
+  point: Scalars['Float'];
+};
+
+
+export type MutationUpdateRatingArgs = {
+  userId: Scalars['String'];
+  groundId: Scalars['String'];
+  point: Scalars['Float'];
 };
 
 
@@ -579,8 +602,9 @@ export type ResolversTypes = ResolversObject<{
   SuccessMessage: ResolverTypeWrapper<SuccessMessage>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Ground: ResolverTypeWrapper<Ground>;
-  SubGround: ResolverTypeWrapper<SubGround>;
+  Reaction: ResolverTypeWrapper<Reaction>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
+  SubGround: ResolverTypeWrapper<SubGround>;
   Query: ResolverTypeWrapper<{}>;
   Mutation: ResolverTypeWrapper<{}>;
   User: ResolverTypeWrapper<User>;
@@ -642,8 +666,9 @@ export type ResolversParentTypes = ResolversObject<{
   SuccessMessage: SuccessMessage;
   Int: Scalars['Int'];
   Ground: Ground;
-  SubGround: SubGround;
+  Reaction: Reaction;
   Float: Scalars['Float'];
+  SubGround: SubGround;
   Query: {};
   Mutation: {};
   User: User;
@@ -881,6 +906,13 @@ export type GroundResolvers<ContextType = any, ParentType extends ResolversParen
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type ReactionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Reaction'] = ResolversParentTypes['Reaction']> = ResolversObject<{
+  userId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  point?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  groundId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type SubGroundResolvers<ContextType = any, ParentType extends ResolversParentTypes['SubGround'] = ResolversParentTypes['SubGround']> = ResolversObject<{
   id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -908,7 +940,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, never>>;
   deleteUser?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'id'>>;
   changePassword?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'currentPassword' | 'newPassword' | 'confirmPassword'>>;
-  createBenefit?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<MutationCreateBenefitArgs, 'title'>>;
+  createBenefit?: Resolver<Maybe<ResolversTypes['Benefit']>, ParentType, ContextType, RequireFields<MutationCreateBenefitArgs, 'title'>>;
   updateBenefit?: Resolver<Maybe<ResolversTypes['Benefit']>, ParentType, ContextType, RequireFields<MutationUpdateBenefitArgs, 'id'>>;
   deleteBenefit?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteBenefitArgs, 'id'>>;
   createCat?: Resolver<Maybe<ResolversTypes['Cat']>, ParentType, ContextType, RequireFields<MutationCreateCatArgs, 'name' | 'categoryId'>>;
@@ -918,6 +950,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createGround?: Resolver<Maybe<ResolversTypes['Ground']>, ParentType, ContextType, RequireFields<MutationCreateGroundArgs, 'title' | 'description'>>;
   updateGround?: Resolver<Maybe<ResolversTypes['Ground']>, ParentType, ContextType, RequireFields<MutationUpdateGroundArgs, never>>;
   deleteGround?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteGroundArgs, 'id'>>;
+  createRating?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationCreateRatingArgs, 'userId' | 'groundId' | 'point'>>;
+  updateRating?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationUpdateRatingArgs, 'userId' | 'groundId' | 'point'>>;
   createSubGround?: Resolver<Maybe<ResolversTypes['SubGround']>, ParentType, ContextType, RequireFields<MutationCreateSubGroundArgs, 'name'>>;
   updateSubGround?: Resolver<Maybe<ResolversTypes['SubGround']>, ParentType, ContextType, RequireFields<MutationUpdateSubGroundArgs, never>>;
   deleteSubGround?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteSubGroundArgs, 'id'>>;
@@ -1011,6 +1045,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Category?: CategoryResolvers<ContextType>;
   SuccessMessage?: SuccessMessageResolvers<ContextType>;
   Ground?: GroundResolvers<ContextType>;
+  Reaction?: ReactionResolvers<ContextType>;
   SubGround?: SubGroundResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
