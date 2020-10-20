@@ -26,6 +26,11 @@ Category.init({
   },
   name: {
     type: DataTypes.STRING,
+    validate: {
+      notEmpty: true,
+    },
+    unique: true,
+    allowNull: false,
   },
   createdAt: {
     type: DataTypes.DATEONLY,

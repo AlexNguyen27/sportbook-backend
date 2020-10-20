@@ -28,6 +28,10 @@ Benefit.init({
   title: {
     type: DataTypes.STRING,
     allowNull: false,
+    validate: {
+      notEmpty: true,
+    },
+    unique: true,
   },
   description: {
     type: DataTypes.TEXT, // TODO: CHANGE DB TO TEXT

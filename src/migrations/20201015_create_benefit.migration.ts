@@ -12,6 +12,7 @@ const migration = {
       validate: {
         notEmpty: true,
       },
+      unique: true,
       allowNull: false,
     },
     description: {
