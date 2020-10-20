@@ -5,6 +5,8 @@ const typeDef = `
 
   extend type Mutation {
     createCategory(name: String!): Category
+    updateCategory(id: String!, name: String): Category,
+    deleteCategory(id: String!): SuccessMessage
   }
 
   type Category {
