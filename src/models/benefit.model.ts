@@ -27,9 +27,10 @@ Benefit.init({
   },
   title: {
     type: DataTypes.STRING,
+    allowNull: false,
   },
   description: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT, // TODO: CHANGE DB TO TEXT
   },
   createdAt: {
     type: DataTypes.DATEONLY,

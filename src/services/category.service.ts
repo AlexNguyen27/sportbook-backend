@@ -28,6 +28,26 @@ class CategoryService {
       return cate;
     });
   }
+
+  static async updateCategory({ id, name }: { id: string; name: string }) {
+    await this.findCategoryById(id);
+    await CategoryModel.update({ name }, { where: { id } });
+
+    const currentCategory = await this.findCategoryById(id);
+    return currentCategory;
+  }
+
+  static async deleteCategory({ id }: { id: string }) {
+    const currentCategory = await CategoryModel.findOne({ where: { id } });
+    if (!currentCategory) {
+      throw new ExistsError('Category not found');
+    }
+    await CategoryModel.destroy({ where: { id } });
+    return {
+      status: 200,
+      message: 'Delete successfully',
+    };
+  }
 }
 
 export default CategoryService;

@@ -12,10 +12,10 @@ const migration = {
       validate: {
         notEmpty: true,
       },
+      allowNull: false,
     },
     description: {
-      type: DataTypes.STRING,
-      allowNull: true,
+      type: DataTypes.TEXT,
     },
     createdAt: {
       type: DataTypes.DATE,

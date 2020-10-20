@@ -165,6 +165,14 @@ export type Scalars = {
 
 
 
+export type Benefit = {
+  __typename?: 'Benefit';
+  id?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+};
+
 export type Cat = {
   __typename?: 'Cat';
   id?: Maybe<Scalars['String']>;
@@ -223,6 +231,7 @@ export type Query = {
   __typename?: 'Query';
   users?: Maybe<Array<Maybe<User>>>;
   login?: Maybe<LoginOutput>;
+  benefits?: Maybe<Array<Maybe<Benefit>>>;
   cats?: Maybe<Array<Maybe<Cat>>>;
   categories?: Maybe<Array<Maybe<Category>>>;
   grounds?: Maybe<Array<Maybe<Ground>>>;
@@ -256,8 +265,13 @@ export type Mutation = {
   updateUser?: Maybe<User>;
   deleteUser?: Maybe<SuccessMessage>;
   changePassword?: Maybe<SuccessMessage>;
+  createBenefit?: Maybe<Category>;
+  updateBenefit?: Maybe<Benefit>;
+  deleteBenefit?: Maybe<SuccessMessage>;
   createCat?: Maybe<Cat>;
   createCategory?: Maybe<Category>;
+  updateCategory?: Maybe<Category>;
+  deleteCategory?: Maybe<SuccessMessage>;
   createGround?: Maybe<Ground>;
   updateGround?: Maybe<Ground>;
   deleteGround?: Maybe<SuccessMessage>;
@@ -303,6 +317,23 @@ export type MutationChangePasswordArgs = {
 };
 
 
+export type MutationCreateBenefitArgs = {
+  name: Scalars['String'];
+};
+
+
+export type MutationUpdateBenefitArgs = {
+  id: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationDeleteBenefitArgs = {
+  id: Scalars['String'];
+};
+
+
 export type MutationCreateCatArgs = {
   name: Scalars['String'];
   color?: Maybe<Scalars['String']>;
@@ -312,6 +343,17 @@ export type MutationCreateCatArgs = {
 
 export type MutationCreateCategoryArgs = {
   name: Scalars['String'];
+};
+
+
+export type MutationUpdateCategoryArgs = {
+  id: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationDeleteCategoryArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -529,8 +571,9 @@ export type ResolversTypes = ResolversObject<{
   IBAN: ResolverTypeWrapper<Scalars['IBAN']>;
   ObjectID: ResolverTypeWrapper<Scalars['ObjectID']>;
   Void: ResolverTypeWrapper<Scalars['Void']>;
-  Cat: ResolverTypeWrapper<Cat>;
+  Benefit: ResolverTypeWrapper<Benefit>;
   String: ResolverTypeWrapper<Scalars['String']>;
+  Cat: ResolverTypeWrapper<Cat>;
   Category: ResolverTypeWrapper<Category>;
   SuccessMessage: ResolverTypeWrapper<SuccessMessage>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
@@ -591,8 +634,9 @@ export type ResolversParentTypes = ResolversObject<{
   IBAN: Scalars['IBAN'];
   ObjectID: Scalars['ObjectID'];
   Void: Scalars['Void'];
-  Cat: Cat;
+  Benefit: Benefit;
   String: Scalars['String'];
+  Cat: Cat;
   Category: Category;
   SuccessMessage: SuccessMessage;
   Int: Scalars['Int'];
@@ -786,6 +830,14 @@ export interface VoidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
   name: 'Void';
 }
 
+export type BenefitResolvers<ContextType = any, ParentType extends ResolversParentTypes['Benefit'] = ResolversParentTypes['Benefit']> = ResolversObject<{
+  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type CatResolvers<ContextType = any, ParentType extends ResolversParentTypes['Cat'] = ResolversParentTypes['Cat']> = ResolversObject<{
   id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -843,6 +895,7 @@ export type SubGroundResolvers<ContextType = any, ParentType extends ResolversPa
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
   login?: Resolver<Maybe<ResolversTypes['LoginOutput']>, ParentType, ContextType, RequireFields<QueryLoginArgs, 'email' | 'password'>>;
+  benefits?: Resolver<Maybe<Array<Maybe<ResolversTypes['Benefit']>>>, ParentType, ContextType>;
   cats?: Resolver<Maybe<Array<Maybe<ResolversTypes['Cat']>>>, ParentType, ContextType, RequireFields<QueryCatsArgs, never>>;
   categories?: Resolver<Maybe<Array<Maybe<ResolversTypes['Category']>>>, ParentType, ContextType>;
   grounds?: Resolver<Maybe<Array<Maybe<ResolversTypes['Ground']>>>, ParentType, ContextType, RequireFields<QueryGroundsArgs, never>>;
@@ -854,8 +907,13 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, never>>;
   deleteUser?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'id'>>;
   changePassword?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'currentPassword' | 'newPassword' | 'confirmPassword'>>;
+  createBenefit?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<MutationCreateBenefitArgs, 'name'>>;
+  updateBenefit?: Resolver<Maybe<ResolversTypes['Benefit']>, ParentType, ContextType, RequireFields<MutationUpdateBenefitArgs, 'id'>>;
+  deleteBenefit?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteBenefitArgs, 'id'>>;
   createCat?: Resolver<Maybe<ResolversTypes['Cat']>, ParentType, ContextType, RequireFields<MutationCreateCatArgs, 'name' | 'categoryId'>>;
   createCategory?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<MutationCreateCategoryArgs, 'name'>>;
+  updateCategory?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<MutationUpdateCategoryArgs, 'id'>>;
+  deleteCategory?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteCategoryArgs, 'id'>>;
   createGround?: Resolver<Maybe<ResolversTypes['Ground']>, ParentType, ContextType, RequireFields<MutationCreateGroundArgs, 'title' | 'description'>>;
   updateGround?: Resolver<Maybe<ResolversTypes['Ground']>, ParentType, ContextType, RequireFields<MutationUpdateGroundArgs, never>>;
   deleteGround?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteGroundArgs, 'id'>>;
@@ -947,6 +1005,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   IBAN?: GraphQLScalarType;
   ObjectID?: GraphQLScalarType;
   Void?: GraphQLScalarType;
+  Benefit?: BenefitResolvers<ContextType>;
   Cat?: CatResolvers<ContextType>;
   Category?: CategoryResolvers<ContextType>;
   SuccessMessage?: SuccessMessageResolvers<ContextType>;
