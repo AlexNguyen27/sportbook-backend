@@ -53,7 +53,7 @@ Rating.init({
     onUpdate: 'CASCADE',
   },
   point: {
-    type: DataTypes.FLOAT,
+    type: DataTypes.FLOAT, // point need to have point ex: 4.5
     allowNull: false,
     validate: {
       isNumeric: true,
