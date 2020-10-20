@@ -12,6 +12,8 @@ const migration = {
       validate: {
         notEmpty: true,
       },
+      unique: true,
+      allowNull: false,
     },
     createdAt: {
       type: DataTypes.DATE,

@@ -4,7 +4,7 @@ const typeDef = `
   }
 
   extend type Mutation {
-    createBenefit(name: String!, ): Category
+    createBenefit(title: String!, description: String): Benefit
     updateBenefit(id: String!, title: String, description: String): Benefit,
     deleteBenefit(id: String!): SuccessMessage
   }
