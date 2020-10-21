@@ -192,6 +192,26 @@ export type Category = {
   createdAt?: Maybe<Scalars['DateTime']>;
 };
 
+export type Comment = {
+  __typename?: 'Comment';
+  id?: Maybe<Scalars['String']>;
+  comment?: Maybe<Scalars['String']>;
+  userId?: Maybe<Scalars['String']>;
+  user?: Maybe<UserComment>;
+  groundId?: Maybe<Scalars['String']>;
+  parentId?: Maybe<Scalars['String']>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type UserComment = {
+  __typename?: 'UserComment';
+  email?: Maybe<Scalars['String']>;
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  avatar?: Maybe<Scalars['String']>;
+};
+
 export type SuccessMessage = {
   __typename?: 'SuccessMessage';
   status?: Maybe<Scalars['Int']>;
@@ -215,8 +235,8 @@ export type Ground = {
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
-export type Reaction = {
-  __typename?: 'Reaction';
+export type Rating = {
+  __typename?: 'Rating';
   userId?: Maybe<Scalars['String']>;
   point: Scalars['Float'];
   groundId?: Maybe<Scalars['String']>;
@@ -241,6 +261,7 @@ export type Query = {
   benefits?: Maybe<Array<Maybe<Benefit>>>;
   cats?: Maybe<Array<Maybe<Cat>>>;
   categories?: Maybe<Array<Maybe<Category>>>;
+  getCommentsbyGroundId?: Maybe<Array<Maybe<Comment>>>;
   grounds?: Maybe<Array<Maybe<Ground>>>;
   subGrounds?: Maybe<Array<Maybe<SubGround>>>;
 };
@@ -254,6 +275,11 @@ export type QueryLoginArgs = {
 
 export type QueryCatsArgs = {
   id?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryGetCommentsbyGroundIdArgs = {
+  groundId: Scalars['String'];
 };
 
 
@@ -279,11 +305,14 @@ export type Mutation = {
   createCategory?: Maybe<Category>;
   updateCategory?: Maybe<Category>;
   deleteCategory?: Maybe<SuccessMessage>;
+  createComment?: Maybe<Comment>;
+  updateComment?: Maybe<Comment>;
+  deleteComment?: Maybe<SuccessMessage>;
   createGround?: Maybe<Ground>;
   updateGround?: Maybe<Ground>;
   deleteGround?: Maybe<SuccessMessage>;
   createRating?: Maybe<SuccessMessage>;
-  updateRating?: Maybe<SuccessMessage>;
+  updateRating?: Maybe<Rating>;
   createSubGround?: Maybe<SubGround>;
   updateSubGround?: Maybe<SubGround>;
   deleteSubGround?: Maybe<SuccessMessage>;
@@ -363,6 +392,25 @@ export type MutationUpdateCategoryArgs = {
 
 
 export type MutationDeleteCategoryArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationCreateCommentArgs = {
+  comment: Scalars['String'];
+  userId: Scalars['String'];
+  groundId: Scalars['String'];
+  parentId?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationUpdateCommentArgs = {
+  id: Scalars['String'];
+  comment: Scalars['String'];
+};
+
+
+export type MutationDeleteCommentArgs = {
   id: Scalars['String'];
 };
 
@@ -599,10 +647,12 @@ export type ResolversTypes = ResolversObject<{
   String: ResolverTypeWrapper<Scalars['String']>;
   Cat: ResolverTypeWrapper<Cat>;
   Category: ResolverTypeWrapper<Category>;
+  Comment: ResolverTypeWrapper<Comment>;
+  UserComment: ResolverTypeWrapper<UserComment>;
   SuccessMessage: ResolverTypeWrapper<SuccessMessage>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Ground: ResolverTypeWrapper<Ground>;
-  Reaction: ResolverTypeWrapper<Reaction>;
+  Rating: ResolverTypeWrapper<Rating>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   SubGround: ResolverTypeWrapper<SubGround>;
   Query: ResolverTypeWrapper<{}>;
@@ -663,10 +713,12 @@ export type ResolversParentTypes = ResolversObject<{
   String: Scalars['String'];
   Cat: Cat;
   Category: Category;
+  Comment: Comment;
+  UserComment: UserComment;
   SuccessMessage: SuccessMessage;
   Int: Scalars['Int'];
   Ground: Ground;
-  Reaction: Reaction;
+  Rating: Rating;
   Float: Scalars['Float'];
   SubGround: SubGround;
   Query: {};
@@ -883,6 +935,26 @@ export type CategoryResolvers<ContextType = any, ParentType extends ResolversPar
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type CommentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Comment'] = ResolversParentTypes['Comment']> = ResolversObject<{
+  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  comment?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  userId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['UserComment']>, ParentType, ContextType>;
+  groundId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  parentId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type UserCommentResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserComment'] = ResolversParentTypes['UserComment']> = ResolversObject<{
+  email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  firstName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type SuccessMessageResolvers<ContextType = any, ParentType extends ResolversParentTypes['SuccessMessage'] = ResolversParentTypes['SuccessMessage']> = ResolversObject<{
   status?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   message?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -906,7 +978,7 @@ export type GroundResolvers<ContextType = any, ParentType extends ResolversParen
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type ReactionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Reaction'] = ResolversParentTypes['Reaction']> = ResolversObject<{
+export type RatingResolvers<ContextType = any, ParentType extends ResolversParentTypes['Rating'] = ResolversParentTypes['Rating']> = ResolversObject<{
   userId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   point?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   groundId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -931,6 +1003,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   benefits?: Resolver<Maybe<Array<Maybe<ResolversTypes['Benefit']>>>, ParentType, ContextType>;
   cats?: Resolver<Maybe<Array<Maybe<ResolversTypes['Cat']>>>, ParentType, ContextType, RequireFields<QueryCatsArgs, never>>;
   categories?: Resolver<Maybe<Array<Maybe<ResolversTypes['Category']>>>, ParentType, ContextType>;
+  getCommentsbyGroundId?: Resolver<Maybe<Array<Maybe<ResolversTypes['Comment']>>>, ParentType, ContextType, RequireFields<QueryGetCommentsbyGroundIdArgs, 'groundId'>>;
   grounds?: Resolver<Maybe<Array<Maybe<ResolversTypes['Ground']>>>, ParentType, ContextType, RequireFields<QueryGroundsArgs, never>>;
   subGrounds?: Resolver<Maybe<Array<Maybe<ResolversTypes['SubGround']>>>, ParentType, ContextType, RequireFields<QuerySubGroundsArgs, never>>;
 }>;
@@ -947,11 +1020,14 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createCategory?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<MutationCreateCategoryArgs, 'name'>>;
   updateCategory?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<MutationUpdateCategoryArgs, 'id'>>;
   deleteCategory?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteCategoryArgs, 'id'>>;
+  createComment?: Resolver<Maybe<ResolversTypes['Comment']>, ParentType, ContextType, RequireFields<MutationCreateCommentArgs, 'comment' | 'userId' | 'groundId'>>;
+  updateComment?: Resolver<Maybe<ResolversTypes['Comment']>, ParentType, ContextType, RequireFields<MutationUpdateCommentArgs, 'id' | 'comment'>>;
+  deleteComment?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteCommentArgs, 'id'>>;
   createGround?: Resolver<Maybe<ResolversTypes['Ground']>, ParentType, ContextType, RequireFields<MutationCreateGroundArgs, 'title' | 'description'>>;
   updateGround?: Resolver<Maybe<ResolversTypes['Ground']>, ParentType, ContextType, RequireFields<MutationUpdateGroundArgs, never>>;
   deleteGround?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteGroundArgs, 'id'>>;
   createRating?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationCreateRatingArgs, 'userId' | 'groundId' | 'point'>>;
-  updateRating?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationUpdateRatingArgs, 'userId' | 'groundId' | 'point'>>;
+  updateRating?: Resolver<Maybe<ResolversTypes['Rating']>, ParentType, ContextType, RequireFields<MutationUpdateRatingArgs, 'userId' | 'groundId' | 'point'>>;
   createSubGround?: Resolver<Maybe<ResolversTypes['SubGround']>, ParentType, ContextType, RequireFields<MutationCreateSubGroundArgs, 'name'>>;
   updateSubGround?: Resolver<Maybe<ResolversTypes['SubGround']>, ParentType, ContextType, RequireFields<MutationUpdateSubGroundArgs, never>>;
   deleteSubGround?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteSubGroundArgs, 'id'>>;
@@ -1043,9 +1119,11 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Benefit?: BenefitResolvers<ContextType>;
   Cat?: CatResolvers<ContextType>;
   Category?: CategoryResolvers<ContextType>;
+  Comment?: CommentResolvers<ContextType>;
+  UserComment?: UserCommentResolvers<ContextType>;
   SuccessMessage?: SuccessMessageResolvers<ContextType>;
   Ground?: GroundResolvers<ContextType>;
-  Reaction?: ReactionResolvers<ContextType>;
+  Rating?: RatingResolvers<ContextType>;
   SubGround?: SubGroundResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;

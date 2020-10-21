@@ -29,7 +29,6 @@ const migration = {
     },
     parentId: {
       type: DataTypes.UUID,
-      allowNull: false,
       validate: {
         notEmpty: true,
       },
