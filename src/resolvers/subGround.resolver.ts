@@ -33,7 +33,6 @@ const resolver: Resolvers = {
         price: joi.number(),
         discount: joi.number(),
         status: joi.string().valid(Object.values(SUB_GROUND_STATUS)),
-        groundId: joi.string().uuid(),
       }),
       (_: any, args: MutationUpdateSubGroundArgs, { user }: any): Promise<SubGround> => SubGroundService.updateSubGround(args, user),
     ),

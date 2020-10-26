@@ -18,7 +18,7 @@ class SubGroundService {
       include: [
         {
           model: Ground,
-          as: 'Ground',
+          as: 'ground',
         },
       ],
     });
@@ -32,13 +32,13 @@ class SubGroundService {
         include: [
           {
             model: Ground,
-            as: 'Ground',
+            as: 'ground',
           },
         ],
       });
       return { ...subGround.toJSON() };
     } catch (error) {
-      if (!subGround) throw new ExistsError('Ground not found');
+      if (!subGround) throw new ExistsError('Sub Ground not found');
       throw error;
     }
   }
@@ -51,26 +51,23 @@ class SubGroundService {
     }
     // CHECK IF GROUND EXITS
     await GroundService.findGroundById({ id: groundId });
-
     const newGround = await SubGroundModel.create({ ...data });
 
     return this.findSubGroundById({ id: newGround.id });
   }
 
   static async updateSubGround(data: MutationUpdateSubGroundArgs, user: any) {
-    const { id, groundId } = data;
+    const { id } = data;
     const { role } = user;
 
     if (role === ROLE.user) {
       throw new AuthenticationError('Your role is not allowed');
     }
-
-    await this.findSubGroundById({ id });
     // CHECK IF GROUND EXITS
-    const ground: any = await GroundService.findGroundById({ id: groundId });
-    if (groundId !== ground.id) {
-      throw new ExistsError('Can not update sub ground!');
-    }
+    // const ground: any = await GroundService.findGroundById({ id: groundId });
+    // if (groundId !== ground.id) {
+    //   throw new ExistsError('Can not update sub ground!');
+    // }
 
     // UDPATE SUB GROUND INFO
     const subGroundId: any = id;

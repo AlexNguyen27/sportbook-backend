@@ -1,9 +1,10 @@
 import { Model, DataTypes } from 'sequelize';
-
+import moment from 'moment';
 import { sequelize } from './sequelize';
 import { PAYMENT_TYPE, ORDER_STATUS } from '../components/constants';
 import SubGround from './subGround.model';
 import User from './user.model';
+import History from './history.model';
 
 const paymentTypes: any = Object.values(PAYMENT_TYPE);
 const orderStatus: any = Object.values(ORDER_STATUS);
@@ -43,6 +44,11 @@ class Order extends Model {
       as: 'user',
       foreignKey: 'userId',
     });
+
+    this.hasMany(History, {
+      as: 'histories',
+      foreignKey: 'orderId',
+    });
   }
 }
 
@@ -81,6 +87,9 @@ Order.init({
   startDay: {
     type: DataTypes.DATEONLY,
     allowNull: false,
+    get() {
+      return moment(this.getDataValue('startDay')).format('DD-MM-YYYY');
+    },
   },
   startTime: {
     type: DataTypes.TIME,
@@ -104,6 +113,7 @@ Order.init({
       isNumeric: true,
       min: 0,
     },
+    allowNull: false,
   },
   discount: {
     type: DataTypes.FLOAT,
@@ -112,6 +122,7 @@ Order.init({
       min: 0,
       max: 100,
     },
+    defaultValue: 0,
   },
   createdAt: {
     type: DataTypes.DATE,

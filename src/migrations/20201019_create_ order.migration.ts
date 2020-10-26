@@ -63,6 +63,7 @@ const migration = {
         isNumeric: true,
         min: 0,
       },
+      allowNull: false,
     },
     discount: {
       type: DataTypes.FLOAT,
@@ -71,6 +72,7 @@ const migration = {
         min: 0,
         max: 100,
       },
+      defaultValue: 0,
     },
     createdAt: {
       type: DataTypes.DATE,

@@ -20,7 +20,6 @@ const typeDef = `
       price: Float
       discount: Float,
       status: String
-      groundId: String,
     ): SubGround
 
     deleteSubGround(id: String!): SuccessMessage
