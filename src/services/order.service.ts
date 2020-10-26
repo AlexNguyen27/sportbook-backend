@@ -48,6 +48,41 @@ class OrderService {
     });
   }
 
+  static async getOrders(filter: any) {
+    // const { search = '' } = filter;
+    const { userId, subGroundId } = filter;
+    let condition = {};
+    if (userId) {
+      condition = {
+        userId,
+      };
+    }
+
+    if (subGroundId) {
+      condition = {
+        subGroundId,
+      };
+    }
+
+    const listOrders = await OrderModel.findAll({
+      where: {
+        ...condition,
+      },
+      include: [
+        {
+          model: User,
+          as: 'user',
+        },
+        {
+          model: SubGround,
+          as: 'subGround',
+        },
+      ],
+    });
+
+    return listOrders;
+  }
+
   static async findOrderById({ id }: { id: any }) {
     let order: any;
     try {
@@ -91,6 +126,7 @@ class OrderService {
     return this.findOrderById({ id: newOrder.id });
   }
 
+  // todo: validate role later
   static async updateOrder(data: any, user: any) {
     const { id, subGroundId } = data;
     const { role, userId } = user;

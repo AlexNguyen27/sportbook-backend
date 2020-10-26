@@ -9,8 +9,8 @@ import OrderService from '../services/order.service';
 
 const resolver: Resolvers = {
   Query: {
-    ordersByUserId: (_: any, args: any): Promise<Order[]> => OrderService.getOrdersByUserId({ userId: args.userId }),
-    ordersBySubGroundId: (_: any, args: any): Promise<Order[]> => OrderService.getOrdersBySubGroundId({ subGroundId: args.subGroundId }),
+    orders: (_: any, args: any): Promise<Order[]> => OrderService.getOrders(args),
+    // ordersBySubGroundId: (_: any, args: any): Promise<Order[]> => OrderService.getOrdersBySubGroundId({ subGroundId: args.subGroundId }),
   },
   Mutation: {
     // todo validate later
