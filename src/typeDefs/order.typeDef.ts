@@ -1,7 +1,6 @@
 const typeDef = `
   extend type Query {
-    ordersByUserId(userId: String): [Order]
-    ordersBySubGroundId(subGroundId: String): [Order]
+    orders(userId: String, subGroundId: String): [Order]
   }
 
   extend type Mutation {
