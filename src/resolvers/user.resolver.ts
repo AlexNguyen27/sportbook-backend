@@ -25,7 +25,7 @@ const resolver: Resolvers = {
     updateUser: middleware(
       tokenValidation(ROLE.admin, ROLE.owner, ROLE.user),
       schemaValidation({
-        id: joi.string().uuid().required(),
+        id: joi.string().uuid(),
         email: joi.string(),
         firstName: joi.string(),
         lastName: joi.string(),
