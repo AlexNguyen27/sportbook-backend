@@ -45,10 +45,10 @@ const migration = {
       type: DataTypes.TIME,
       allowNull: false,
     },
-    duration: {
-      type: DataTypes.INTEGER,
+    endTime: {
+      type: DataTypes.TIME,
       allowNull: false,
-    },
+    }, // can count duration later
     paymentType: {
       type: DataTypes.ENUM(paymentTypes),
       allowNull: false,

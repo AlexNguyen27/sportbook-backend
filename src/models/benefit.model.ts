@@ -3,7 +3,7 @@ import { Model, DataTypes } from 'sequelize';
 import { sequelize } from './sequelize';
 
 class Benefit extends Model {
-  public id: string;
+  public id: number;
 
   public title: string;
 
@@ -21,9 +21,9 @@ class Benefit extends Model {
 
 Benefit.init({
   id: {
-    type: DataTypes.UUID,
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
     primaryKey: true,
-    defaultValue: DataTypes.UUIDV4,
   },
   title: {
     type: DataTypes.STRING,

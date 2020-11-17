@@ -20,7 +20,7 @@ class Order extends Model {
 
   public startTime: string;
 
-  public duration: number;
+  public endTime: string;
 
   public paymentType: string;
 
@@ -95,10 +95,10 @@ Order.init({
     type: DataTypes.TIME,
     allowNull: false,
   },
-  duration: {
-    type: DataTypes.INTEGER,
+  endTime: {
+    type: DataTypes.TIME,
     allowNull: false,
-  },
+  }, // can count duration later
   paymentType: {
     type: DataTypes.ENUM(paymentTypes),
     allowNull: false,
