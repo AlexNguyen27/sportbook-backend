@@ -5,12 +5,12 @@ const typeDef = `
 
   extend type Mutation {
     createBenefit(title: String!, description: String): Benefit
-    updateBenefit(id: String!, title: String, description: String): Benefit,
-    deleteBenefit(id: String!): SuccessMessage
+    updateBenefit(id: Int!, title: String, description: String): Benefit,
+    deleteBenefit(id: Int!): SuccessMessage
   }
 
   type Benefit {
-    id: String
+    id: Int
     title: String
     description: String
     createdAt: DateTime
