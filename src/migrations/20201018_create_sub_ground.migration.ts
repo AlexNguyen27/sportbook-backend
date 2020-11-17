@@ -1,7 +1,5 @@
 import { QueryInterface, DataTypes } from 'sequelize';
-import { SUB_GROUND_STATUS } from '../components/constants';
 
-const subGroundStatus: any = Object.values(SUB_GROUND_STATUS);
 const migration = {
   up: (queryInterface: QueryInterface) => queryInterface.sequelize.transaction((t) => queryInterface.createTable('SUB_GROUND', {
     id: {
@@ -9,7 +7,7 @@ const migration = {
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
     },
-    type: {
+    numberOfPlayers: {
       type: DataTypes.FLOAT,
       validate: {
         isNumeric: true,
@@ -18,27 +16,13 @@ const migration = {
     },
     name: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false, // vd: 5 nguoi, 7 nguoi
     },
-    price: {
-      type: DataTypes.FLOAT,
-      validate: {
-        isNumeric: true,
-        min: 0,
-      },
-    },
-    discount: {
-      type: DataTypes.FLOAT,
-      validate: {
-        isNumeric: true,
-        min: 0,
-        max: 100,
-      },
-    },
-    status: {
-      type: DataTypes.ENUM(subGroundStatus),
-      allowNull: false,
-    },
+    // 0 = Monday, 1 = Tuesday, 2 = Wednesday, 3 = Thursday, 4 = Friday, 5 = Saturday, 6 = Sunday.
+    // activeWeekDays: {
+    //   type: DataTypes.JSONB,
+    //   allowNull: false,
+    // },
     groundId: {
       type: DataTypes.UUID,
       allowNull: false,

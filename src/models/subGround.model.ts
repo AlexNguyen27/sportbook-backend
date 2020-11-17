@@ -1,23 +1,14 @@
 import { Model, DataTypes } from 'sequelize';
 
 import { sequelize } from './sequelize';
-import { SUB_GROUND_STATUS } from '../components/constants';
 import Ground from './ground.model';
-
-const subGroundStatus: any = Object.values(SUB_GROUND_STATUS);
 
 class SubGround extends Model {
   public id: string;
 
-  public type: number;
+  public numberOfPlayers: number;
 
   public name: string;
-
-  public price: number;
-
-  public discount: number;
-
-  public status: string;
 
   public groundId: string;
 
@@ -37,7 +28,7 @@ SubGround.init({
     primaryKey: true,
     defaultValue: DataTypes.UUIDV4,
   },
-  type: {
+  numberOfPlayers: {
     type: DataTypes.FLOAT,
     validate: {
       isNumeric: true,
@@ -46,25 +37,6 @@ SubGround.init({
   },
   name: {
     type: DataTypes.STRING,
-    allowNull: false,
-  },
-  price: {
-    type: DataTypes.FLOAT,
-    validate: {
-      isNumeric: true,
-      min: 0,
-    },
-  },
-  discount: {
-    type: DataTypes.FLOAT,
-    validate: {
-      isNumeric: true,
-      min: 0,
-      max: 100,
-    },
-  },
-  status: {
-    type: DataTypes.ENUM(subGroundStatus),
     allowNull: false,
   },
   groundId: {

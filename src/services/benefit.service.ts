@@ -1,6 +1,5 @@
-import { sequelize } from '../models/sequelize';
 import BenefitModel from '../models/benefit.model';
-import { Benefit, MutationCreateBenefitArgs, MutationUpdateBenefitArgs } from '../types/graphql.type';
+import { MutationCreateBenefitArgs, MutationUpdateBenefitArgs } from '../types/graphql.type';
 import { ExistsError } from '../components/errors';
 
 class BenefitService {
@@ -8,8 +7,8 @@ class BenefitService {
     return BenefitModel.findAll();
   }
 
-  static createBenefit(data: MutationCreateBenefitArgs): Promise<Benefit> {
-    return sequelize.transaction((transaction) => BenefitModel.create(data, { transaction }));
+  static createBenefit(data: MutationCreateBenefitArgs) {
+    return BenefitModel.create(data);
   }
 
   static findBenefitById(id: string | any | undefined) {

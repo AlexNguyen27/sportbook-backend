@@ -3,9 +3,9 @@ import { QueryInterface, DataTypes } from 'sequelize';
 const migration = {
   up: (queryInterface: QueryInterface) => queryInterface.sequelize.transaction((t) => queryInterface.createTable('BENEFIT', {
     id: {
-      type: DataTypes.UUID,
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
       primaryKey: true,
-      defaultValue: DataTypes.UUIDV4,
     },
     title: {
       type: DataTypes.STRING,
