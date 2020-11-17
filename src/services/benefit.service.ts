@@ -11,10 +11,10 @@ class BenefitService {
     return BenefitModel.create(data);
   }
 
-  static findBenefitById(id: string | any | undefined) {
-    return BenefitModel.findOne({ where: { id } }).then((cate) => {
-      if (!cate) throw new ExistsError('Benefit not found');
-      return cate;
+  static findBenefitById(id: number | any | undefined) {
+    return BenefitModel.findOne({ where: { id } }).then((benefit) => {
+      if (!benefit) throw new ExistsError('Benefit not found');
+      return benefit;
     });
   }
 
@@ -27,7 +27,7 @@ class BenefitService {
     return currentBenefit;
   }
 
-  static async deleteBenefit({ id }: { id: string }) {
+  static async deleteBenefit({ id }: { id: number }) {
     const currentBenefit = await BenefitModel.findOne({ where: { id } });
     if (!currentBenefit) {
       throw new ExistsError('Benefit not found');

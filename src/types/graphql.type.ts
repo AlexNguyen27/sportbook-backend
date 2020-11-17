@@ -167,7 +167,7 @@ export type Scalars = {
 
 export type Benefit = {
   __typename?: 'Benefit';
-  id?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['Int']>;
   title?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   createdAt?: Maybe<Scalars['DateTime']>;
@@ -390,14 +390,14 @@ export type MutationCreateBenefitArgs = {
 
 
 export type MutationUpdateBenefitArgs = {
-  id: Scalars['String'];
+  id: Scalars['Int'];
   title?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
 };
 
 
 export type MutationDeleteBenefitArgs = {
-  id: Scalars['String'];
+  id: Scalars['Int'];
 };
 
 
@@ -700,13 +700,13 @@ export type ResolversTypes = ResolversObject<{
   ObjectID: ResolverTypeWrapper<Scalars['ObjectID']>;
   Void: ResolverTypeWrapper<Scalars['Void']>;
   Benefit: ResolverTypeWrapper<Benefit>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Cat: ResolverTypeWrapper<Cat>;
   Category: ResolverTypeWrapper<Category>;
   Comment: ResolverTypeWrapper<Comment>;
   UserComment: ResolverTypeWrapper<UserComment>;
   SuccessMessage: ResolverTypeWrapper<SuccessMessage>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
   Ground: ResolverTypeWrapper<Ground>;
   Order: ResolverTypeWrapper<Order>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
@@ -767,13 +767,13 @@ export type ResolversParentTypes = ResolversObject<{
   ObjectID: Scalars['ObjectID'];
   Void: Scalars['Void'];
   Benefit: Benefit;
+  Int: Scalars['Int'];
   String: Scalars['String'];
   Cat: Cat;
   Category: Category;
   Comment: Comment;
   UserComment: UserComment;
   SuccessMessage: SuccessMessage;
-  Int: Scalars['Int'];
   Ground: Ground;
   Order: Order;
   Float: Scalars['Float'];
@@ -967,7 +967,7 @@ export interface VoidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 }
 
 export type BenefitResolvers<ContextType = any, ParentType extends ResolversParentTypes['Benefit'] = ResolversParentTypes['Benefit']> = ResolversObject<{
-  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
