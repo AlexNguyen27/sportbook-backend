@@ -276,6 +276,7 @@ export type Query = {
   __typename?: 'Query';
   users?: Maybe<Array<Maybe<User>>>;
   login?: Maybe<LoginOutput>;
+  getUserById?: Maybe<User>;
   benefits?: Maybe<Array<Maybe<Benefit>>>;
   cats?: Maybe<Array<Maybe<Cat>>>;
   categories?: Maybe<Array<Maybe<Category>>>;
@@ -289,6 +290,11 @@ export type Query = {
 export type QueryLoginArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
+};
+
+
+export type QueryGetUserByIdArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -355,8 +361,8 @@ export type MutationCreateUserArgs = {
 
 
 export type MutationUpdateUserArgs = {
-  id?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  email: Scalars['String'];
   firstName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
   phone?: Maybe<Scalars['String']>;
@@ -367,6 +373,9 @@ export type MutationUpdateUserArgs = {
   favoriteFoot?: Maybe<Scalars['String']>;
   playRole?: Maybe<Scalars['String']>;
   role?: Maybe<Scalars['String']>;
+  regionCode?: Maybe<Scalars['String']>;
+  districtCode?: Maybe<Scalars['String']>;
+  wardCode?: Maybe<Scalars['String']>;
 };
 
 
@@ -1076,6 +1085,7 @@ export type SubGroundResolvers<ContextType = any, ParentType extends ResolversPa
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
   login?: Resolver<Maybe<ResolversTypes['LoginOutput']>, ParentType, ContextType, RequireFields<QueryLoginArgs, 'email' | 'password'>>;
+  getUserById?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryGetUserByIdArgs, 'id'>>;
   benefits?: Resolver<Maybe<Array<Maybe<ResolversTypes['Benefit']>>>, ParentType, ContextType>;
   cats?: Resolver<Maybe<Array<Maybe<ResolversTypes['Cat']>>>, ParentType, ContextType, RequireFields<QueryCatsArgs, never>>;
   categories?: Resolver<Maybe<Array<Maybe<ResolversTypes['Category']>>>, ParentType, ContextType>;
@@ -1087,7 +1097,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   createUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'email' | 'password' | 'role'>>;
-  updateUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, never>>;
+  updateUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'id' | 'email'>>;
   deleteUser?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'id'>>;
   changePassword?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'currentPassword' | 'newPassword' | 'confirmPassword'>>;
   createBenefit?: Resolver<Maybe<ResolversTypes['Benefit']>, ParentType, ContextType, RequireFields<MutationCreateBenefitArgs, 'title'>>;

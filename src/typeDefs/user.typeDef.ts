@@ -2,6 +2,7 @@ const typeDef = `
   type Query {
     users: [User]
     login(email: String!, password: String!): LoginOutput
+    getUserById(id: String!): User
   }
 
   type Mutation {
@@ -12,8 +13,8 @@ const typeDef = `
     ): User
 
     updateUser(
-      id: String
-      email: String,
+      id: String!
+      email: String!,
       firstName: String,
       lastName: String,
       phone: String,
@@ -24,6 +25,9 @@ const typeDef = `
       favoriteFoot: String
       playRole: String
       role: String
+      regionCode: String,
+      districtCode: String
+      wardCode: String
     ): User,
 
     deleteUser(id: String!): SuccessMessage,

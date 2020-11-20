@@ -13,6 +13,9 @@ class CategoryService {
           as: 'grounds',
         },
       ],
+      order: [
+        ['createdAt', 'DESC'],
+      ],
     });
   }
 
