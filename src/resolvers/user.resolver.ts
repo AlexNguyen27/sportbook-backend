@@ -41,7 +41,7 @@ const resolver: Resolvers = {
       (_: any, args: MutationDeleteUserArgs, { user }: any) => UserService.deleteUser(args.id, user),
     ),
     changePassword: middleware(
-      tokenValidation(ROLE.admin, ROLE.user),
+      tokenValidation(ROLE.admin, ROLE.user, ROLE.owner),
       schemaValidation({
         id: joi.string().uuid(),
         currentPassword: joi.string(),

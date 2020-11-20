@@ -151,7 +151,7 @@ class UserService {
     } = data;
 
     // ADMIN CAN UPDATE PASSWORD USER
-    if (userId && user.role === ROLE.user) {
+    if (userId && user.role !== ROLE.admin) {
       throw new AuthenticationError('Your role is not allowed!');
     }
 
