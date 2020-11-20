@@ -58,17 +58,24 @@ class UserService {
     };
   }
 
-  static findUserById(id: string) {
+  static getUserInfo(id: string, user: any) {
+    // only admin can get other user info
+    // manager can only get their info
+    if (user.role === ROLE.owner && user.id !== id) {
+      throw new AuthenticationError('Your role is not allowed');
+    }
     return UserModel.findOne({ where: { id } }).then((user) => {
       if (!user) throw new ExistsError('User not found');
       return { ...user.toJSON() };
     });
   }
 
-  static findUserByUsername(email: string) {
-    return UserModel.findOne({ where: { email } }).then((user) => {
+  static findUserById(id: string) {
+    // only admin can get other user info
+    // manager can only get there info
+    return UserModel.findOne({ where: { id } }).then((user) => {
       if (!user) throw new ExistsError('User not found');
-      return user;
+      return { ...user.toJSON() };
     });
   }
 
@@ -87,7 +94,17 @@ class UserService {
       // eslint-disable-next-line no-param-reassign
       delete userInfo.email;
     }
-    await UserModel.update(userInfo, { where: { id: userId }, returning: true });
+
+    const formatedUserInfo: any = { ...userInfo };
+    const { regionCode, districtCode, wardCode } = userInfo;
+    formatedUserInfo.address = JSON.stringify({
+      regionCode,
+      districtCode,
+      wardCode,
+      address: userInfo.address,
+    });
+
+    await UserModel.update(formatedUserInfo, { where: { id: userId }, returning: true });
     const currentUser = await this.findUserById(userId);
     return currentUser;
   }

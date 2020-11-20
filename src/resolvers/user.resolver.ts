@@ -5,12 +5,19 @@ import UserService from '../services/user.service';
 import {
   User, Resolvers, QueryLoginArgs, MutationCreateUserArgs, MutationUpdateUserArgs, MutationChangePasswordArgs, MutationDeleteUserArgs,
 } from '../types/graphql.type';
-import { ROLE, GENDER } from '../components/constants';
+import { ROLE } from '../components/constants';
 
 const resolver: Resolvers = {
   Query: {
-    users: (): Promise<User[]> => UserService.getUsers(),
+    users: middleware(
+      tokenValidation(ROLE.admin, ROLE.owner, ROLE.user),
+      (): Promise<User[]> => UserService.getUsers(),
+    ),
     login: (_: any, args: QueryLoginArgs): Promise<any> => UserService.login(args),
+    getUserById: middleware(
+      tokenValidation(ROLE.admin, ROLE.owner, ROLE.user),
+      (_: any, args: any, { user }: any): Promise<User> => UserService.getUserInfo(args.id, user),
+    ),
   },
   Mutation: {
     createUser: middleware(
@@ -24,19 +31,6 @@ const resolver: Resolvers = {
 
     updateUser: middleware(
       tokenValidation(ROLE.admin, ROLE.owner, ROLE.user),
-      schemaValidation({
-        id: joi.string().uuid(),
-        email: joi.string(),
-        firstName: joi.string(),
-        lastName: joi.string(),
-        phone: joi.string(),
-        gender: joi.string().valid(Object.values(GENDER)),
-        address: joi.string(),
-        dob: joi.string(),
-        avatar: joi.string(),
-        favoriteFood: joi.string(),
-        role: joi.string(),
-      }),
       (_: any, args: MutationUpdateUserArgs, { user }: any): Promise<User> => UserService.updateUser(args, user),
     ),
     deleteUser: middleware(
