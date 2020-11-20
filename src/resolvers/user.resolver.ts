@@ -11,7 +11,7 @@ const resolver: Resolvers = {
   Query: {
     users: middleware(
       tokenValidation(ROLE.admin, ROLE.owner, ROLE.user),
-      (): Promise<User[]> => UserService.getUsers(),
+      (_: any, args: any): Promise<User[]> => UserService.getUsers(args),
     ),
     login: (_: any, args: QueryLoginArgs): Promise<any> => UserService.login(args),
     getUserById: middleware(
@@ -38,7 +38,7 @@ const resolver: Resolvers = {
       schemaValidation({
         id: joi.string().uuid(),
       }),
-      (_: any, args: MutationDeleteUserArgs) => UserService.deleteUser(args),
+      (_: any, args: MutationDeleteUserArgs, { user }: any) => UserService.deleteUser(args.id, user),
     ),
     changePassword: middleware(
       tokenValidation(ROLE.admin, ROLE.user),
