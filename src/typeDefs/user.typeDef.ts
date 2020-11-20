@@ -1,6 +1,6 @@
 const typeDef = `
   type Query {
-    users: [User]
+    users(role: String): [User]
     login(email: String!, password: String!): LoginOutput
     getUserById(id: String!): User
   }

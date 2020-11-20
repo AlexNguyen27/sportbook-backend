@@ -1,16 +1,35 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-
 import UserModel from '../models/user.model';
 
 import config from '../components/config';
 import { AuthenticationError, ExistsError, BusinessError } from '../components/errors';
 import { User, MutationCreateUserArgs, MutationUpdateUserArgs } from '../types/graphql.type';
+
 import { ROLE } from '../components/constants';
 
+const { Op } = require('sequelize');
+
 class UserService {
-  static getUsers(): Promise<User[]> {
-    return UserModel.findAll();
+  static getUsers(filter: any): Promise<User[]> {
+    let whereCondition = {};
+    if (filter && filter.role && filter.role === ROLE.user) {
+      whereCondition = {
+        ...filter,
+      };
+    } else {
+      whereCondition = {
+        role: {
+          [Op.in]: [ROLE.admin, ROLE.owner],
+        },
+      };
+    }
+
+    return UserModel.findAll({
+      where: {
+        ...whereCondition,
+      },
+    });
   }
 
   static async login(data: any) {
@@ -109,7 +128,12 @@ class UserService {
     return currentUser;
   }
 
-  static async deleteUser({ id }: { id: string }) {
+  static async deleteUser(id: string, user: any) {
+    const { role } = user;
+    // only admin can delete user
+    if (role !== ROLE.admin) {
+      throw new AuthenticationError('Your role is not allowed!');
+    }
     const currentUser = await UserModel.findOne({ where: { id } });
     if (!currentUser) {
       throw new ExistsError('User not found');

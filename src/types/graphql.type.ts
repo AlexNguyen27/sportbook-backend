@@ -287,6 +287,11 @@ export type Query = {
 };
 
 
+export type QueryUsersArgs = {
+  role?: Maybe<Scalars['String']>;
+};
+
+
 export type QueryLoginArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
@@ -1083,7 +1088,7 @@ export type SubGroundResolvers<ContextType = any, ParentType extends ResolversPa
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
+  users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType, RequireFields<QueryUsersArgs, never>>;
   login?: Resolver<Maybe<ResolversTypes['LoginOutput']>, ParentType, ContextType, RequireFields<QueryLoginArgs, 'email' | 'password'>>;
   getUserById?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryGetUserByIdArgs, 'id'>>;
   benefits?: Resolver<Maybe<Array<Maybe<ResolversTypes['Benefit']>>>, ParentType, ContextType>;
