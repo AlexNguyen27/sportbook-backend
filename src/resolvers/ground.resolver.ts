@@ -9,7 +9,10 @@ import GroundService from '../services/ground.service';
 
 const resolver: Resolvers = {
   Query: {
-    grounds: (): Promise<Ground[]> => GroundService.getGrounds(),
+    grounds: middleware(
+      tokenValidation(ROLE.owner, ROLE.admin),
+      (_: any, args: MutationUpdateGroundArgs, { user }: any) => GroundService.getGrounds(user),
+    ),
   },
   Mutation: {
     createGround: middleware(
@@ -22,6 +25,9 @@ const resolver: Resolvers = {
         benefit: joi.string(),
         image: joi.string(),
         categoryId: joi.string(),
+        regionCode: joi.string(),
+        districtCode: joi.string(),
+        wardCode: joi.string(),
       }),
       (_: any, args: MutationCreateGroundArgs, { user: { userId } }: any): Promise<Ground> => GroundService.createGround(args, userId),
     ),

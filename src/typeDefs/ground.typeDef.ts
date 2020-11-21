@@ -1,17 +1,20 @@
 const typeDef = `
   extend type Query {
-    grounds(id: String): [Ground]
+    grounds(search: String): [Ground]
   }
 
   extend type Mutation {
     createGround(
       title: String!
       description: String!
-      phone: String
-      address: String,
+      phone: String!
+      address: String!,
       benefit: String
+      categoryId: String!
+      regionCode: String!
+      districtCode: String!
+      wardCode: String!
       image: String,
-      categoryId: String
     ): Ground
 
     updateGround(

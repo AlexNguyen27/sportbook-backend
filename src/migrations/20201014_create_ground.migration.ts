@@ -31,7 +31,7 @@ const migration = {
       type: DataTypes.JSONB,
     },
     benefit: {
-      type: DataTypes.JSONB,
+      type: DataTypes.STRING,
     },
     image: {
       type: DataTypes.JSONB,

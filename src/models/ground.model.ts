@@ -95,7 +95,7 @@ Ground.init({
     type: DataTypes.JSONB,
   },
   benefit: {
-    type: DataTypes.JSONB,
+    type: DataTypes.STRING,
   },
   image: {
     type: DataTypes.JSONB,
@@ -103,9 +103,6 @@ Ground.init({
   userId: {
     type: DataTypes.UUID,
     allowNull: false,
-    validate: {
-      notEmpty: true,
-    },
     references: {
       model: 'USER',
       key: 'id',
@@ -116,9 +113,6 @@ Ground.init({
   categoryId: {
     type: DataTypes.UUID,
     allowNull: false,
-    validate: {
-      notEmpty: true,
-    },
     references: {
       model: 'CATEGORY',
       key: 'id',
