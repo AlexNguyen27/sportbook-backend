@@ -314,7 +314,7 @@ export type QueryGetCommentsbyGroundIdArgs = {
 
 
 export type QueryGroundsArgs = {
-  id?: Maybe<Scalars['String']>;
+  search?: Maybe<Scalars['String']>;
 };
 
 
@@ -460,11 +460,14 @@ export type MutationDeleteCommentArgs = {
 export type MutationCreateGroundArgs = {
   title: Scalars['String'];
   description: Scalars['String'];
-  phone?: Maybe<Scalars['String']>;
-  address?: Maybe<Scalars['String']>;
+  phone: Scalars['String'];
+  address: Scalars['String'];
   benefit?: Maybe<Scalars['String']>;
+  categoryId: Scalars['String'];
+  regionCode: Scalars['String'];
+  districtCode: Scalars['String'];
+  wardCode: Scalars['String'];
   image?: Maybe<Scalars['String']>;
-  categoryId?: Maybe<Scalars['String']>;
 };
 
 
@@ -1115,7 +1118,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createComment?: Resolver<Maybe<ResolversTypes['Comment']>, ParentType, ContextType, RequireFields<MutationCreateCommentArgs, 'comment' | 'userId' | 'groundId'>>;
   updateComment?: Resolver<Maybe<ResolversTypes['Comment']>, ParentType, ContextType, RequireFields<MutationUpdateCommentArgs, 'id' | 'comment'>>;
   deleteComment?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteCommentArgs, 'id'>>;
-  createGround?: Resolver<Maybe<ResolversTypes['Ground']>, ParentType, ContextType, RequireFields<MutationCreateGroundArgs, 'title' | 'description'>>;
+  createGround?: Resolver<Maybe<ResolversTypes['Ground']>, ParentType, ContextType, RequireFields<MutationCreateGroundArgs, 'title' | 'description' | 'phone' | 'address' | 'categoryId' | 'regionCode' | 'districtCode' | 'wardCode'>>;
   updateGround?: Resolver<Maybe<ResolversTypes['Ground']>, ParentType, ContextType, RequireFields<MutationUpdateGroundArgs, never>>;
   deleteGround?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteGroundArgs, 'id'>>;
   createOrder?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<MutationCreateOrderArgs, 'subGroundId' | 'startDay' | 'startTime' | 'duration' | 'paymentType' | 'price'>>;

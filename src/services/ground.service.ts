@@ -11,7 +11,13 @@ import { ROLE } from '../components/constants';
 import SubGround from '../models/subGround.model';
 
 class GroundService {
-  static getGrounds(): Promise<Ground[]> {
+  static getGrounds(user: any): Promise<Ground[]> {
+    let whereCondition = {};
+    if (user.role === ROLE.owner) {
+      whereCondition = {
+        userId: user.id,
+      };
+    }
     return GroundModel.findAll({
       include: [
         {
@@ -27,6 +33,9 @@ class GroundService {
           as: 'subGrounds',
         },
       ],
+      where: {
+        ...whereCondition,
+      },
     });
   }
 
@@ -76,12 +85,30 @@ class GroundService {
 
   // ADMIN CAN NOT CREATE GROUND FOR OTHER ROLES
   static async createGround(data: MutationCreateGroundArgs, userId: any): Promise<Ground> {
-    const { categoryId } = data;
+    const {
+      categoryId,
+      regionCode,
+      districtCode,
+      wardCode,
+      address,
+    } = data;
     // CHECK IF USER AND CATEGORY EXITS
     await UserService.findUserById(userId);
     await CategoryService.findCategoryById(categoryId);
 
-    const newGround = await GroundModel.create({ ...data, userId });
+    const formatedData = {
+      ...data,
+      address: JSON.stringify({
+        regionCode,
+        districtCode,
+        wardCode,
+        address,
+      }),
+    };
+
+    console.log(formatedData);
+
+    const newGround = await GroundModel.create({ ...formatedData, userId });
 
     return this.findGroundById({ id: newGround.id });
   }
