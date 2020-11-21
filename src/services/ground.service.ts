@@ -36,6 +36,9 @@ class GroundService {
       where: {
         ...whereCondition,
       },
+      order: [
+        ['createdAt', 'DESC'],
+      ],
     });
   }
 
@@ -135,7 +138,7 @@ class GroundService {
 
   static async deleteGround(id: string, user: any) {
     const ground = await this.findGroundById({ id });
-    if (ground.userId !== user.userId && [ROLE.owner, ROLE.user].includes(user.role)) {
+    if (ground.userId !== user.userId && user.role === ROLE.owner) {
       throw new AuthenticationError('Your role is not allowed');
     }
     await GroundModel.destroy({ where: { id } });
