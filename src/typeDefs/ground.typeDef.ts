@@ -18,14 +18,16 @@ const typeDef = `
     ): Ground
 
     updateGround(
-      id: String
-      title: String
-      description: String
-      phone: String
-      address: String,
+      id: String!
+      title: String!
+      description: String!
+      phone: String!
+      address: String!,
       benefit: String
-      image: String,
-      categoryId: String
+      categoryId: String!
+      regionCode: String!
+      districtCode: String!
+      wardCode: String!
     ): Ground
 
     deleteGround(id: String!): SuccessMessage

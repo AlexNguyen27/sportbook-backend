@@ -109,29 +109,42 @@ class GroundService {
       }),
     };
 
-    console.log(formatedData);
-
     const newGround = await GroundModel.create({ ...formatedData, userId });
 
     return this.findGroundById({ id: newGround.id });
   }
 
   static async updateGround(data: any, user: any) {
-    const { id, categoryId } = data;
+    const {
+      id,
+      categoryId,
+      regionCode,
+      districtCode,
+      wardCode,
+      address,
+    } = data;
     const { role, userId } = user;
 
     const currentGround: any = await this.findGroundById({ id: data.id });
-
-    if (role === ROLE.user && currentGround.userId !== userId) {
+    // ONLY ADMIN CAN DELETE ALL PEOPLE GROUND
+    if (role === ROLE.owner && currentGround.userId !== userId) {
       throw new AuthenticationError('Your role is not allowed');
     }
-
     if (categoryId) {
       await CategoryService.findCategoryById(categoryId);
     }
 
-    await GroundModel.update({ ...data }, { where: { id } });
+    const formatedData = {
+      ...data,
+      address: JSON.stringify({
+        regionCode,
+        districtCode,
+        wardCode,
+        address,
+      }),
+    };
 
+    await GroundModel.update({ ...formatedData }, { where: { id } });
     const updatedGround = await this.findGroundById({ id });
     return updatedGround;
   }
