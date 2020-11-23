@@ -253,6 +253,19 @@ export type Order = {
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
+export type Price = {
+  __typename?: 'Price';
+  id?: Maybe<Scalars['String']>;
+  price?: Maybe<Scalars['Float']>;
+  discount?: Maybe<Scalars['Float']>;
+  startTime?: Maybe<Scalars['String']>;
+  endTime?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
+  subGroundId?: Maybe<Scalars['String']>;
+  subGround?: Maybe<SubGround>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+};
+
 export type Rating = {
   __typename?: 'Rating';
   userId?: Maybe<Scalars['String']>;
@@ -281,6 +294,7 @@ export type Query = {
   getCommentsbyGroundId?: Maybe<Array<Maybe<Comment>>>;
   grounds?: Maybe<Array<Maybe<Ground>>>;
   orders?: Maybe<Array<Maybe<Order>>>;
+  prices?: Maybe<Array<Maybe<Price>>>;
   subGrounds?: Maybe<Array<Maybe<SubGround>>>;
 };
 
@@ -322,6 +336,11 @@ export type QueryOrdersArgs = {
 };
 
 
+export type QueryPricesArgs = {
+  subGroundId?: Maybe<Scalars['String']>;
+};
+
+
 export type QuerySubGroundsArgs = {
   groundId?: Maybe<Scalars['String']>;
 };
@@ -348,6 +367,9 @@ export type Mutation = {
   createOrder?: Maybe<Order>;
   updateOrder?: Maybe<Order>;
   updateOrderStatus?: Maybe<SuccessMessage>;
+  createPrice?: Maybe<Price>;
+  updatePrice?: Maybe<Price>;
+  deletePrice?: Maybe<SuccessMessage>;
   createRating?: Maybe<SuccessMessage>;
   updateRating?: Maybe<Rating>;
   createSubGround?: Maybe<SubGround>;
@@ -514,6 +536,30 @@ export type MutationUpdateOrderArgs = {
 export type MutationUpdateOrderStatusArgs = {
   id: Scalars['String'];
   status: Scalars['String'];
+};
+
+
+export type MutationCreatePriceArgs = {
+  price: Scalars['Float'];
+  discount?: Maybe<Scalars['Float']>;
+  startTime: Scalars['String'];
+  endTime: Scalars['String'];
+  subGroundId: Scalars['String'];
+};
+
+
+export type MutationUpdatePriceArgs = {
+  id: Scalars['String'];
+  price: Scalars['Float'];
+  discount?: Maybe<Scalars['Float']>;
+  startTime: Scalars['String'];
+  endTime: Scalars['String'];
+  subGroundId: Scalars['String'];
+};
+
+
+export type MutationDeletePriceArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -722,6 +768,7 @@ export type ResolversTypes = ResolversObject<{
   Ground: ResolverTypeWrapper<Ground>;
   Order: ResolverTypeWrapper<Order>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
+  Price: ResolverTypeWrapper<Price>;
   Rating: ResolverTypeWrapper<Rating>;
   SubGround: ResolverTypeWrapper<SubGround>;
   Query: ResolverTypeWrapper<{}>;
@@ -789,6 +836,7 @@ export type ResolversParentTypes = ResolversObject<{
   Ground: Ground;
   Order: Order;
   Float: Scalars['Float'];
+  Price: Price;
   Rating: Rating;
   SubGround: SubGround;
   Query: {};
@@ -1066,6 +1114,19 @@ export type OrderResolvers<ContextType = any, ParentType extends ResolversParent
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type PriceResolvers<ContextType = any, ParentType extends ResolversParentTypes['Price'] = ResolversParentTypes['Price']> = ResolversObject<{
+  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  price?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  discount?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  startTime?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  endTime?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  subGroundId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  subGround?: Resolver<Maybe<ResolversTypes['SubGround']>, ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type RatingResolvers<ContextType = any, ParentType extends ResolversParentTypes['Rating'] = ResolversParentTypes['Rating']> = ResolversObject<{
   userId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   point?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
@@ -1093,6 +1154,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getCommentsbyGroundId?: Resolver<Maybe<Array<Maybe<ResolversTypes['Comment']>>>, ParentType, ContextType, RequireFields<QueryGetCommentsbyGroundIdArgs, 'groundId'>>;
   grounds?: Resolver<Maybe<Array<Maybe<ResolversTypes['Ground']>>>, ParentType, ContextType, RequireFields<QueryGroundsArgs, never>>;
   orders?: Resolver<Maybe<Array<Maybe<ResolversTypes['Order']>>>, ParentType, ContextType, RequireFields<QueryOrdersArgs, never>>;
+  prices?: Resolver<Maybe<Array<Maybe<ResolversTypes['Price']>>>, ParentType, ContextType, RequireFields<QueryPricesArgs, never>>;
   subGrounds?: Resolver<Maybe<Array<Maybe<ResolversTypes['SubGround']>>>, ParentType, ContextType, RequireFields<QuerySubGroundsArgs, never>>;
 }>;
 
@@ -1117,6 +1179,9 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createOrder?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<MutationCreateOrderArgs, 'subGroundId' | 'startDay' | 'startTime' | 'duration' | 'paymentType' | 'price'>>;
   updateOrder?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<MutationUpdateOrderArgs, 'id' | 'subGroundId'>>;
   updateOrderStatus?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationUpdateOrderStatusArgs, 'id' | 'status'>>;
+  createPrice?: Resolver<Maybe<ResolversTypes['Price']>, ParentType, ContextType, RequireFields<MutationCreatePriceArgs, 'price' | 'startTime' | 'endTime' | 'subGroundId'>>;
+  updatePrice?: Resolver<Maybe<ResolversTypes['Price']>, ParentType, ContextType, RequireFields<MutationUpdatePriceArgs, 'id' | 'price' | 'startTime' | 'endTime' | 'subGroundId'>>;
+  deletePrice?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeletePriceArgs, 'id'>>;
   createRating?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationCreateRatingArgs, 'userId' | 'groundId' | 'point'>>;
   updateRating?: Resolver<Maybe<ResolversTypes['Rating']>, ParentType, ContextType, RequireFields<MutationUpdateRatingArgs, 'userId' | 'groundId' | 'point'>>;
   createSubGround?: Resolver<Maybe<ResolversTypes['SubGround']>, ParentType, ContextType, RequireFields<MutationCreateSubGroundArgs, 'name'>>;
@@ -1215,6 +1280,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   SuccessMessage?: SuccessMessageResolvers<ContextType>;
   Ground?: GroundResolvers<ContextType>;
   Order?: OrderResolvers<ContextType>;
+  Price?: PriceResolvers<ContextType>;
   Rating?: RatingResolvers<ContextType>;
   SubGround?: SubGroundResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;

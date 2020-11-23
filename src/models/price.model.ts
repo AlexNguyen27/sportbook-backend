@@ -39,6 +39,7 @@ Price.init({
   },
   price: {
     type: DataTypes.FLOAT,
+    allowNull: false,
     validate: {
       isNumeric: true,
       min: 0,
