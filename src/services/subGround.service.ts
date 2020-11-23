@@ -1,7 +1,6 @@
 import Ground from '../models/ground.model';
+import User from '../models/user.model';
 import SubGroundModel from '../models/subGround.model';
-// import Category from '../models/category.model';
-// import Comment from '../models/comment.model';
 import { ExistsError, AuthenticationError } from '../components/errors';
 import {
   SubGround, MutationCreateSubGroundArgs, MutationUpdateSubGroundArgs,
@@ -10,17 +9,60 @@ import GroundService from './ground.service';
 import { ROLE } from '../components/constants';
 
 class SubGroundService {
-  static async getSubGrounds({ groundId }: any): Promise<SubGround[]> {
-    await GroundService.findGroundById({ id: groundId });
+  static async getSubGrounds(filter: any, user: any) {
+    const { groundId } = filter;
+    let condition = {};
+    if (groundId) {
+      await GroundService.findGroundById({ id: groundId });
+      condition = {
+        groundId
+      }
+    }
 
+    let userCondition = {};
+    // USER DONT NEED A USER CONDTION
+    if (user.role === ROLE.owner) {
+      userCondition = {
+        id: user.id
+      }
+    }
+
+    // ROLE USER OR OWNER
+    if (user.role !== ROLE.admin) {
+      return SubGroundModel.findAll({
+        where: {
+          ...condition,
+        },
+        include: [
+          {
+            model: Ground,
+            as: 'ground',
+            include: [
+              {
+                model: User,
+                as: 'user',
+                where: {
+                  ...userCondition
+                }
+              }
+            ]
+          },
+        ],
+      });
+    }
+
+    // ADMIN
     return SubGroundModel.findAll({
-      where: {
-        groundId,
-      },
       include: [
         {
           model: Ground,
           as: 'ground',
+          include: [
+            {
+              model: User,
+              as: 'user',
+            }
+          ]
         },
       ],
     });

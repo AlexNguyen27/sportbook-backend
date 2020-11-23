@@ -9,18 +9,21 @@ import OrderService from '../services/order.service';
 
 const resolver: Resolvers = {
   Query: {
-    orders: (_: any, args: any): Promise<Order[]> => OrderService.getOrders(args),
+    orders: middleware(
+      tokenValidation(ROLE.owner, ROLE.admin, ROLE.user),
+      (_: any, args: any, { user }: any): Promise<Order[]> => OrderService.getOrders(args, user),
+    ),
     // ordersBySubGroundId: (_: any, args: any): Promise<Order[]> => OrderService.getOrdersBySubGroundId({ subGroundId: args.subGroundId }),
   },
   Mutation: {
     // todo validate later
     createOrder: middleware(
-      tokenValidation(ROLE.user),
+      tokenValidation(ROLE.user, ROLE.owner),
       schemaValidation({
         subGroundId: joi.string().uuid(),
         startDay: joi.string(),
         startTime: joi.string(),
-        duration: joi.number(),
+        endTime: joi.string(),
         paymentType: joi.string().valid(PAYMENT_TYPE.offline, PAYMENT_TYPE.online),
         price: joi.number(),
         discount: joi.number(),
@@ -28,7 +31,7 @@ const resolver: Resolvers = {
       (_: any, args: MutationCreateOrderArgs, { user: { userId } }: any): Promise<Order> => OrderService.createOrder(args, userId),
     ),
     updateOrder: middleware(
-      tokenValidation(ROLE.user, ROLE.owner, ROLE.admin),
+      tokenValidation(ROLE.owner, ROLE.admin),
       schemaValidation({
         id: joi.string().uuid(),
         subGroundId: joi.string().uuid(),
