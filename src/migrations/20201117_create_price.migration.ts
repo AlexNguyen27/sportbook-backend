@@ -11,6 +11,7 @@ const migration = {
     },
     price: {
       type: DataTypes.FLOAT,
+      allowNull: false,
       validate: {
         isNumeric: true,
         min: 0,
@@ -36,7 +37,7 @@ const migration = {
       type: DataTypes.ENUM(subGroundStatus),
       allowNull: false,
     },
-    subgroundId: {
+    subGroundId: {
       type: DataTypes.UUID,
       allowNull: false,
       validate: {
