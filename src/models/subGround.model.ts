@@ -29,10 +29,10 @@ SubGround.init({
     defaultValue: DataTypes.UUIDV4,
   },
   numberOfPlayers: {
-    type: DataTypes.FLOAT,
+    type: DataTypes.INTEGER,
     validate: {
       isNumeric: true,
-      min: 5,
+      min: 2,
     },
   },
   name: {
