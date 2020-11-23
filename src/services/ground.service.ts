@@ -86,6 +86,27 @@ class GroundService {
     }
   }
 
+  static async findGroundAndUser(filter: any) {
+    let ground: any;
+    const { groundId, userId } = filter;
+    try {
+      ground = await GroundModel.findOne({
+        where: { id: groundId, userId },
+        include: [
+          {
+            model: SubGround,
+            as: 'subGrounds',
+            required: false,
+          },
+        ],
+      });
+      return { ...ground.toJSON() };
+    } catch (error) {
+      if (!ground) throw new ExistsError('Ground not found');
+      throw error;
+    }
+  }
+
   // ADMIN CAN NOT CREATE GROUND FOR OTHER ROLES
   static async createGround(data: MutationCreateGroundArgs, userId: any): Promise<Ground> {
     const {

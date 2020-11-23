@@ -5,21 +5,16 @@ const typeDef = `
 
   extend type Mutation {
     createSubGround(
-      type: Float
       name: String!
-      price: Float
-      discount: Float,
-      status: String
+      numberOfPlayers: Int
       groundId: String,
     ): SubGround
 
     updateSubGround(
       id: String
-      type: Float
-      name: String
-      price: Float
-      discount: Float,
-      status: String
+      name: String!
+      numberOfPlayers: Int
+      groundId: String,
     ): SubGround
 
     deleteSubGround(id: String!): SuccessMessage
@@ -28,9 +23,7 @@ const typeDef = `
   type SubGround {
     id: String
     name: String
-    price: Float
-    discount: Float
-    status: String
+    numberOfPlayers: Int
     groundId: String
     ground: Ground
     createdAt: DateTime
