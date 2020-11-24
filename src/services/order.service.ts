@@ -77,16 +77,15 @@ class OrderService {
       return OrderModel.findAll({
         include: [
           {
-            model: User,
-            as: 'user',
-          },
-          {
             model: SubGround,
             as: 'subGround',
+            required: true,
             include: [
               {
                 model: Ground,
                 as: 'ground',
+                attributes: [],
+                required: true,
                 where: {
                   userId: user.id
                 }

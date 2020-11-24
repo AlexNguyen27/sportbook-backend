@@ -37,10 +37,12 @@ class SubGroundService {
           {
             model: Ground,
             as: 'ground',
+            required: true,
             include: [
               {
                 model: User,
                 as: 'user',
+                required: true,
                 where: {
                   ...userCondition
                 }
