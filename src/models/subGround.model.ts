@@ -2,6 +2,8 @@ import { Model, DataTypes } from 'sequelize';
 
 import { sequelize } from './sequelize';
 import Ground from './ground.model';
+import Price from './price.model';
+import Order from './order.model';
 
 class SubGround extends Model {
   public id: string;
@@ -18,6 +20,14 @@ class SubGround extends Model {
     this.belongsTo(Ground, {
       as: 'ground',
       foreignKey: 'groundId',
+    });
+    this.hasMany(Price, {
+      as: 'prices',
+      foreignKey: 'subGroundId',
+    });
+    this.hasMany(Order, {
+      as: 'orders',
+      foreignKey: 'subGroundId',
     });
   }
 }
