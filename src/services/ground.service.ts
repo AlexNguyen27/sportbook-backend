@@ -24,34 +24,52 @@ class GroundService {
       };
     }
 
-    if (filter.date) {
+    // FOR STATISTIC
+    const { date, startDate, endDate } = filter;
+    if (date || (startDate && endDate)) {
       const createdAtCondtions: any = {
-        '7days': moment().subtract(7, 'days').toDate(),
-        aMonth: moment().subtract(1, 'months').toDate(),
-        '6Months': moment().subtract(6, 'months').toDate(),
-        aYear: moment().subtract(1, 'years').toDate(),
+        '7days': moment().subtract(7, 'days').startOf('date').toDate(),
+        aMonth: moment().subtract(1, 'months').startOf('date').toDate(),
+        '6Months': moment().subtract(6, 'months').startOf('date').toDate(),
+        aYear: moment().subtract(1, 'years').startOf('date').toDate(),
       }
-      const whereDateConditon: any = {
-        [Op.and]: [
-          { status: ORDER_STATUS.approved },
-          {
-            createdAt: {
-              [Op.gte]: createdAtCondtions[filter.date],
+      let whereDateConditon = {};
+      if (date) {
+        whereDateConditon = {
+          [Op.and]: [
+            { status: ORDER_STATUS.approved },
+            {
+              createdAt: {
+                [Op.gte]: createdAtCondtions[date],
+              }
             }
-          }
-        ]
+          ]
+        }
+      }
+
+      if (startDate && endDate) {
+        whereDateConditon = {
+          [Op.and]: [
+            { status: ORDER_STATUS.approved },
+            {
+              createdAt: {
+                [Op.gte]: startDate,
+                [Op.lte]: endDate,
+              }
+            }
+          ]
+        }
       }
       const { Sequelize } = sequelize;
-      // const testAtt: any = [[sequelize.Sequelize.fn('SUM', sequelize.Sequelize.col('subGrounds->orders.price')), 'totalAmount']];
-      // const testGround: any = ['GROUND.id', 'GROUND.title', 'GROUND.userId', 'subGrounds.id', 'subGrounds->orders.subGroundId'];
       try {
         let groundList: any = await GroundModel.findAll({
           attributes: [
             'id',
             'title',
             [Sequelize.literal('sum("subGrounds->orders"."price" * (100 - "subGrounds->orders"."discount") / 100)'), 'totalAmount'],
+            [Sequelize.fn('COUNT', Sequelize.col('"subGrounds->orders"."id"')), 'orderCount']
           ],
-          group: ['GROUND.id', 'GROUND.title', 'subGrounds->orders.discount'],
+          group: ['GROUND.id', 'GROUND.title'],
           include: [
             {
               model: SubGround,
@@ -78,13 +96,13 @@ class GroundService {
         });
 
         groundList = groundList.map((item: any) => item.toJSON());
-        // console.log('roundlissg-=-------------------', groundList);
         return groundList;
       } catch (error) {
         console.log('error--------------------', error)
       }
     }
 
+    // FOR ADMIN AND OWER
     return GroundModel.findAll({
       include: [
         {
