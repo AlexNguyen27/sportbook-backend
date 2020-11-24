@@ -242,7 +242,7 @@ export type Order = {
   userId?: Maybe<Scalars['String']>;
   startDay?: Maybe<Scalars['String']>;
   startTime?: Maybe<Scalars['String']>;
-  duration?: Maybe<Scalars['Int']>;
+  endTime?: Maybe<Scalars['String']>;
   paymentType?: Maybe<Scalars['String']>;
   status?: Maybe<Scalars['String']>;
   discount?: Maybe<Scalars['Float']>;
@@ -514,7 +514,7 @@ export type MutationCreateOrderArgs = {
   subGroundId: Scalars['String'];
   startDay: Scalars['String'];
   startTime: Scalars['String'];
-  duration: Scalars['Int'];
+  endTime: Scalars['String'];
   paymentType: Scalars['String'];
   price: Scalars['Float'];
   discount?: Maybe<Scalars['Float']>;
@@ -524,12 +524,12 @@ export type MutationCreateOrderArgs = {
 export type MutationUpdateOrderArgs = {
   id: Scalars['String'];
   subGroundId: Scalars['String'];
-  startDay?: Maybe<Scalars['String']>;
-  startTime?: Maybe<Scalars['String']>;
-  duration?: Maybe<Scalars['Int']>;
-  paymentType?: Maybe<Scalars['String']>;
+  startDay: Scalars['String'];
+  startTime: Scalars['String'];
+  endTime: Scalars['String'];
+  paymentType: Scalars['String'];
+  price: Scalars['Float'];
   discount?: Maybe<Scalars['Float']>;
-  price?: Maybe<Scalars['Float']>;
 };
 
 
@@ -1102,7 +1102,7 @@ export type OrderResolvers<ContextType = any, ParentType extends ResolversParent
   userId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   startDay?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   startTime?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  duration?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  endTime?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   paymentType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   discount?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -1176,8 +1176,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createGround?: Resolver<Maybe<ResolversTypes['Ground']>, ParentType, ContextType, RequireFields<MutationCreateGroundArgs, 'title' | 'description' | 'phone' | 'address' | 'categoryId' | 'regionCode' | 'districtCode' | 'wardCode'>>;
   updateGround?: Resolver<Maybe<ResolversTypes['Ground']>, ParentType, ContextType, RequireFields<MutationUpdateGroundArgs, 'id' | 'title' | 'description' | 'phone' | 'address' | 'categoryId' | 'regionCode' | 'districtCode' | 'wardCode'>>;
   deleteGround?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteGroundArgs, 'id'>>;
-  createOrder?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<MutationCreateOrderArgs, 'subGroundId' | 'startDay' | 'startTime' | 'duration' | 'paymentType' | 'price'>>;
-  updateOrder?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<MutationUpdateOrderArgs, 'id' | 'subGroundId'>>;
+  createOrder?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<MutationCreateOrderArgs, 'subGroundId' | 'startDay' | 'startTime' | 'endTime' | 'paymentType' | 'price'>>;
+  updateOrder?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<MutationUpdateOrderArgs, 'id' | 'subGroundId' | 'startDay' | 'startTime' | 'endTime' | 'paymentType' | 'price'>>;
   updateOrderStatus?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationUpdateOrderStatusArgs, 'id' | 'status'>>;
   createPrice?: Resolver<Maybe<ResolversTypes['Price']>, ParentType, ContextType, RequireFields<MutationCreatePriceArgs, 'price' | 'startTime' | 'endTime' | 'subGroundId'>>;
   updatePrice?: Resolver<Maybe<ResolversTypes['Price']>, ParentType, ContextType, RequireFields<MutationUpdatePriceArgs, 'id' | 'price' | 'startTime' | 'endTime' | 'subGroundId'>>;

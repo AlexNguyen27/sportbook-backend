@@ -22,7 +22,7 @@
       }
     ],
     "comma-dangle": [
-      "error",
+      "off",
       {
         "arrays": "always-multiline",
         "objects": "always-multiline",
@@ -37,7 +37,7 @@
     "no-shadow": "warn",
     "consistent-return": "off",
     "semi": [
-      "error",
+      "off",
       "always"
     ],
     "class-methods-use-this": "off",

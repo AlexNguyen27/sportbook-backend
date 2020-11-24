@@ -8,7 +8,7 @@ const typeDef = `
       subGroundId: String!
       startDay: String!
       startTime: String!
-      duration: Int!
+      endTime: String!
       paymentType: String!
       price: Float!
       discount: Float
@@ -17,12 +17,12 @@ const typeDef = `
     updateOrder(
       id: String!
       subGroundId: String!
-      startDay: String
-      startTime: String,
-      duration: Int
-      paymentType: String,
+      startDay: String!
+      startTime: String!
+      endTime: String!
+      paymentType: String!
+      price: Float!
       discount: Float
-      price: Float
     ): Order
 
     updateOrderStatus(
@@ -37,7 +37,7 @@ const typeDef = `
     userId: String
     startDay: String
     startTime: String,
-    duration: Int
+    endTime: String
     paymentType: String,
     status: String
     discount: Float

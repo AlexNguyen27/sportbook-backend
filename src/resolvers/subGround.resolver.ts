@@ -9,7 +9,10 @@ import SubGroundService from '../services/subGround.service';
 
 const resolver: Resolvers = {
   Query: {
-    subGrounds: (_: any, args: any): Promise<SubGround[]> => SubGroundService.getSubGrounds(args),
+    subGrounds: middleware(
+      tokenValidation(ROLE.owner, ROLE.admin),
+      (_: any, args: MutationUpdateSubGroundArgs, { user }: any): Promise<SubGround[]> => SubGroundService.getSubGrounds(args, user),
+    ),
   },
   Mutation: {
     createSubGround: middleware(
