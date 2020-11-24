@@ -3,6 +3,7 @@ const typeDef = `
     users(role: String): [User]
     login(email: String!, password: String!): LoginOutput
     getUserById(id: String!): User
+    loyalCustomers(weekday: String): [User]
   }
 
   type Mutation {

@@ -6,18 +6,55 @@ import config from '../components/config';
 import { AuthenticationError, ExistsError, BusinessError } from '../components/errors';
 import { User, MutationCreateUserArgs, MutationUpdateUserArgs } from '../types/graphql.type';
 
-import { ROLE } from '../components/constants';
+import { ROLE, ORDER_STATUS } from '../components/constants';
+import Order from '../models/order.model';
+import Ground from '../models/ground.model';
+import { sequelize } from '../models/sequelize';
 
 const { Op } = require('sequelize');
+// const Sequelize = require('sequelize');
 
 class UserService {
-  static getUsers(filter: any): Promise<User[]> {
+  static getUsers(filter: any, user: any): Promise<User[]> {
     let whereCondition = {};
+
+    if (filter.weekday) {
+      const condtion: any = {
+        [Op.and]: [
+          { status: ORDER_STATUS.approved },
+          sequelize.Sequelize.where(
+            sequelize.Sequelize.literal('to_char("orders"."createdAt", \'day\')'),
+            { [Op.like]: `%${filter.weekday}%` }
+          )
+        ]
+      }
+      return UserModel.findAll({
+        include: [
+          {
+            model: Order,
+            as: 'orders',
+            required: true,
+            where: {
+              ...condtion
+            }
+          },
+          {
+            model: Ground,
+            as: 'grounds',
+            where: {
+              userId: user.id
+            }
+          }
+        ]
+      });
+    }
+    // get user with role for admin
     if (filter && filter.role && filter.role === ROLE.user) {
       whereCondition = {
         ...filter,
       };
     } else {
+      // manager management with role owner and admin
       whereCondition = {
         role: {
           [Op.in]: [ROLE.admin, ROLE.owner],
