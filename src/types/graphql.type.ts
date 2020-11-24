@@ -288,6 +288,7 @@ export type Query = {
   users?: Maybe<Array<Maybe<User>>>;
   login?: Maybe<LoginOutput>;
   getUserById?: Maybe<User>;
+  loyalCustomers?: Maybe<Array<Maybe<User>>>;
   benefits?: Maybe<Array<Maybe<Benefit>>>;
   cats?: Maybe<Array<Maybe<Cat>>>;
   categories?: Maybe<Array<Maybe<Category>>>;
@@ -312,6 +313,11 @@ export type QueryLoginArgs = {
 
 export type QueryGetUserByIdArgs = {
   id: Scalars['String'];
+};
+
+
+export type QueryLoyalCustomersArgs = {
+  weekday?: Maybe<Scalars['String']>;
 };
 
 
@@ -1148,6 +1154,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType, RequireFields<QueryUsersArgs, never>>;
   login?: Resolver<Maybe<ResolversTypes['LoginOutput']>, ParentType, ContextType, RequireFields<QueryLoginArgs, 'email' | 'password'>>;
   getUserById?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryGetUserByIdArgs, 'id'>>;
+  loyalCustomers?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType, RequireFields<QueryLoyalCustomersArgs, never>>;
   benefits?: Resolver<Maybe<Array<Maybe<ResolversTypes['Benefit']>>>, ParentType, ContextType>;
   cats?: Resolver<Maybe<Array<Maybe<ResolversTypes['Cat']>>>, ParentType, ContextType, RequireFields<QueryCatsArgs, never>>;
   categories?: Resolver<Maybe<Array<Maybe<ResolversTypes['Category']>>>, ParentType, ContextType>;

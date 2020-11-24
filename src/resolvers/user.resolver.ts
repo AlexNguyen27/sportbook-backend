@@ -11,12 +11,16 @@ const resolver: Resolvers = {
   Query: {
     users: middleware(
       tokenValidation(ROLE.admin, ROLE.owner, ROLE.user),
-      (_: any, args: any): Promise<User[]> => UserService.getUsers(args),
+      (_: any, args: any, { user }: any): Promise<User[]> => UserService.getUsers(args, user),
     ),
     login: (_: any, args: QueryLoginArgs): Promise<any> => UserService.login(args),
     getUserById: middleware(
       tokenValidation(ROLE.admin, ROLE.owner, ROLE.user),
       (_: any, args: any, { user }: any): Promise<User> => UserService.getUserInfo(args.id, user),
+    ),
+    loyalCustomers: middleware(
+      tokenValidation(ROLE.admin, ROLE.owner, ROLE.user),
+      (_: any, args: any, { user }: any): Promise<User[]> => UserService.getUsers(args, user),
     ),
   },
   Mutation: {
