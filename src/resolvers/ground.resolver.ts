@@ -11,7 +11,7 @@ const resolver: Resolvers = {
   Query: {
     grounds: middleware(
       tokenValidation(ROLE.owner, ROLE.admin),
-      (_: any, args: MutationUpdateGroundArgs, { user }: any) => GroundService.getGrounds(user),
+      (_: any, args: MutationUpdateGroundArgs, { user }: any) => GroundService.getGrounds(args, user),
     ),
   },
   Mutation: {
