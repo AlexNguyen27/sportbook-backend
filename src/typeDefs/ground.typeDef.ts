@@ -1,6 +1,6 @@
 const typeDef = `
   extend type Query {
-    grounds(search: String, date: String): [Ground]
+    grounds(search: String, date: String, startDate: String, endDate: String): [Ground]
   }
 
   extend type Mutation {
@@ -48,6 +48,7 @@ const typeDef = `
     createdAt: DateTime
     updatedAt: DateTime
     totalAmount: Float
+    orderCount: Int
   }
 `;
 
