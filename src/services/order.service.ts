@@ -1,6 +1,7 @@
+import moment from 'moment';
 import OrderModel from '../models/order.model';
 import User from '../models/user.model';
-import { ExistsError, AuthenticationError, BusinessError } from '../components/errors';
+import { ExistsError, BusinessError } from '../components/errors';
 import { Order, MutationCreateOrderArgs, MutationUpdateOrderStatusArgs } from '../types/graphql.type';
 import UserService from './user.service';
 import SubGroundService from './subGround.service';
@@ -140,7 +141,7 @@ class OrderService {
     await UserService.findUserById(userId);
     await SubGroundService.findSubGroundById({ id: subGroundId });
 
-    const formatedData: any = { ...data, status: ORDER_STATUS.new };
+    const formatedData: any = { ...data, startDay: moment(data.startDay, 'DD/MM/YYYY'), status: ORDER_STATUS.new };
     formatedData.histories = {
       orderStatus: ORDER_STATUS.new,
     };
@@ -157,8 +158,8 @@ class OrderService {
   // todo: DONT NEED TO UPDATE ORDER
   static async updateOrder(data: any, user: any) {
     const { id, subGroundId } = data;
-    const { userId } = user;
-    const order = await this.findOrderById({ id });
+    // const { userId } = user;
+    // const order = await this.findOrderById({ id });
 
     // if (order.userId !== userId) {
     //   throw new AuthenticationError('Your role is not allowed');
@@ -172,17 +173,37 @@ class OrderService {
     return updatedGround;
   }
 
-  // todo can not delete order
+  // TODO: ONWER CAN ONLY UPDATE STATUS OF THEIR OWN
   static async updateStatus(data: MutationUpdateOrderStatusArgs, user: any) {
     const transaction = await sequelize.transaction();
 
     const { id } = data;
     const order = await this.findOrderById({ id });
+    if (user.role === ROLE.owner) {
+      // CHECK  SUBGROUND OWNER ID
+      const isExitsSubGround = SubGround.findOne({
+        where: {
+          id: order.subGroundId,
+        },
+        include: [
+          {
+            model: Ground,
+            as: 'ground',
+            where: {
+              userId: user.id
+            }
+          }
+        ]
+      });
+
+      if (!isExitsSubGround) {
+        throw new BusinessError('Can not update order status!');
+      }
+    }
     // CAN'T CHANGE STATUS IF ORDER APPROVED
     if (order.status === ORDER_STATUS.approved) {
       throw new BusinessError('Order has been approved!');
     }
-
     if (order.status === ORDER_STATUS.cancelled) {
       throw new BusinessError('Order has been cancelled!');
     }
