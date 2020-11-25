@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
+import moment from 'moment';
 import jwt from 'jsonwebtoken';
 import UserModel from '../models/user.model';
-
 import config from '../components/config';
 import { AuthenticationError, ExistsError, BusinessError } from '../components/errors';
 import { User, MutationCreateUserArgs, MutationUpdateUserArgs } from '../types/graphql.type';
@@ -159,6 +159,8 @@ class UserService {
       wardCode,
       address: userInfo.address,
     });
+
+    formatedUserInfo.dob = moment(userInfo.dob, 'DD/MM/YYYY');
 
     await UserModel.update(formatedUserInfo, { where: { id: userId }, returning: true });
     const currentUser = await this.findUserById(userId);

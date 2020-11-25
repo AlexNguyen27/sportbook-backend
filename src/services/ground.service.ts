@@ -53,8 +53,8 @@ class GroundService {
             { status: ORDER_STATUS.approved },
             {
               createdAt: {
-                [Op.gte]: startDate,
-                [Op.lte]: endDate,
+                [Op.gte]: moment(startDate).startOf('day').subtract(1, 'days'),
+                [Op.lte]: moment(endDate).startOf('day').add(1, 'days'),
               }
             }
           ]

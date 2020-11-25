@@ -173,17 +173,6 @@ export type Benefit = {
   createdAt?: Maybe<Scalars['DateTime']>;
 };
 
-export type Cat = {
-  __typename?: 'Cat';
-  id?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  color?: Maybe<Scalars['String']>;
-  categoryId?: Maybe<Scalars['String']>;
-  category?: Maybe<Category>;
-  createdAt?: Maybe<Scalars['DateTime']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-};
-
 export type Category = {
   __typename?: 'Category';
   id?: Maybe<Scalars['String']>;
@@ -233,6 +222,17 @@ export type Ground = {
   categoryId?: Maybe<Scalars['String']>;
   createdAt?: Maybe<Scalars['DateTime']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
+  totalAmount?: Maybe<Scalars['Float']>;
+  orderCount?: Maybe<Scalars['Int']>;
+};
+
+export type History = {
+  __typename?: 'History';
+  id?: Maybe<Scalars['String']>;
+  orderId?: Maybe<Scalars['String']>;
+  orderStatus?: Maybe<Scalars['String']>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  order?: Maybe<Order>;
 };
 
 export type Order = {
@@ -290,10 +290,10 @@ export type Query = {
   getUserById?: Maybe<User>;
   loyalCustomers?: Maybe<Array<Maybe<User>>>;
   benefits?: Maybe<Array<Maybe<Benefit>>>;
-  cats?: Maybe<Array<Maybe<Cat>>>;
   categories?: Maybe<Array<Maybe<Category>>>;
   getCommentsbyGroundId?: Maybe<Array<Maybe<Comment>>>;
   grounds?: Maybe<Array<Maybe<Ground>>>;
+  histories?: Maybe<Array<Maybe<History>>>;
   orders?: Maybe<Array<Maybe<Order>>>;
   prices?: Maybe<Array<Maybe<Price>>>;
   subGrounds?: Maybe<Array<Maybe<SubGround>>>;
@@ -321,11 +321,6 @@ export type QueryLoyalCustomersArgs = {
 };
 
 
-export type QueryCatsArgs = {
-  id?: Maybe<Scalars['String']>;
-};
-
-
 export type QueryGetCommentsbyGroundIdArgs = {
   groundId: Scalars['String'];
 };
@@ -333,6 +328,14 @@ export type QueryGetCommentsbyGroundIdArgs = {
 
 export type QueryGroundsArgs = {
   search?: Maybe<Scalars['String']>;
+  date?: Maybe<Scalars['String']>;
+  startDate?: Maybe<Scalars['String']>;
+  endDate?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryHistoriesArgs = {
+  orderId?: Maybe<Scalars['String']>;
 };
 
 
@@ -360,7 +363,6 @@ export type Mutation = {
   createBenefit?: Maybe<Benefit>;
   updateBenefit?: Maybe<Benefit>;
   deleteBenefit?: Maybe<SuccessMessage>;
-  createCat?: Maybe<Cat>;
   createCategory?: Maybe<Category>;
   updateCategory?: Maybe<Category>;
   deleteCategory?: Maybe<SuccessMessage>;
@@ -438,13 +440,6 @@ export type MutationUpdateBenefitArgs = {
 
 export type MutationDeleteBenefitArgs = {
   id: Scalars['Int'];
-};
-
-
-export type MutationCreateCatArgs = {
-  name: Scalars['String'];
-  color?: Maybe<Scalars['String']>;
-  categoryId: Scalars['String'];
 };
 
 
@@ -766,14 +761,14 @@ export type ResolversTypes = ResolversObject<{
   Benefit: ResolverTypeWrapper<Benefit>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   String: ResolverTypeWrapper<Scalars['String']>;
-  Cat: ResolverTypeWrapper<Cat>;
   Category: ResolverTypeWrapper<Category>;
   Comment: ResolverTypeWrapper<Comment>;
   UserComment: ResolverTypeWrapper<UserComment>;
   SuccessMessage: ResolverTypeWrapper<SuccessMessage>;
   Ground: ResolverTypeWrapper<Ground>;
-  Order: ResolverTypeWrapper<Order>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
+  History: ResolverTypeWrapper<History>;
+  Order: ResolverTypeWrapper<Order>;
   Price: ResolverTypeWrapper<Price>;
   Rating: ResolverTypeWrapper<Rating>;
   SubGround: ResolverTypeWrapper<SubGround>;
@@ -834,14 +829,14 @@ export type ResolversParentTypes = ResolversObject<{
   Benefit: Benefit;
   Int: Scalars['Int'];
   String: Scalars['String'];
-  Cat: Cat;
   Category: Category;
   Comment: Comment;
   UserComment: UserComment;
   SuccessMessage: SuccessMessage;
   Ground: Ground;
-  Order: Order;
   Float: Scalars['Float'];
+  History: History;
+  Order: Order;
   Price: Price;
   Rating: Rating;
   SubGround: SubGround;
@@ -1040,17 +1035,6 @@ export type BenefitResolvers<ContextType = any, ParentType extends ResolversPare
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type CatResolvers<ContextType = any, ParentType extends ResolversParentTypes['Cat'] = ResolversParentTypes['Cat']> = ResolversObject<{
-  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  color?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  categoryId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  category?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType>;
-  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
-  updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
 export type CategoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Category'] = ResolversParentTypes['Category']> = ResolversObject<{
   id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -1099,6 +1083,17 @@ export type GroundResolvers<ContextType = any, ParentType extends ResolversParen
   categoryId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  totalAmount?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  orderCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type HistoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['History'] = ResolversParentTypes['History']> = ResolversObject<{
+  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  orderId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  orderStatus?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  order?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1156,10 +1151,10 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getUserById?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryGetUserByIdArgs, 'id'>>;
   loyalCustomers?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType, RequireFields<QueryLoyalCustomersArgs, never>>;
   benefits?: Resolver<Maybe<Array<Maybe<ResolversTypes['Benefit']>>>, ParentType, ContextType>;
-  cats?: Resolver<Maybe<Array<Maybe<ResolversTypes['Cat']>>>, ParentType, ContextType, RequireFields<QueryCatsArgs, never>>;
   categories?: Resolver<Maybe<Array<Maybe<ResolversTypes['Category']>>>, ParentType, ContextType>;
   getCommentsbyGroundId?: Resolver<Maybe<Array<Maybe<ResolversTypes['Comment']>>>, ParentType, ContextType, RequireFields<QueryGetCommentsbyGroundIdArgs, 'groundId'>>;
   grounds?: Resolver<Maybe<Array<Maybe<ResolversTypes['Ground']>>>, ParentType, ContextType, RequireFields<QueryGroundsArgs, never>>;
+  histories?: Resolver<Maybe<Array<Maybe<ResolversTypes['History']>>>, ParentType, ContextType, RequireFields<QueryHistoriesArgs, never>>;
   orders?: Resolver<Maybe<Array<Maybe<ResolversTypes['Order']>>>, ParentType, ContextType, RequireFields<QueryOrdersArgs, never>>;
   prices?: Resolver<Maybe<Array<Maybe<ResolversTypes['Price']>>>, ParentType, ContextType, RequireFields<QueryPricesArgs, never>>;
   subGrounds?: Resolver<Maybe<Array<Maybe<ResolversTypes['SubGround']>>>, ParentType, ContextType, RequireFields<QuerySubGroundsArgs, never>>;
@@ -1173,7 +1168,6 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createBenefit?: Resolver<Maybe<ResolversTypes['Benefit']>, ParentType, ContextType, RequireFields<MutationCreateBenefitArgs, 'title'>>;
   updateBenefit?: Resolver<Maybe<ResolversTypes['Benefit']>, ParentType, ContextType, RequireFields<MutationUpdateBenefitArgs, 'id'>>;
   deleteBenefit?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteBenefitArgs, 'id'>>;
-  createCat?: Resolver<Maybe<ResolversTypes['Cat']>, ParentType, ContextType, RequireFields<MutationCreateCatArgs, 'name' | 'categoryId'>>;
   createCategory?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<MutationCreateCategoryArgs, 'name'>>;
   updateCategory?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<MutationUpdateCategoryArgs, 'id'>>;
   deleteCategory?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteCategoryArgs, 'id'>>;
@@ -1280,12 +1274,12 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   ObjectID?: GraphQLScalarType;
   Void?: GraphQLScalarType;
   Benefit?: BenefitResolvers<ContextType>;
-  Cat?: CatResolvers<ContextType>;
   Category?: CategoryResolvers<ContextType>;
   Comment?: CommentResolvers<ContextType>;
   UserComment?: UserCommentResolvers<ContextType>;
   SuccessMessage?: SuccessMessageResolvers<ContextType>;
   Ground?: GroundResolvers<ContextType>;
+  History?: HistoryResolvers<ContextType>;
   Order?: OrderResolvers<ContextType>;
   Price?: PriceResolvers<ContextType>;
   Rating?: RatingResolvers<ContextType>;
