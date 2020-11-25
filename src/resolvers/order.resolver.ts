@@ -13,7 +13,6 @@ const resolver: Resolvers = {
       tokenValidation(ROLE.owner, ROLE.admin, ROLE.user),
       (_: any, args: any, { user }: any): Promise<Order[]> => OrderService.getOrders(args, user),
     ),
-    // ordersBySubGroundId: (_: any, args: any): Promise<Order[]> => OrderService.getOrdersBySubGroundId({ subGroundId: args.subGroundId }),
   },
   Mutation: {
     // todo validate later
