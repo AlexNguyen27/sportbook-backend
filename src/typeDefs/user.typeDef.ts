@@ -39,6 +39,11 @@ const typeDef = `
       newPassword: String!,
       confirmPassword: String!,
     ): SuccessMessage
+
+    uploadAvatar(
+      avatar: String
+      userId: String
+    ): User
   }
 
   type User {

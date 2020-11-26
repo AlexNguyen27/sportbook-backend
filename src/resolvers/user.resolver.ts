@@ -3,7 +3,7 @@ import joi from 'joi';
 import { middleware, schemaValidation, tokenValidation } from '../components';
 import UserService from '../services/user.service';
 import {
-  User, Resolvers, QueryLoginArgs, MutationCreateUserArgs, MutationUpdateUserArgs, MutationChangePasswordArgs, MutationDeleteUserArgs,
+  User, Resolvers, QueryLoginArgs, MutationCreateUserArgs, MutationUpdateUserArgs, MutationChangePasswordArgs, MutationDeleteUserArgs, MutationUploadAvatarArgs,
 } from '../types/graphql.type';
 import { ROLE } from '../components/constants';
 
@@ -31,6 +31,11 @@ const resolver: Resolvers = {
         role: joi.string().valid(Object.values(ROLE)),
       }),
       (_: any, args: MutationCreateUserArgs): Promise<User> => UserService.register(args),
+    ),
+
+    uploadAvatar: middleware(
+      tokenValidation(ROLE.admin, ROLE.owner, ROLE.user),
+      (_: any, args: any, { user }: any): Promise<User> => UserService.uploadAvatar(args, user),
     ),
 
     updateUser: middleware(

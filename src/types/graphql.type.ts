@@ -360,6 +360,7 @@ export type Mutation = {
   updateUser?: Maybe<User>;
   deleteUser?: Maybe<SuccessMessage>;
   changePassword?: Maybe<SuccessMessage>;
+  uploadAvatar?: Maybe<User>;
   createBenefit?: Maybe<Benefit>;
   updateBenefit?: Maybe<Benefit>;
   deleteBenefit?: Maybe<SuccessMessage>;
@@ -422,6 +423,12 @@ export type MutationChangePasswordArgs = {
   currentPassword: Scalars['String'];
   newPassword: Scalars['String'];
   confirmPassword: Scalars['String'];
+};
+
+
+export type MutationUploadAvatarArgs = {
+  avatar?: Maybe<Scalars['String']>;
+  userId?: Maybe<Scalars['String']>;
 };
 
 
@@ -503,6 +510,7 @@ export type MutationUpdateGroundArgs = {
   regionCode: Scalars['String'];
   districtCode: Scalars['String'];
   wardCode: Scalars['String'];
+  image?: Maybe<Scalars['String']>;
 };
 
 
@@ -1165,6 +1173,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'id' | 'email'>>;
   deleteUser?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'id'>>;
   changePassword?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'currentPassword' | 'newPassword' | 'confirmPassword'>>;
+  uploadAvatar?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUploadAvatarArgs, never>>;
   createBenefit?: Resolver<Maybe<ResolversTypes['Benefit']>, ParentType, ContextType, RequireFields<MutationCreateBenefitArgs, 'title'>>;
   updateBenefit?: Resolver<Maybe<ResolversTypes['Benefit']>, ParentType, ContextType, RequireFields<MutationUpdateBenefitArgs, 'id'>>;
   deleteBenefit?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteBenefitArgs, 'id'>>;

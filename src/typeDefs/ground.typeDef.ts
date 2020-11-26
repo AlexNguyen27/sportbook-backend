@@ -27,7 +27,8 @@ const typeDef = `
       categoryId: String!
       regionCode: String!
       districtCode: String!
-      wardCode: String!
+      wardCode: String!,
+      image: String,
     ): Ground
 
     deleteGround(id: String!): SuccessMessage
