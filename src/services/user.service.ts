@@ -120,9 +120,9 @@ class UserService {
     if (user.role === ROLE.owner && user.id !== id) {
       throw new AuthenticationError('Your role is not allowed');
     }
-    return UserModel.findOne({ where: { id } }).then((user) => {
-      if (!user) throw new ExistsError('User not found');
-      return { ...user.toJSON() };
+    return UserModel.findOne({ where: { id } }).then((item) => {
+      if (!item) throw new ExistsError('User not found');
+      return { ...item.toJSON() };
     });
   }
 
@@ -182,6 +182,22 @@ class UserService {
       status: 200,
       message: 'Delete successfully',
     };
+  }
+
+  static async uploadAvatar(data: any, user: any) {
+    const { avatar } = data;
+    // ADMIN CAN UPLOAD IMAGE OF USER
+    // IF NOT ADMIN AND PASSING USER ID => PASSED
+    if (user.role === ROLE.admin && data.userId) {
+      await UserModel.update({ avatar }, { where: { id: data.userId }, returning: true });
+      const editedUser = await this.findUserById(data.userId);
+      return editedUser;
+    }
+
+    // GET USER ID FROM TOKEN
+    await UserModel.update({ avatar }, { where: { id: user.id }, returning: true });
+    const currentUser = await this.findUserById(user.id);
+    return currentUser;
   }
 
   static async changePassword(data: any, user: any) {

@@ -61,7 +61,6 @@ class PriceService {
       ...data,
       status: SUB_GROUND_STATUS.ready, // default status
     };
-    console.log(formatedData, '-------------------------');
     const newPrice = await PriceModel.create({ ...formatedData });
 
     return this.findPriceById({ id: newPrice.id });
@@ -71,7 +70,6 @@ class PriceService {
     const {
       id, subGroundId,
     } = data;
-    console.log(data, '---------------updatePrice----------');
 
     await SubGroundService.findSubGroundById({ id: subGroundId });
 
