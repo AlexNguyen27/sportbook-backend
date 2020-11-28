@@ -1,6 +1,7 @@
 const typeDef = `
   extend type Query {
-    grounds(search: String, date: String, startDate: String, endDate: String): [Ground]
+    grounds(search: String, date: String, startDate: String, endDate: String): [Ground],
+    getGroundById(id: String): Ground
   }
 
   extend type Mutation {
