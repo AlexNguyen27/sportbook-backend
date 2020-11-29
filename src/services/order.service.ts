@@ -11,6 +11,8 @@ import { sequelize } from '../models/sequelize';
 import History from '../models/history.model';
 import Ground from '../models/ground.model';
 
+const { Op } = require('sequelize');
+
 class OrderService {
   static getOrdersByUserId({ userId }: any): Promise<Order[]> {
     // todo get user id in token
@@ -51,15 +53,37 @@ class OrderService {
   }
 
   static getOrders(filter: any, user: any) {
-    // const { search = '' } = filter;
-    // const { userId, subGroundId } = filter;
     // IF ROLE OWNER OR ADMIN => GET ALL ORDER OF THE GROUND
     // IF ROLE USER GET ONLY ORDER OF THAT USER ID
     // GETTING ORDER FOR USER
     if (user.role === ROLE.user) {
+      // all these field will pass on input
+      const { status, fromDate, toDate } = filter;
+      let whereCondtionUser: any = {
+        [Op.and]: [
+          { status },
+          {
+            createdAt: {
+              [Op.gte]: moment(fromDate).startOf('day').subtract(1, 'days'),
+              [Op.lte]: moment(toDate).startOf('day').add(1, 'days'),
+            }
+          }
+        ]
+      };
+
+      if (status === 'all') {
+        whereCondtionUser = {
+          createdAt: {
+            [Op.gte]: moment(fromDate).startOf('day').subtract(1, 'days'),
+            [Op.lte]: moment(toDate).startOf('day').add(1, 'days'),
+          }
+        };
+      }
+
       return OrderModel.findAll({
         where: {
-          user: user.id,
+          userId: user.id,
+          ...whereCondtionUser,
         },
         include: [
           {

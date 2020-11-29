@@ -10,8 +10,12 @@ import GroundService from '../services/ground.service';
 const resolver: Resolvers = {
   Query: {
     grounds: middleware(
-      tokenValidation(ROLE.owner, ROLE.admin),
+      tokenValidation(ROLE.owner, ROLE.admin, ROLE.user),
       (_: any, args: MutationUpdateGroundArgs, { user }: any) => GroundService.getGrounds(args, user),
+    ),
+    getGroundById: middleware(
+      tokenValidation(ROLE.owner, ROLE.admin, ROLE.user),
+      (_: any, args: MutationUpdateGroundArgs, { user }: any) => GroundService.findGroundById({ id: args.id }),
     ),
   },
   Mutation: {
