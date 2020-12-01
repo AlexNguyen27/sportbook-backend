@@ -294,6 +294,7 @@ export type Query = {
   getCommentsbyGroundId?: Maybe<Array<Maybe<Comment>>>;
   grounds?: Maybe<Array<Maybe<Ground>>>;
   getGroundById?: Maybe<Ground>;
+  getAllGrounds?: Maybe<Array<Maybe<Ground>>>;
   histories?: Maybe<Array<Maybe<History>>>;
   orders?: Maybe<Array<Maybe<Order>>>;
   prices?: Maybe<Array<Maybe<Price>>>;
@@ -1172,6 +1173,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getCommentsbyGroundId?: Resolver<Maybe<Array<Maybe<ResolversTypes['Comment']>>>, ParentType, ContextType, RequireFields<QueryGetCommentsbyGroundIdArgs, 'groundId'>>;
   grounds?: Resolver<Maybe<Array<Maybe<ResolversTypes['Ground']>>>, ParentType, ContextType, RequireFields<QueryGroundsArgs, never>>;
   getGroundById?: Resolver<Maybe<ResolversTypes['Ground']>, ParentType, ContextType, RequireFields<QueryGetGroundByIdArgs, never>>;
+  getAllGrounds?: Resolver<Maybe<Array<Maybe<ResolversTypes['Ground']>>>, ParentType, ContextType>;
   histories?: Resolver<Maybe<Array<Maybe<ResolversTypes['History']>>>, ParentType, ContextType, RequireFields<QueryHistoriesArgs, never>>;
   orders?: Resolver<Maybe<Array<Maybe<ResolversTypes['Order']>>>, ParentType, ContextType, RequireFields<QueryOrdersArgs, never>>;
   prices?: Resolver<Maybe<Array<Maybe<ResolversTypes['Price']>>>, ParentType, ContextType, RequireFields<QueryPricesArgs, never>>;

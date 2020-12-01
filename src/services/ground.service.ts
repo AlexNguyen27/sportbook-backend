@@ -12,12 +12,18 @@ import { ROLE, ORDER_STATUS } from '../components/constants';
 import SubGround from '../models/subGround.model';
 import Order from '../models/order.model';
 import { sequelize } from '../models/sequelize';
+import Price from '../models/price.model';
+import { FragmentsOnCompositeTypesRule } from 'graphql';
 
 const { Op } = require('sequelize');
+
+const { Sequelize } = sequelize;
 
 class GroundService {
   static async getGrounds(filter: any, user: any): Promise<Ground[]> {
     let whereCondition = {};
+
+    // FOR OWNER
     if (user.role === ROLE.owner) {
       whereCondition = {
         userId: user.id,
@@ -60,7 +66,6 @@ class GroundService {
           ]
         }
       }
-      const { Sequelize } = sequelize;
       try {
         let groundList: any = await GroundModel.findAll({
           attributes: [
@@ -104,6 +109,8 @@ class GroundService {
 
     // FOR ADMIN AND OWER
     return GroundModel.findAll({
+
+      group: ['GROUND.id', 'GROUND.title'],
       include: [
         {
           model: Category,
@@ -124,6 +131,77 @@ class GroundService {
       order: [
         ['createdAt', 'DESC'],
       ],
+    });
+  }
+
+  static async getAllGrounds(filter: any) {
+    // const { isAvailable } = filter;
+    // let whereCondtion = {};
+    // if (isAvailable) {
+    //   whereCondtion = {
+    //     '$subGrounds.prices.status$': 'ready',
+    //   }
+    // }
+    // add value is avalable
+    // count subground has status ready
+    const groundList = await GroundModel.findAll({
+      include: [
+        {
+          model: Category,
+          as: 'category',
+        },
+        {
+          model: User,
+          as: 'user',
+        },
+        {
+          model: SubGround,
+          as: 'subGrounds',
+          include: [
+            {
+              model: Price,
+              as: 'prices',
+            }
+          ]
+        },
+      ],
+      order: [
+        ['createdAt', 'DESC'],
+      ],
+    });
+
+    const availableGrounds = await GroundModel.findAll({
+      attributes: ['id'],
+      where: {
+        '$subGrounds.prices.status$': 'ready',
+      },
+      include: [
+        {
+          model: SubGround,
+          as: 'subGrounds',
+          attributes: ['id'],
+          required: true,
+          include: [
+            {
+              model: Price,
+              as: 'prices',
+              required: true,
+            }
+          ]
+        },
+      ],
+      order: [
+        ['createdAt', 'DESC'],
+      ],
+    });
+    const availableGroundIds = availableGrounds.reduce((acc: any, curr: any) => ({ ...acc, [curr.id]: true }), {});
+
+    return groundList.map((ground: any) => {
+      const groundItem = ground.toJSON();
+      return {
+        ...ground.toJSON(),
+        isAvailable: !!availableGroundIds[groundItem.id]
+      }
     });
   }
 

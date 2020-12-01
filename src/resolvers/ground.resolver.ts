@@ -14,8 +14,10 @@ const resolver: Resolvers = {
       (_: any, args: MutationUpdateGroundArgs, { user }: any) => GroundService.getGrounds(args, user),
     ),
     getGroundById: middleware(
-      tokenValidation(ROLE.owner, ROLE.admin, ROLE.user),
-      (_: any, args: MutationUpdateGroundArgs, { user }: any) => GroundService.findGroundById({ id: args.id }),
+      (_: any, args: MutationUpdateGroundArgs) => GroundService.findGroundById({ id: args.id }),
+    ),
+    getAllGrounds: middleware(
+      (_: any, args: any) => GroundService.getAllGrounds(args),
     ),
   },
   Mutation: {
