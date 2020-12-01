@@ -27,6 +27,7 @@ const typeDef = `
     groundId: String
     ground: Ground
     createdAt: DateTime
+    prices: [Price]
   }
 `;
 
