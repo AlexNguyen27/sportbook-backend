@@ -13,7 +13,6 @@ import SubGround from '../models/subGround.model';
 import Order from '../models/order.model';
 import { sequelize } from '../models/sequelize';
 import Price from '../models/price.model';
-import { FragmentsOnCompositeTypesRule } from 'graphql';
 
 const { Op } = require('sequelize');
 
@@ -135,13 +134,6 @@ class GroundService {
   }
 
   static async getAllGrounds(filter: any) {
-    // const { isAvailable } = filter;
-    // let whereCondtion = {};
-    // if (isAvailable) {
-    //   whereCondtion = {
-    //     '$subGrounds.prices.status$': 'ready',
-    //   }
-    // }
     // add value is avalable
     // count subground has status ready
     const groundList = await GroundModel.findAll({
@@ -239,6 +231,13 @@ class GroundService {
             model: SubGround,
             as: 'subGrounds',
             required: false,
+            include: [
+              {
+                model: Price,
+                as: 'prices',
+                required: false,
+              }
+            ]
           },
         ],
       });
