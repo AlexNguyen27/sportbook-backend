@@ -28,6 +28,7 @@ class GroundService {
         userId: user.id,
       };
     }
+    console.log('herer------------------', filter);
 
     // FOR STATISTIC
     const { date, startDate, endDate } = filter;
@@ -108,8 +109,6 @@ class GroundService {
 
     // FOR ADMIN AND OWER
     return GroundModel.findAll({
-
-      group: ['GROUND.id', 'GROUND.title'],
       include: [
         {
           model: Category,
