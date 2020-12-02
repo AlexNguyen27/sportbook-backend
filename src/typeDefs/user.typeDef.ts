@@ -11,6 +11,8 @@ const typeDef = `
       email: String!,
       password: String!,
       role: String!,
+      firstName: String,
+      lastName: String
     ): User
 
     updateUser(
