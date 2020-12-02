@@ -3,7 +3,7 @@ const typeDef = `
     users(role: String): [User]
     login(email: String!, password: String!): LoginOutput
     getUserById(id: String!): User
-    loyalCustomers(weekday: String): [User]
+    loyalCustomers(weekday: String): [LoyalUser]
   }
 
   type Mutation {
@@ -64,6 +64,16 @@ const typeDef = `
     createdAt: DateTime
     updatedAt: DateTime
   }
+
+  type LoyalUser {
+    id: String
+    email: String
+    firstName: String
+    lastName: String
+    phone: String
+    orders: [Order]
+  }
+
 
   type LoginOutput {
     id: String,
