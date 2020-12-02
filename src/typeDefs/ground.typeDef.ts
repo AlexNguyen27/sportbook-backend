@@ -48,6 +48,7 @@ const typeDef = `
     user: User
     category: Category
     subGrounds: [SubGround]
+    comments: [Comment]
     categoryId: String
     createdAt: DateTime
     updatedAt: DateTime

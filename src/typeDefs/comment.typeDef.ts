@@ -33,6 +33,7 @@ const typeDef = `
   }
 
   type UserComment {
+    id: String
     email: String,
     firstName: String,
     lastName: String,
