@@ -1,6 +1,10 @@
 const typeDef = `
+  extend type Query {
+    ratings(groundId: String!): [Rating]
+  }
+
   extend type Mutation {
-    createRating(userId: String!, groundId: String!, point: Float!): SuccessMessage,
+    createOrUpdateRating(userId: String!, groundId: String!, point: Float!): SuccessMessage,
     updateRating(userId: String!, groundId: String!, point: Float!): Rating,
   }
 
