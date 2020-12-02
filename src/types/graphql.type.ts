@@ -195,6 +195,7 @@ export type Comment = {
 
 export type UserComment = {
   __typename?: 'UserComment';
+  id?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
   firstName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
@@ -220,6 +221,7 @@ export type Ground = {
   user?: Maybe<User>;
   category?: Maybe<Category>;
   subGrounds?: Maybe<Array<Maybe<SubGround>>>;
+  comments?: Maybe<Array<Maybe<Comment>>>;
   categoryId?: Maybe<Scalars['String']>;
   createdAt?: Maybe<Scalars['DateTime']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
@@ -1086,6 +1088,7 @@ export type CommentResolvers<ContextType = any, ParentType extends ResolversPare
 }>;
 
 export type UserCommentResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserComment'] = ResolversParentTypes['UserComment']> = ResolversObject<{
+  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   firstName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -1111,6 +1114,7 @@ export type GroundResolvers<ContextType = any, ParentType extends ResolversParen
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   category?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType>;
   subGrounds?: Resolver<Maybe<Array<Maybe<ResolversTypes['SubGround']>>>, ParentType, ContextType>;
+  comments?: Resolver<Maybe<Array<Maybe<ResolversTypes['Comment']>>>, ParentType, ContextType>;
   categoryId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
