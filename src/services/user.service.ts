@@ -9,12 +9,13 @@ import { ROLE, ORDER_STATUS } from '../components/constants';
 import Order from '../models/order.model';
 import Ground from '../models/ground.model';
 import { sequelize } from '../models/sequelize';
+import SubGround from '../models/subGround.model';
 
 const { Op } = require('sequelize');
 // const Sequelize = require('sequelize');
 
 class UserService {
-  static getUsers(filter: any, user: any): Promise<User[]> {
+  static async getUsers(filter: any, user: any): Promise<User[]> {
     let whereCondition = {};
 
     if (filter.weekday) {
@@ -27,25 +28,37 @@ class UserService {
           )
         ]
       }
-      return UserModel.findAll({
+      const test = await UserModel.findAll({
+        attributes: ['id', 'email', 'firstName', 'lastName', 'phone'],
         include: [
           {
             model: Order,
+            attributes: ['status', 'createdAt', 'startDay'],
             as: 'orders',
-            required: true,
             where: {
-              ...condtion
-            }
+              ...condtion // status approved and same search day
+            },
+            include: [
+              {
+                model: SubGround,
+                as: 'subGround',
+                attributes: [],
+                include: [
+                  {
+                    model: Ground,
+                    as: 'ground',
+                    attributes: [],
+                    where: {
+                      userId: user.id // id owner
+                    }
+                  }
+                ]
+              }
+            ]
           },
-          {
-            model: Ground,
-            as: 'grounds',
-            where: {
-              userId: user.id
-            }
-          }
         ]
       });
+      return test;
     }
     // get user with role for admin
     if (filter && filter.role && filter.role === ROLE.user) {
