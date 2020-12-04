@@ -30,6 +30,9 @@ class OrderService {
           as: 'subGround',
         },
       ],
+      order: [
+        ['createdAt', 'DESC'],
+      ],
     });
   }
 
@@ -48,6 +51,9 @@ class OrderService {
           model: SubGround,
           as: 'subGround',
         },
+      ],
+      order: [
+        ['createdAt', 'DESC'],
       ],
     });
   }
@@ -95,6 +101,9 @@ class OrderService {
             as: 'subGround',
           },
         ],
+        order: [
+          ['createdAt', 'DESC'],
+        ],
       });
     }
     if (user.role === ROLE.owner) {
@@ -117,6 +126,9 @@ class OrderService {
             ]
           },
         ],
+        order: [
+          ['createdAt', 'DESC'],
+        ],
       });
     }
 
@@ -130,6 +142,9 @@ class OrderService {
           model: SubGround,
           as: 'subGround',
         },
+      ],
+      order: [
+        ['createdAt', 'DESC'],
       ],
     });
   }
@@ -167,28 +182,69 @@ class OrderService {
     try {
       order = await OrderModel.findOne({
         where: {
-          status: [ORDER_STATUS.approved, ORDER_STATUS.finished],
+          status: [ORDER_STATUS.approved, ORDER_STATUS.paid],
           subGroundId,
           startDay,
           startTime,
           endTime
         }
       });
-      return 1;
+      if (!order) return false;
+      return true; // EXITS
+    } catch (error) {
+      if (!order) return false; // NOT FOUND
+    }
+  }
+
+  static async checkExitsOthersOrder({
+    startDay,
+    startTime,
+    endTime,
+    subGroundId,
+    orderId,
+  }: any) {
+    let order: any;
+    try {
+      order = await OrderModel.findOne({
+        where: {
+          status: [ORDER_STATUS.approved, ORDER_STATUS.paid],
+          subGroundId,
+          startDay,
+          startTime,
+          endTime,
+          id: {
+            [Op.not]: orderId
+          }
+        }
+      });
+      if (!order) return false;
+      return true; // EXITS
     } catch (error) {
       console.log('checkExitsOrder-------------------', error)
-      if (!order) return -1;
+      if (!order) return false; // NOT FOUND
     }
   }
 
   // ADMIN CAN NOT CREATE GROUND FOR OTHER ROLES
   static async createOrder(data: MutationCreateOrderArgs, userId: any): Promise<Order> {
-    const { subGroundId }: any = data;
+    const { subGroundId, startDay, endTime, startTime }: any = data;
+
+    const formatStartDay = moment(startDay, 'DD/MM/YYYY');
     // CHECK IF USER AND CATEGORY EXITS
     await UserService.findUserById(userId);
     await SubGroundService.findSubGroundById({ id: subGroundId });
 
-    const formatedData: any = { ...data, startDay: moment(data.startDay, 'DD/MM/YYYY'), status: ORDER_STATUS.waiting_for_approve };
+    const isExitOrder = await this.checkExitsOrder({
+      startDay: formatStartDay,
+      startTime,
+      endTime,
+      subGroundId
+    });
+
+    if (isExitOrder) {
+      throw new BusinessError('Same order is waiting for approve or waiting for paid!');
+    }
+    const formatedData: any = { ...data, startDay: formatStartDay, status: ORDER_STATUS.waiting_for_approve };
     formatedData.histories = {
       orderStatus: ORDER_STATUS.waiting_for_approve,
     };
@@ -220,12 +276,34 @@ class OrderService {
     return updatedGround;
   }
 
-  // TODO: ONWER CAN ONLY UPDATE STATUS OF THEIR OWN
+  // ONWER CAN ONLY UPDATE STATUS OF THEIR OWN
   static async updateStatus(data: MutationUpdateOrderStatusArgs, user: any) {
     const transaction = await sequelize.transaction();
 
     const { id } = data;
     const order = await this.findOrderById({ id });
+
+    const formatOrder: any = { ...order };
+    // Check if has order status been approved or paid of this order subground
+    const {
+      subGroundId, startTime, startDay, endTime
+    } = formatOrder;
+
+    // TODO: WHEN MANAGER CHECKOUT 1 STATUS IS APPROVED THEN OTHERS STATUS SHOULD BE CANCELLED
+    // FIND ALL AND UPDATE BUCK
+    if (formatOrder.status === ORDER_STATUS.waiting_for_approve) {
+      const isExitOrder = await this.checkExitsOthersOrder({
+        subGroundId,
+        startDay: moment(startDay, 'DD/MM/YYYY'),
+        startTime,
+        endTime,
+        orderId: id,
+      });
+      if (isExitOrder && data.status === ORDER_STATUS.approved) {
+        throw new BusinessError('Same order is waiting for approve or waiting for paid!');
+      }
+    }
+
     if (user.role === ROLE.owner) {
       // CHECK  SUBGROUND OWNER ID
       const isExitsSubGround = SubGround.findOne({
@@ -248,11 +326,8 @@ class OrderService {
       }
     }
     // CAN'T CHANGE STATUS IF ORDER APPROVED
-    if (order.status === ORDER_STATUS.approved) {
-      throw new BusinessError('Order has been approved!');
-    }
-    if (order.status === ORDER_STATUS.cancelled) {
-      throw new BusinessError('Order has been cancelled!');
+    if (order.status === ORDER_STATUS.finished) {
+      throw new BusinessError('Order has been finished!');
     }
 
     try {
