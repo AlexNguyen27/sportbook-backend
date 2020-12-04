@@ -30,6 +30,7 @@ const typeDef = `
     discount: Float
     startTime: String
     endTime: String
+    status: String
     subGroundId: String
     subGround: SubGround
     createdAt: DateTime

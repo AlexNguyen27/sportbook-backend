@@ -23,7 +23,7 @@ class CommentService {
 
     // CHECK IF USERID AND groundId IS EXITS
     await UserService.findUserById(userId);
-    await GroundService.findGroundById({ id: groundId });
+    await GroundService.checkGroundIdExit({ id: groundId });
 
     if (data.parentId) {
       await this.findCommentById(data.parentId, 'Parent comment id not found');

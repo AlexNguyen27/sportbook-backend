@@ -8,7 +8,7 @@ import { ExistsError, AuthenticationError } from '../components/errors';
 import { Ground, MutationCreateGroundArgs } from '../types/graphql.type';
 import CategoryService from './category.service';
 import UserService from './user.service';
-import { ROLE, ORDER_STATUS } from '../components/constants';
+import { ROLE, ORDER_STATUS, SUB_GROUND_STATUS } from '../components/constants';
 import SubGround from '../models/subGround.model';
 import Order from '../models/order.model';
 import { sequelize } from '../models/sequelize';
@@ -161,7 +161,7 @@ class GroundService {
       ],
     });
 
-    // todo GET AVALABLE GROUND
+    // todo GET AVALABLE GROUND ON TODAY
     const availableGrounds = await GroundModel.findAll({
       attributes: ['id'],
       include: [
@@ -194,7 +194,27 @@ class GroundService {
     });
   }
 
-  static async findGroundById({ id }: { id: any }) {
+  static async checkGroundIdExit({ id }: any) {
+    let ground: any;
+    try {
+      ground = await GroundModel.findOne({
+        where: { id },
+        include: [
+          {
+            model: User,
+            as: 'user',
+          },
+        ]
+      });
+      return { ...ground.toJSON() };
+    } catch (error) {
+      if (!ground) throw new ExistsError('Ground not found');
+      throw error;
+    }
+  }
+
+  static async findGroundById(filter: any) {
+    const { id, startDay } = filter;
     let ground: any;
     try {
       ground = await GroundModel.findOne({
@@ -232,13 +252,55 @@ class GroundService {
               {
                 model: Price,
                 as: 'prices',
+                required: false
+              },
+              {
+                model: Order,
+                as: 'orders',
                 required: false,
               }
             ]
           },
         ],
       });
-      return { ...ground.toJSON() };
+
+      if (!startDay) {
+        return { ...ground.toJSON() }
+      }
+
+      const formatGround = JSON.parse(JSON.stringify(ground));
+      const { subGrounds } = formatGround;
+
+      // MAP ORDER WITH STATUS APPROVED AND PAID => CAN'T CREATE ORDER
+      subGrounds.forEach((sub: any, index: any) => {
+        sub.prices.forEach((price: any, priceIndex: any) => {
+          sub.orders.forEach((order: any) => {
+            if (order.startDay === startDay
+              && order.startTime === price.startTime
+              && order.endTime === price.endTime
+              && (order.status === ORDER_STATUS.approved || order.status === ORDER_STATUS.paid)) {
+              formatGround.subGrounds[index].prices[priceIndex] = {
+                ...price,
+                status: SUB_GROUND_STATUS.reserved
+              }
+            } else {
+              formatGround.subGrounds[index].prices[priceIndex] = {
+                ...price,
+                status: SUB_GROUND_STATUS.ready
+              }
+            }
+          })
+
+          // DONT HAVE ORDER => PRICE STATUS ALL READY
+          if (!sub.orders.length) {
+            formatGround.subGrounds[index].prices[priceIndex] = {
+              ...price,
+              status: SUB_GROUND_STATUS.ready
+            }
+          }
+        })
+      })
+      return formatGround;
     } catch (error) {
       if (!ground) throw new ExistsError('Ground not found');
       throw error;

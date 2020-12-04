@@ -1,6 +1,6 @@
 const typeDef = `
   extend type Query {
-    subGrounds(groundId: String): [SubGround]
+    subGrounds(groundId: String!): [SubGround]
   }
 
   extend type Mutation {

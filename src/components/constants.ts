@@ -27,18 +27,21 @@ export const PAYMENT_TYPE = {
 
 export const ORDER_STATUS = {
   // eslint-disable-next-line @typescript-eslint/camelcase
-  waiting_for_appove: 'waiting_for_appove',
-  cancelled: 'cancelled',
-  approved: 'approved',
-  paid: 'paid'
+  waiting_for_approve: 'waiting_for_approve', // wait for owner to approved
+  cancelled: 'cancelled', // owner cancell order or  out of time
+  finished: 'finished', // DONE
+
+  // TODO THESE STATUS CAN'T CREATE ORDER (SAME SUB GROUND, STARTDAY, STARTTIME, ENDTIME)
+  paid: 'paid', // paid order
+  approved: 'approved', // owner approve and now waiting for paid
 };
 
-export const WEEKDAY = {
-  monday: 1,
-  tuesday: 2,
-  wednesday: 3,
-  thursday: 4,
-  friday: 5,
-  saturday: 6,
-  sunday: 7
-}
+// export const WEEKDAY = {
+//   monday: 1,
+//   tuesday: 2,
+//   wednesday: 3,
+//   thursday: 4,
+//   friday: 5,
+//   saturday: 6,
+//   sunday: 7
+// }

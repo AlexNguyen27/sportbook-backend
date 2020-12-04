@@ -17,7 +17,7 @@ class RatingService {
     const exitsRating: any = await this.findRatingByUserIdGroundId({ userId, groundId });
 
     // CHECK IF USER ID AND GROUND ID EXITS
-    await GroundService.findGroundById({ id: groundId });
+    await GroundService.checkGroundIdExit({ id: groundId });
     await UserService.findUserById(userId);
     // GET REACTION TYPE
 
