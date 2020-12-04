@@ -28,8 +28,6 @@ class GroundService {
         userId: user.id,
       };
     }
-    console.log('herer------------------', filter);
-
     // FOR STATISTIC
     const { date, startDate, endDate } = filter;
     if (date || (startDate && endDate)) {
@@ -43,7 +41,7 @@ class GroundService {
       if (date) {
         whereDateConditon = {
           [Op.and]: [
-            { status: ORDER_STATUS.approved },
+            { status: ORDER_STATUS.approved }, // TODO should be finished
             {
               createdAt: {
                 [Op.gte]: createdAtCondtions[date],
@@ -56,7 +54,7 @@ class GroundService {
       if (startDate && endDate) {
         whereDateConditon = {
           [Op.and]: [
-            { status: ORDER_STATUS.approved },
+            { status: ORDER_STATUS.approved }, // TODO should be finished
             {
               createdAt: {
                 [Op.gte]: moment(startDate).startOf('day'),
