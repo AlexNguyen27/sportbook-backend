@@ -157,6 +157,30 @@ class OrderService {
     }
   }
 
+  static async checkExitsOrder({
+    startDay,
+    startTime,
+    endTime,
+    subGroundId
+  }: any) {
+    let order: any;
+    try {
+      order = await OrderModel.findOne({
+        where: {
+          status: [ORDER_STATUS.approved, ORDER_STATUS.finished],
+          subGroundId,
+          startDay,
+          startTime,
+          endTime
+        }
+      });
+      return 1;
+    } catch (error) {
+      console.log('checkExitsOrder-------------------', error)
+      if (!order) return -1;
+    }
+  }
+
   // ADMIN CAN NOT CREATE GROUND FOR OTHER ROLES
   static async createOrder(data: MutationCreateOrderArgs, userId: any): Promise<Order> {
     const { subGroundId }: any = data;
@@ -164,11 +188,11 @@ class OrderService {
     await UserService.findUserById(userId);
     await SubGroundService.findSubGroundById({ id: subGroundId });
 
-    const formatedData: any = { ...data, startDay: moment(data.startDay, 'DD/MM/YYYY'), status: ORDER_STATUS.waiting_for_appove };
+    const formatedData: any = { ...data, startDay: moment(data.startDay, 'DD/MM/YYYY'), status: ORDER_STATUS.waiting_for_approve };
     formatedData.histories = {
-      orderStatus: ORDER_STATUS.waiting_for_appove,
+      orderStatus: ORDER_STATUS.waiting_for_approve,
     };
-    const newOrder = await OrderModel.create({ ...formatedData, userId, status: ORDER_STATUS.waiting_for_appove }, {
+    const newOrder = await OrderModel.create({ ...formatedData, userId, status: ORDER_STATUS.waiting_for_approve }, {
       include: [{
         model: History,
         as: 'histories',

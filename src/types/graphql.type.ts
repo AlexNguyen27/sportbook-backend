@@ -292,7 +292,7 @@ export type Query = {
   users?: Maybe<Array<Maybe<User>>>;
   login?: Maybe<LoginOutput>;
   getUserById?: Maybe<User>;
-  loyalCustomers?: Maybe<Array<Maybe<User>>>;
+  loyalCustomers?: Maybe<Array<Maybe<LoyalUser>>>;
   benefits?: Maybe<Array<Maybe<Benefit>>>;
   categories?: Maybe<Array<Maybe<Category>>>;
   getCommentsbyGroundId?: Maybe<Array<Maybe<Comment>>>;
@@ -341,7 +341,8 @@ export type QueryGroundsArgs = {
 
 
 export type QueryGetGroundByIdArgs = {
-  id?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  startDay?: Maybe<Scalars['String']>;
 };
 
 
@@ -375,7 +376,7 @@ export type QueryRatingsArgs = {
 
 
 export type QuerySubGroundsArgs = {
-  groundId?: Maybe<Scalars['String']>;
+  groundId: Scalars['String'];
 };
 
 export type Mutation = {
@@ -415,6 +416,8 @@ export type MutationCreateUserArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
   role: Scalars['String'];
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
 };
 
 
@@ -647,6 +650,16 @@ export type User = {
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
+export type LoyalUser = {
+  __typename?: 'LoyalUser';
+  id?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  phone?: Maybe<Scalars['String']>;
+  orders?: Maybe<Array<Maybe<Order>>>;
+};
+
 export type LoginOutput = {
   __typename?: 'LoginOutput';
   id?: Maybe<Scalars['String']>;
@@ -808,6 +821,7 @@ export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>;
   Mutation: ResolverTypeWrapper<{}>;
   User: ResolverTypeWrapper<User>;
+  LoyalUser: ResolverTypeWrapper<LoyalUser>;
   LoginOutput: ResolverTypeWrapper<LoginOutput>;
 }>;
 
@@ -876,6 +890,7 @@ export type ResolversParentTypes = ResolversObject<{
   Query: {};
   Mutation: {};
   User: User;
+  LoyalUser: LoyalUser;
   LoginOutput: LoginOutput;
 }>;
 
@@ -1185,18 +1200,18 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType, RequireFields<QueryUsersArgs, never>>;
   login?: Resolver<Maybe<ResolversTypes['LoginOutput']>, ParentType, ContextType, RequireFields<QueryLoginArgs, 'email' | 'password'>>;
   getUserById?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryGetUserByIdArgs, 'id'>>;
-  loyalCustomers?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType, RequireFields<QueryLoyalCustomersArgs, never>>;
+  loyalCustomers?: Resolver<Maybe<Array<Maybe<ResolversTypes['LoyalUser']>>>, ParentType, ContextType, RequireFields<QueryLoyalCustomersArgs, never>>;
   benefits?: Resolver<Maybe<Array<Maybe<ResolversTypes['Benefit']>>>, ParentType, ContextType>;
   categories?: Resolver<Maybe<Array<Maybe<ResolversTypes['Category']>>>, ParentType, ContextType>;
   getCommentsbyGroundId?: Resolver<Maybe<Array<Maybe<ResolversTypes['Comment']>>>, ParentType, ContextType, RequireFields<QueryGetCommentsbyGroundIdArgs, 'groundId'>>;
   grounds?: Resolver<Maybe<Array<Maybe<ResolversTypes['Ground']>>>, ParentType, ContextType, RequireFields<QueryGroundsArgs, never>>;
-  getGroundById?: Resolver<Maybe<ResolversTypes['Ground']>, ParentType, ContextType, RequireFields<QueryGetGroundByIdArgs, never>>;
+  getGroundById?: Resolver<Maybe<ResolversTypes['Ground']>, ParentType, ContextType, RequireFields<QueryGetGroundByIdArgs, 'id'>>;
   getAllGrounds?: Resolver<Maybe<Array<Maybe<ResolversTypes['Ground']>>>, ParentType, ContextType, RequireFields<QueryGetAllGroundsArgs, never>>;
   histories?: Resolver<Maybe<Array<Maybe<ResolversTypes['History']>>>, ParentType, ContextType, RequireFields<QueryHistoriesArgs, never>>;
   orders?: Resolver<Maybe<Array<Maybe<ResolversTypes['Order']>>>, ParentType, ContextType, RequireFields<QueryOrdersArgs, never>>;
   prices?: Resolver<Maybe<Array<Maybe<ResolversTypes['Price']>>>, ParentType, ContextType, RequireFields<QueryPricesArgs, never>>;
   ratings?: Resolver<Maybe<Array<Maybe<ResolversTypes['Rating']>>>, ParentType, ContextType, RequireFields<QueryRatingsArgs, 'groundId'>>;
-  subGrounds?: Resolver<Maybe<Array<Maybe<ResolversTypes['SubGround']>>>, ParentType, ContextType, RequireFields<QuerySubGroundsArgs, never>>;
+  subGrounds?: Resolver<Maybe<Array<Maybe<ResolversTypes['SubGround']>>>, ParentType, ContextType, RequireFields<QuerySubGroundsArgs, 'groundId'>>;
 }>;
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
@@ -1245,6 +1260,16 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   role?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type LoyalUserResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoyalUser'] = ResolversParentTypes['LoyalUser']> = ResolversObject<{
+  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  firstName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  phone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  orders?: Resolver<Maybe<Array<Maybe<ResolversTypes['Order']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1327,6 +1352,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Query?: QueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
+  LoyalUser?: LoyalUserResolvers<ContextType>;
   LoginOutput?: LoginOutputResolvers<ContextType>;
 }>;
 

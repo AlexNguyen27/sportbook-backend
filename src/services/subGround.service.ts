@@ -13,7 +13,7 @@ class SubGroundService {
     const { groundId } = filter;
     let condition = {};
     if (groundId) {
-      await GroundService.findGroundById({ id: groundId });
+      await GroundService.checkGroundIdExit({ id: groundId });
       condition = {
         groundId
       }
@@ -108,19 +108,11 @@ class SubGroundService {
       id, groundId,
     } = data;
 
-    // allow to update sub Ground to another ground
+    // only update user ground
     const ground: any = await GroundService.findGroundAndUser({ userId: user.id, groundId });
     if (!ground) {
       throw new ExistsError('Can not update sub ground!');
     }
-    // if (role === ROLE.user) {
-    //   throw new AuthenticationError('Your role is not allowed');
-    // }
-    // CHECK IF GROUND EXITS
-    // const ground: any = await GroundService.findGroundById({ id: groundId });
-    // if (groundId !== ground.id) {
-    //   throw new ExistsError('Can not update sub ground!');
-    // }
 
     // UDPATE SUB GROUND INFO
     const subGroundId: any = id;

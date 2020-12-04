@@ -1,7 +1,7 @@
 const typeDef = `
   extend type Query {
     grounds(date: String, startDate: String, endDate: String): [Ground],
-    getGroundById(id: String): Ground,
+    getGroundById(id: String!, startDay: String): Ground,
     getAllGrounds(isAvailable: Boolean): [Ground]
   }
 
