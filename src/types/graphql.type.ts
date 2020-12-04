@@ -376,7 +376,7 @@ export type QueryRatingsArgs = {
 
 
 export type QuerySubGroundsArgs = {
-  groundId: Scalars['String'];
+  groundId?: Maybe<Scalars['String']>;
 };
 
 export type Mutation = {
@@ -1211,7 +1211,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   orders?: Resolver<Maybe<Array<Maybe<ResolversTypes['Order']>>>, ParentType, ContextType, RequireFields<QueryOrdersArgs, never>>;
   prices?: Resolver<Maybe<Array<Maybe<ResolversTypes['Price']>>>, ParentType, ContextType, RequireFields<QueryPricesArgs, never>>;
   ratings?: Resolver<Maybe<Array<Maybe<ResolversTypes['Rating']>>>, ParentType, ContextType, RequireFields<QueryRatingsArgs, 'groundId'>>;
-  subGrounds?: Resolver<Maybe<Array<Maybe<ResolversTypes['SubGround']>>>, ParentType, ContextType, RequireFields<QuerySubGroundsArgs, 'groundId'>>;
+  subGrounds?: Resolver<Maybe<Array<Maybe<ResolversTypes['SubGround']>>>, ParentType, ContextType, RequireFields<QuerySubGroundsArgs, never>>;
 }>;
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{

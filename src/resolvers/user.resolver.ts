@@ -3,7 +3,7 @@ import joi from 'joi';
 import { middleware, schemaValidation, tokenValidation } from '../components';
 import UserService from '../services/user.service';
 import {
-  User, Resolvers, QueryLoginArgs, MutationCreateUserArgs, MutationUpdateUserArgs, MutationChangePasswordArgs, MutationDeleteUserArgs, MutationUploadAvatarArgs,
+  User, Resolvers, QueryLoginArgs, MutationCreateUserArgs, MutationUpdateUserArgs, MutationChangePasswordArgs, MutationDeleteUserArgs,
 } from '../types/graphql.type';
 import { ROLE } from '../components/constants';
 
@@ -20,7 +20,7 @@ const resolver: Resolvers = {
     ),
     loyalCustomers: middleware(
       tokenValidation(ROLE.admin, ROLE.owner, ROLE.user),
-      (_: any, args: any, { user }: any): Promise<User[]> => UserService.getUsers(args, user),
+      (_: any, args: any, { user }: any): Promise<any[]> => UserService.getUsers(args, user),
     ),
   },
   Mutation: {

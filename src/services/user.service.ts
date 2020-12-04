@@ -12,7 +12,6 @@ import { sequelize } from '../models/sequelize';
 import SubGround from '../models/subGround.model';
 
 const { Op } = require('sequelize');
-// const Sequelize = require('sequelize');
 
 class UserService {
   static async getUsers(filter: any, user: any): Promise<User[]> {
@@ -21,19 +20,20 @@ class UserService {
     if (filter.weekday) {
       const condtion: any = {
         [Op.and]: [
-          { status: ORDER_STATUS.approved },
+          { status: ORDER_STATUS.approved }, // TODO should be finished
           sequelize.Sequelize.where(
-            sequelize.Sequelize.literal('to_char("orders"."createdAt", \'day\')'),
+            sequelize.Sequelize.literal('to_char("orders"."startDay", \'day\')'),
             { [Op.like]: `%${filter.weekday}%` }
           )
         ]
       }
-      const test = await UserModel.findAll({
-        attributes: ['id', 'email', 'firstName', 'lastName', 'phone'],
+      const userList = await UserModel.findAll({
+        attributes: ['id', 'email', 'firstName', 'lastName', 'phone',
+        ],
         include: [
           {
             model: Order,
-            attributes: ['status', 'createdAt', 'startDay'],
+            attributes: ['status', 'createdAt', 'startDay', 'id'],
             as: 'orders',
             where: {
               ...condtion // status approved and same search day
@@ -58,7 +58,7 @@ class UserService {
           },
         ]
       });
-      return test;
+      return userList;
     }
     // get user with role for admin
     if (filter && filter.role && filter.role === ROLE.user) {
