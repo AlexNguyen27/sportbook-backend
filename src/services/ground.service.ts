@@ -59,8 +59,8 @@ class GroundService {
             { status: ORDER_STATUS.approved },
             {
               createdAt: {
-                [Op.gte]: moment(startDate).startOf('day').subtract(1, 'days'),
-                [Op.lte]: moment(endDate).startOf('day').add(1, 'days'),
+                [Op.gte]: moment(startDate).startOf('day'),
+                [Op.lte]: moment(endDate).startOf('day').add(2, 'days'),
               }
             }
           ]
@@ -161,11 +161,9 @@ class GroundService {
       ],
     });
 
+    // todo GET AVALABLE GROUND
     const availableGrounds = await GroundModel.findAll({
       attributes: ['id'],
-      where: {
-        '$subGrounds.prices.status$': 'ready',
-      },
       include: [
         {
           model: SubGround,
