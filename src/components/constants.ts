@@ -26,9 +26,11 @@ export const PAYMENT_TYPE = {
 };
 
 export const ORDER_STATUS = {
-  new: 'new',
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  waiting_for_appove: 'waiting_for_appove',
   cancelled: 'cancelled',
   approved: 'approved',
+  paid: 'paid'
 };
 
 export const WEEKDAY = {

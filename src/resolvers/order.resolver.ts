@@ -47,7 +47,7 @@ const resolver: Resolvers = {
       tokenValidation(ROLE.owner, ROLE.admin),
       schemaValidation({
         id: joi.string().uuid(),
-        status: joi.string().allow(ORDER_STATUS.new, ORDER_STATUS.approved, ORDER_STATUS.cancelled),
+        status: joi.string().allow(ORDER_STATUS.waiting_for_appove, ORDER_STATUS.paid, ORDER_STATUS.approved, ORDER_STATUS.cancelled),
       }),
       (_: any, args: MutationUpdateOrderStatusArgs, { user }: any) => OrderService.updateStatus(args, user),
     ),

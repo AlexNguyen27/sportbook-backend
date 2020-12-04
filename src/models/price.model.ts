@@ -1,10 +1,10 @@
 import { Model, DataTypes } from 'sequelize';
 
 import { sequelize } from './sequelize';
-import { SUB_GROUND_STATUS } from '../components/constants';
+// import { SUB_GROUND_STATUS } from '../components/constants';
 import SubGround from './subGround.model';
 
-const subGroundStatus: any = Object.values(SUB_GROUND_STATUS);
+// const subGroundStatus: any = Object.values(SUB_GROUND_STATUS);
 
 class Price extends Model {
   public id: string;
@@ -17,7 +17,7 @@ class Price extends Model {
 
   public endTime: string;
 
-  public status: string;
+  // public status: string;
 
   public subGroundId: string;
 
@@ -61,10 +61,10 @@ Price.init({
     type: DataTypes.TIME,
     allowNull: false,
   },
-  status: {
-    type: DataTypes.ENUM(subGroundStatus),
-    allowNull: false,
-  },
+  // status: {
+  //   type: DataTypes.ENUM(subGroundStatus),
+  //   allowNull: false,
+  // },
   subGroundId: {
     type: DataTypes.UUID,
     allowNull: false,
