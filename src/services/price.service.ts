@@ -3,7 +3,7 @@ import { ExistsError } from '../components/errors';
 import {
   Price, MutationCreatePriceArgs, MutationUpdatePriceArgs,
 } from '../types/graphql.type';
-import { SUB_GROUND_STATUS } from '../components/constants';
+// import { SUB_GROUND_STATUS } from '../components/constants';
 import SubGroundService from './subGround.service';
 import SubGround from '../models/subGround.model';
 
@@ -59,8 +59,8 @@ class PriceService {
     await SubGroundService.findSubGroundById({ id: subGroundId });
     const formatedData = {
       ...data,
-      status: SUB_GROUND_STATUS.ready, // default status
     };
+    // REMOVED PRICE STATUS
     const newPrice = await PriceModel.create({ ...formatedData });
 
     return this.findPriceById({ id: newPrice.id });

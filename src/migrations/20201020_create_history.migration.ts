@@ -24,6 +24,7 @@ const migration = {
     },
     orderStatus: {
       type: DataTypes.ENUM(orderStatus),
+      allowNull: false,
     },
     createdAt: {
       type: DataTypes.DATE,

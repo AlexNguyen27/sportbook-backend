@@ -164,11 +164,11 @@ class OrderService {
     await UserService.findUserById(userId);
     await SubGroundService.findSubGroundById({ id: subGroundId });
 
-    const formatedData: any = { ...data, startDay: moment(data.startDay, 'DD/MM/YYYY'), status: ORDER_STATUS.new };
+    const formatedData: any = { ...data, startDay: moment(data.startDay, 'DD/MM/YYYY'), status: ORDER_STATUS.waiting_for_appove };
     formatedData.histories = {
-      orderStatus: ORDER_STATUS.new,
+      orderStatus: ORDER_STATUS.waiting_for_appove,
     };
-    const newOrder = await OrderModel.create({ ...formatedData, userId, status: ORDER_STATUS.new }, {
+    const newOrder = await OrderModel.create({ ...formatedData, userId, status: ORDER_STATUS.waiting_for_appove }, {
       include: [{
         model: History,
         as: 'histories',
