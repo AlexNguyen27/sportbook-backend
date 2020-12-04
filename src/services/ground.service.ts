@@ -274,32 +274,35 @@ class GroundService {
       // MAP ORDER WITH STATUS APPROVED AND PAID => CAN'T CREATE ORDER
       subGrounds.forEach((sub: any, index: any) => {
         sub.prices.forEach((price: any, priceIndex: any) => {
-          sub.orders.forEach((order: any) => {
-            if (order.startDay === startDay
-              && order.startTime === price.startTime
-              && order.endTime === price.endTime
-              && (order.status === ORDER_STATUS.approved || order.status === ORDER_STATUS.paid)) {
-              formatGround.subGrounds[index].prices[priceIndex] = {
-                ...price,
-                status: SUB_GROUND_STATUS.reserved
-              }
-            } else {
-              formatGround.subGrounds[index].prices[priceIndex] = {
-                ...price,
-                status: SUB_GROUND_STATUS.ready
-              }
-            }
-          })
-
           // DONT HAVE ORDER => PRICE STATUS ALL READY
           if (!sub.orders.length) {
             formatGround.subGrounds[index].prices[priceIndex] = {
               ...price,
               status: SUB_GROUND_STATUS.ready
             }
+          } else {
+            sub.orders.forEach((order: any) => {
+              if (startDay === order.startDay
+                && order.startTime === price.startTime
+                && order.endTime === price.endTime
+                && (order.status === ORDER_STATUS.approved || order.status === ORDER_STATUS.paid)) {
+                formatGround.subGrounds[index].prices[priceIndex] = {
+                  ...price,
+                  status: SUB_GROUND_STATUS.reserved
+                }
+              }
+            });
+            if (!formatGround.subGrounds[index].prices[priceIndex].status) {
+              formatGround.subGrounds[index].prices[priceIndex] = {
+                ...price,
+                status: SUB_GROUND_STATUS.ready
+              }
+
+            }
           }
         })
       })
+
       return formatGround;
     } catch (error) {
       if (!ground) throw new ExistsError('Ground not found');
