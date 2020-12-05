@@ -1,5 +1,5 @@
 import { Model, DataTypes } from 'sequelize';
-
+import moment from 'moment';
 import { sequelize } from './sequelize';
 // import { SUB_GROUND_STATUS } from '../components/constants';
 import SubGround from './subGround.model';
@@ -56,10 +56,36 @@ Price.init({
   startTime: {
     type: DataTypes.TIME,
     allowNull: false,
+    validate: {
+      notEmpty: true,
+      startTimeShouldBeforeEndTime(startTime: any) {
+        const { endTime }: any = this;
+
+        if (endTime === null) return;
+        if (startTime === null || startTime.trim() === '') return;
+
+        if (moment(startTime, 'HH:mm:ss').isAfter(moment(endTime, 'HH:mm:ss'))) {
+          throw new Error('Start time shoudld before End time!');
+        }
+      }
+    }
   },
   endTime: {
     type: DataTypes.TIME,
     allowNull: false,
+    validate: {
+      notEmpty: true,
+      endTimeShouldAfterStartTime(endTime: any) {
+        const { startTime }: any = this;
+
+        if (startTime === null) return;
+        if (endTime === null || endTime.trim() === '') return;
+
+        if (moment(endTime, 'HH:mm:ss').isBefore(moment(startTime, 'HH:mm:ss'))) {
+          throw new Error('End time shoudld after Start time!');
+        }
+      }
+    }
   },
   // status: {
   //   type: DataTypes.ENUM(subGroundStatus),
