@@ -15,6 +15,9 @@ class CommentService {
         },
       ],
       where: { groundId },
+      order: [
+        ['createdAt', 'DESC'],
+      ],
     });
   }
 
