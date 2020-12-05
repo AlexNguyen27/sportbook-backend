@@ -227,7 +227,9 @@ class OrderService {
 
   // ADMIN CAN NOT CREATE GROUND FOR OTHER ROLES
   static async createOrder(data: MutationCreateOrderArgs, userId: any): Promise<Order> {
-    const { subGroundId, startDay, endTime, startTime }: any = data;
+    const {
+      subGroundId, startDay, endTime, startTime
+    }: any = data;
 
     const formatStartDay = moment(startDay, 'DD/MM/YYYY');
     // CHECK IF USER AND CATEGORY EXITS
