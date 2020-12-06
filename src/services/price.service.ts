@@ -30,6 +30,9 @@ class PriceService {
           as: 'subGround',
         },
       ],
+      order: [
+        ['createdAt', 'DESC'],
+      ],
     });
   }
 

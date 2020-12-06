@@ -50,6 +50,9 @@ class SubGroundService {
             ]
           },
         ],
+        order: [
+          ['createdAt', 'ASC'],
+        ],
       });
     }
 
@@ -66,6 +69,9 @@ class SubGroundService {
             }
           ]
         },
+      ],
+      order: [
+        ['createdAt', 'ASC'],
       ],
     });
   }

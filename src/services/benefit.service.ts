@@ -4,7 +4,11 @@ import { ExistsError } from '../components/errors';
 
 class BenefitService {
   static getBenefits(): Promise<[]> {
-    return BenefitModel.findAll();
+    return BenefitModel.findAll({
+      order: [
+        ['createdAt', 'DESC'],
+      ],
+    });
   }
 
   static createBenefit(data: MutationCreateBenefitArgs) {

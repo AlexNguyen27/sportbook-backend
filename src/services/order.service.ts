@@ -14,26 +14,55 @@ import Ground from '../models/ground.model';
 const { Op } = require('sequelize');
 
 class OrderService {
-  static getOrdersByUserId({ userId }: any): Promise<Order[]> {
-    // todo get user id in token
-    return OrderModel.findAll({
-      where: {
-        userId,
-      },
-      include: [
-        {
-          model: User,
-          as: 'user',
+  static async getOrderById(id: any, user: any) {
+
+    // user => only get it own
+    // owner get can get order detail of it ground
+    let order: any;
+    try {
+      order = await OrderModel.findOne({
+        where: {
+          id,
         },
-        {
-          model: SubGround,
-          as: 'subGround',
-        },
-      ],
-      order: [
-        ['createdAt', 'DESC'],
-      ],
-    });
+        include: [
+          {
+            model: User,
+            as: 'user',
+            attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'address', 'avatar']
+          },
+          {
+            model: SubGround,
+            as: 'subGround',
+            include: [
+              {
+                model: Ground,
+                as: 'ground',
+                attributes: ['id', 'title', 'address', 'benefit', 'phone'],
+                include: [
+                  {
+                    model: User,
+                    as: 'user',
+                    attributes: ['firstName', 'lastName', 'email', 'phone']
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            model: History,
+            as: 'histories',
+            attributes: ['createdAt', 'orderStatus'],
+            order: [
+              ['createdAt', 'ASC'],
+            ]
+          },
+        ],
+      });
+      return { ...order.toJSON() };
+    } catch (error) {
+      if (!order) throw new ExistsError('Order not found');
+      throw error;
+    }
   }
 
   static getOrdersBySubGroundId({ subGroundId }: any): Promise<Order[]> {
