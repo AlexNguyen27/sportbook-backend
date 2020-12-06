@@ -1,7 +1,7 @@
 import { Model, DataTypes } from 'sequelize';
 
 import { sequelize } from './sequelize';
-import { ROLE, GENDER, FAVORITE_FOOT } from '../components/constants';
+import { ROLE, GENDER } from '../components/constants';
 import Ground from './ground.model';
 import Comment from './comment.model';
 import Order from './order.model';
@@ -9,7 +9,7 @@ import Rating from './rating.model';
 
 const genderType: any = Object.values(GENDER);
 const role: any = Object.values(ROLE);
-const favoriteFoot: any = Object.values(FAVORITE_FOOT);
+// const favoriteFoot: any = Object.values(FAVORITE_FOOT);
 class User extends Model {
   public id: string;
 
@@ -31,9 +31,11 @@ class User extends Model {
 
   public avatar: string;
 
-  public favoriteFoot: string;
+  public extraInfo: string;
 
-  public playRole: string;
+  public socialNetwork: string;
+
+  public momoQRCode: string;
 
   public role: string;
 
@@ -110,6 +112,15 @@ User.init(
     address: {
       type: DataTypes.JSONB,
     },
+    extraInfo: {
+      type: DataTypes.JSONB,
+    },
+    socialNetwork: {
+      type: DataTypes.JSONB,
+    },
+    momoQRCode: {
+      type: DataTypes.TEXT,
+    },
     dob: {
       type: DataTypes.DATEONLY,
       allowNull: true,
@@ -126,12 +137,6 @@ User.init(
     },
     avatar: {
       type: DataTypes.TEXT,
-    },
-    favoriteFoot: {
-      type: DataTypes.ENUM(favoriteFoot),
-    },
-    playRole: {
-      type: DataTypes.STRING,
     },
     role: {
       type: DataTypes.ENUM(role),

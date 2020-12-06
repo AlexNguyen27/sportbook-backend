@@ -38,6 +38,11 @@ const resolver: Resolvers = {
       (_: any, args: any, { user }: any): Promise<User> => UserService.uploadAvatar(args, user),
     ),
 
+    uploadMomoQRCode: middleware(
+      tokenValidation(ROLE.owner),
+      (_: any, args: any, { user }: any): Promise<User> => UserService.uploadMomoQRCode(args, user),
+    ),
+
     updateUser: middleware(
       tokenValidation(ROLE.admin, ROLE.owner, ROLE.user),
       (_: any, args: MutationUpdateUserArgs, { user }: any): Promise<User> => UserService.updateUser(args, user),

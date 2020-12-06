@@ -25,12 +25,12 @@ const typeDef = `
       address: String,
       dob: String,
       avatar: String,
-      favoriteFoot: String
-      playRole: String
       role: String
       regionCode: String,
       districtCode: String
       wardCode: String
+      extraInfo: ExtraInfoInput
+      socialNetwork: SocialNetworkInput
     ): User,
 
     deleteUser(id: String!): SuccessMessage,
@@ -46,6 +46,24 @@ const typeDef = `
       avatar: String
       userId: String
     ): User
+
+    uploadMomoQRCode(
+      momoQRCode: String
+    ): User
+  }
+
+  input ExtraInfoInput {
+    favoriteFoot: String
+    playRole: String
+    shirtNumber: String
+    teamName: String
+    favoritePlayTime: String
+  }
+
+  input SocialNetworkInput {
+    facebook: String
+    zalo: String
+    twitter: String
   }
 
   type User {
@@ -58,11 +76,12 @@ const typeDef = `
     address: String,
     dob: String,
     avatar: String,
-    favoriteFoot: String
-    playRole: String
     role: String
     createdAt: DateTime
     updatedAt: DateTime
+    extraInfo: String,
+    socialNetwork: String,
+    momoQRCode: String,
   }
 
   type LoyalUser {
@@ -86,9 +105,10 @@ const typeDef = `
     address: String,
     dob: String,
     avatar: String,
-    favoriteFoot: String
-    playRole: String
     role: String
+    momoQRCode: String,
+    socialNetwork: String
+    extraInfo: String
     createdAt: DateTime
     updatedAt: DateTime
   }
