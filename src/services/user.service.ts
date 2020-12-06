@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import moment from 'moment'
 import UserModel from '../models/user.model';
 import config from '../components/config';
 import { AuthenticationError, ExistsError, BusinessError } from '../components/errors';
@@ -164,15 +165,26 @@ class UserService {
     }
 
     const formatedUserInfo: any = { ...userInfo };
-    const { regionCode, districtCode, wardCode } = userInfo;
-    formatedUserInfo.address = JSON.stringify({
-      regionCode,
-      districtCode,
-      wardCode,
-      address: userInfo.address,
+    if (userInfo.phone) {
+      const {
+        regionCode, districtCode, wardCode
+      } = userInfo;
+      formatedUserInfo.address = JSON.stringify({
+        regionCode,
+        districtCode,
+        wardCode,
+        address: userInfo.address,
+      });
+      formatedUserInfo.dob = moment(userInfo.dob, 'DD-MM-YYYY');
+    }
+
+    formatedUserInfo.extraInfo = JSON.stringify({
+      ...userInfo.extraInfo,
     });
 
-    // formatedUserInfo.dob = moment(userInfo.dob, 'DD/MM/YYYY');
+    formatedUserInfo.socialNetwork = JSON.stringify({
+      ...userInfo.socialNetwork,
+    });
 
     await UserModel.update(formatedUserInfo, { where: { id: userId }, returning: true });
     const currentUser = await this.findUserById(userId);
@@ -208,6 +220,15 @@ class UserService {
 
     // GET USER ID FROM TOKEN
     await UserModel.update({ avatar }, { where: { id: user.id }, returning: true });
+    const currentUser = await this.findUserById(user.id);
+    return currentUser;
+  }
+
+  static async uploadMomoQRCode(data: any, user: any) {
+    const { momoQRCode } = data;
+
+    // GET USER ID FROM TOKEN
+    await UserModel.update({ momoQRCode }, { where: { id: user.id }, returning: true });
     const currentUser = await this.findUserById(user.id);
     return currentUser;
   }

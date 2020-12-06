@@ -252,6 +252,7 @@ export type Order = {
   price?: Maybe<Scalars['Float']>;
   subGround?: Maybe<SubGround>;
   user?: Maybe<User>;
+  histories?: Maybe<Array<Maybe<History>>>;
   createdAt?: Maybe<Scalars['DateTime']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
@@ -301,6 +302,7 @@ export type Query = {
   getAllGrounds?: Maybe<Array<Maybe<Ground>>>;
   histories?: Maybe<Array<Maybe<History>>>;
   orders?: Maybe<Array<Maybe<Order>>>;
+  getOrderById?: Maybe<Order>;
   prices?: Maybe<Array<Maybe<Price>>>;
   ratings?: Maybe<Array<Maybe<Rating>>>;
   subGrounds?: Maybe<Array<Maybe<SubGround>>>;
@@ -365,6 +367,11 @@ export type QueryOrdersArgs = {
 };
 
 
+export type QueryGetOrderByIdArgs = {
+  id: Scalars['String'];
+};
+
+
 export type QueryPricesArgs = {
   subGroundId?: Maybe<Scalars['String']>;
 };
@@ -386,6 +393,7 @@ export type Mutation = {
   deleteUser?: Maybe<SuccessMessage>;
   changePassword?: Maybe<SuccessMessage>;
   uploadAvatar?: Maybe<User>;
+  uploadMomoQRCode?: Maybe<User>;
   createBenefit?: Maybe<Benefit>;
   updateBenefit?: Maybe<Benefit>;
   deleteBenefit?: Maybe<SuccessMessage>;
@@ -431,12 +439,12 @@ export type MutationUpdateUserArgs = {
   address?: Maybe<Scalars['String']>;
   dob?: Maybe<Scalars['String']>;
   avatar?: Maybe<Scalars['String']>;
-  favoriteFoot?: Maybe<Scalars['String']>;
-  playRole?: Maybe<Scalars['String']>;
   role?: Maybe<Scalars['String']>;
   regionCode?: Maybe<Scalars['String']>;
   districtCode?: Maybe<Scalars['String']>;
   wardCode?: Maybe<Scalars['String']>;
+  extraInfo?: Maybe<ExtraInfoInput>;
+  socialNetwork?: Maybe<SocialNetworkInput>;
 };
 
 
@@ -456,6 +464,11 @@ export type MutationChangePasswordArgs = {
 export type MutationUploadAvatarArgs = {
   avatar?: Maybe<Scalars['String']>;
   userId?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationUploadMomoQrCodeArgs = {
+  momoQRCode?: Maybe<Scalars['String']>;
 };
 
 
@@ -632,6 +645,20 @@ export type MutationDeleteSubGroundArgs = {
   id: Scalars['String'];
 };
 
+export type ExtraInfoInput = {
+  favoriteFoot?: Maybe<Scalars['String']>;
+  playRole?: Maybe<Scalars['String']>;
+  shirtNumber?: Maybe<Scalars['String']>;
+  teamName?: Maybe<Scalars['String']>;
+  favoritePlayTime?: Maybe<Scalars['String']>;
+};
+
+export type SocialNetworkInput = {
+  facebook?: Maybe<Scalars['String']>;
+  zalo?: Maybe<Scalars['String']>;
+  twitter?: Maybe<Scalars['String']>;
+};
+
 export type User = {
   __typename?: 'User';
   id?: Maybe<Scalars['String']>;
@@ -643,11 +670,12 @@ export type User = {
   address?: Maybe<Scalars['String']>;
   dob?: Maybe<Scalars['String']>;
   avatar?: Maybe<Scalars['String']>;
-  favoriteFoot?: Maybe<Scalars['String']>;
-  playRole?: Maybe<Scalars['String']>;
   role?: Maybe<Scalars['String']>;
   createdAt?: Maybe<Scalars['DateTime']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
+  extraInfo?: Maybe<Scalars['String']>;
+  socialNetwork?: Maybe<Scalars['String']>;
+  momoQRCode?: Maybe<Scalars['String']>;
 };
 
 export type LoyalUser = {
@@ -672,9 +700,10 @@ export type LoginOutput = {
   address?: Maybe<Scalars['String']>;
   dob?: Maybe<Scalars['String']>;
   avatar?: Maybe<Scalars['String']>;
-  favoriteFoot?: Maybe<Scalars['String']>;
-  playRole?: Maybe<Scalars['String']>;
   role?: Maybe<Scalars['String']>;
+  momoQRCode?: Maybe<Scalars['String']>;
+  socialNetwork?: Maybe<Scalars['String']>;
+  extraInfo?: Maybe<Scalars['String']>;
   createdAt?: Maybe<Scalars['DateTime']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
@@ -820,6 +849,8 @@ export type ResolversTypes = ResolversObject<{
   SubGround: ResolverTypeWrapper<SubGround>;
   Query: ResolverTypeWrapper<{}>;
   Mutation: ResolverTypeWrapper<{}>;
+  ExtraInfoInput: ExtraInfoInput;
+  SocialNetworkInput: SocialNetworkInput;
   User: ResolverTypeWrapper<User>;
   LoyalUser: ResolverTypeWrapper<LoyalUser>;
   LoginOutput: ResolverTypeWrapper<LoginOutput>;
@@ -889,6 +920,8 @@ export type ResolversParentTypes = ResolversObject<{
   SubGround: SubGround;
   Query: {};
   Mutation: {};
+  ExtraInfoInput: ExtraInfoInput;
+  SocialNetworkInput: SocialNetworkInput;
   User: User;
   LoyalUser: LoyalUser;
   LoginOutput: LoginOutput;
@@ -1160,6 +1193,7 @@ export type OrderResolvers<ContextType = any, ParentType extends ResolversParent
   price?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   subGround?: Resolver<Maybe<ResolversTypes['SubGround']>, ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  histories?: Resolver<Maybe<Array<Maybe<ResolversTypes['History']>>>, ParentType, ContextType>;
   createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1209,6 +1243,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getAllGrounds?: Resolver<Maybe<Array<Maybe<ResolversTypes['Ground']>>>, ParentType, ContextType, RequireFields<QueryGetAllGroundsArgs, never>>;
   histories?: Resolver<Maybe<Array<Maybe<ResolversTypes['History']>>>, ParentType, ContextType, RequireFields<QueryHistoriesArgs, never>>;
   orders?: Resolver<Maybe<Array<Maybe<ResolversTypes['Order']>>>, ParentType, ContextType, RequireFields<QueryOrdersArgs, never>>;
+  getOrderById?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<QueryGetOrderByIdArgs, 'id'>>;
   prices?: Resolver<Maybe<Array<Maybe<ResolversTypes['Price']>>>, ParentType, ContextType, RequireFields<QueryPricesArgs, never>>;
   ratings?: Resolver<Maybe<Array<Maybe<ResolversTypes['Rating']>>>, ParentType, ContextType, RequireFields<QueryRatingsArgs, 'groundId'>>;
   subGrounds?: Resolver<Maybe<Array<Maybe<ResolversTypes['SubGround']>>>, ParentType, ContextType, RequireFields<QuerySubGroundsArgs, never>>;
@@ -1220,6 +1255,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteUser?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'id'>>;
   changePassword?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'currentPassword' | 'newPassword' | 'confirmPassword'>>;
   uploadAvatar?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUploadAvatarArgs, never>>;
+  uploadMomoQRCode?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUploadMomoQrCodeArgs, never>>;
   createBenefit?: Resolver<Maybe<ResolversTypes['Benefit']>, ParentType, ContextType, RequireFields<MutationCreateBenefitArgs, 'title'>>;
   updateBenefit?: Resolver<Maybe<ResolversTypes['Benefit']>, ParentType, ContextType, RequireFields<MutationUpdateBenefitArgs, 'id'>>;
   deleteBenefit?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteBenefitArgs, 'id'>>;
@@ -1255,11 +1291,12 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   address?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   dob?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  favoriteFoot?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  playRole?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   role?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  extraInfo?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  socialNetwork?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  momoQRCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1284,9 +1321,10 @@ export type LoginOutputResolvers<ContextType = any, ParentType extends Resolvers
   address?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   dob?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  favoriteFoot?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  playRole?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   role?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  momoQRCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  socialNetwork?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  extraInfo?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
