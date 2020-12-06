@@ -173,7 +173,7 @@ class GroundService {
               model: Price,
               as: 'prices',
               required: true,
-            }
+            },
           ]
         },
       ],
@@ -181,7 +181,32 @@ class GroundService {
         ['createdAt', 'DESC'],
       ],
     });
-    const availableGroundIds = availableGrounds.reduce((acc: any, curr: any) => ({ ...acc, [curr.id]: true }), {});
+
+    // const today = moment().format('DD-MM-YYYY');
+
+    const availableGroundIds = availableGrounds.reduce((acc: any, curr: any) => {
+      //  check price with startday today
+      // if dont have order => all available
+
+      // curr.subGrounds.map((sub: any) => {
+      //   sub.prices.forEach((price: any) => {
+      //     // DONT HAVE ORDER => PRICE STATUS ALL READY
+      //     sub.orders.forEach((order: any) => {
+      //       if (!(today === order.startDay
+      //         && order.startTime === price.startTime
+      //         && order.endTime === price.endTime
+      //         && (order.status === ORDER_STATUS.approved || order.status === ORDER_STATUS.paid))) {
+      //         console.log('today----------------', today);
+      //         console.log('order.startDay----------------', order.startDay);
+      //         return { ...acc, [curr.id]: true };
+      //       }
+      //     });
+      //   })
+      // });
+
+      // console.log('idd-----------------', curr.id)
+      return { ...acc, [curr.id]: true };
+    }, {});
 
     return groundList.map((ground: any) => {
       const groundItem = ground.toJSON();
@@ -295,7 +320,6 @@ class GroundService {
                 ...price,
                 status: SUB_GROUND_STATUS.ready
               }
-
             }
           }
         })

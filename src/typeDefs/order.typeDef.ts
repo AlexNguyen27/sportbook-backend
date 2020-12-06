@@ -1,6 +1,7 @@
 const typeDef = `
   extend type Query {
     orders(userId: String, subGroundId: String, status: String, fromDate: String, toDate: String): [Order]
+    getOrderById(id: String!): Order
   }
 
   extend type Mutation {
@@ -44,6 +45,7 @@ const typeDef = `
     price: Float
     subGround: SubGround
     user: User
+    histories: [History]
     createdAt: DateTime
     updatedAt: DateTime
   }

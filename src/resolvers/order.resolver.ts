@@ -4,7 +4,7 @@ import { middleware, schemaValidation, tokenValidation } from '../components';
 import {
   Order, Resolvers, MutationCreateOrderArgs, MutationUpdateOrderArgs, MutationUpdateOrderStatusArgs,
 } from '../types/graphql.type';
-import { ROLE, PAYMENT_TYPE, ORDER_STATUS } from '../components/constants';
+import { ROLE, PAYMENT_TYPE } from '../components/constants';
 import OrderService from '../services/order.service';
 
 const resolver: Resolvers = {
@@ -12,6 +12,10 @@ const resolver: Resolvers = {
     orders: middleware(
       tokenValidation(ROLE.owner, ROLE.admin, ROLE.user),
       (_: any, args: any, { user }: any): Promise<Order[]> => OrderService.getOrders(args, user),
+    ),
+    getOrderById: middleware(
+      tokenValidation(ROLE.owner, ROLE.admin, ROLE.user),
+      (_: any, args: any, { user }: any): Promise<Order[]> => OrderService.getOrderById(args.id, user),
     ),
   },
   Mutation: {

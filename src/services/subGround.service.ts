@@ -51,7 +51,7 @@ class SubGroundService {
           },
         ],
         order: [
-          ['createdAt', 'DESC'],
+          ['createdAt', 'ASC'],
         ],
       });
     }
@@ -71,7 +71,7 @@ class SubGroundService {
         },
       ],
       order: [
-        ['createdAt', 'DESC'],
+        ['createdAt', 'ASC'],
       ],
     });
   }
