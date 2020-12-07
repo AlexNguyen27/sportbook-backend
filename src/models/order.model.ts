@@ -94,11 +94,48 @@ Order.init({
   startTime: {
     type: DataTypes.TIME,
     allowNull: false,
+    validate: {
+      notEmpty: true,
+      startTimeShouldBeforeEndTime(startTime: any) {
+        const { endTime, startDay }: any = this;
+
+        if (endTime === null) return;
+        if (startTime === null || startTime.trim() === '') return;
+
+        const day = `${startDay} ${startTime}`;
+        // console.log('d--------------------', day);
+        // console.log('(moment(day).isBefore(moment())-----------', (moment(day, 'DD-MM-YYYY HH:mm:ss').isBefore(moment())));
+        if (moment(day, 'DD-MM-YYYY HH:mm:ss').isBefore(moment())) {
+          throw new Error('Start time or start day is invalied!');
+        }
+
+        if (moment(startTime, 'HH:mm:ss').isAfter(moment(endTime, 'HH:mm:ss'))) {
+          throw new Error('Start time shoudld before End time!');
+        }
+      }
+    }
   },
   endTime: {
     type: DataTypes.TIME,
     allowNull: false,
-  }, // can count duration later
+    validate: {
+      notEmpty: true,
+      endTimeShouldAfterStartTime(endTime: any) {
+        const { startTime, startDay }: any = this;
+
+        if (startTime === null) return;
+        if (endTime === null || endTime.trim() === '') return;
+
+        const day = `${startDay} ${endTime}`;
+        if (moment(day, 'DD-MM-YYYY HH:mm:ss').isBefore(moment())) {
+          throw new Error('End time or start day is invalid!');
+        }
+        if (moment(endTime, 'HH:mm:ss').isBefore(moment(startTime, 'HH:mm:ss'))) {
+          throw new Error('End time shoudld after Start time!');
+        }
+      }
+    }
+  },
   paymentType: {
     type: DataTypes.ENUM(paymentTypes),
     allowNull: false,
