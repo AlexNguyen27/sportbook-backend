@@ -154,6 +154,7 @@ class OrderService {
           {
             model: User,
             as: 'user',
+            attributes: ['id', 'firstName', 'lastName', 'email', 'phone']
           },
           {
             model: SubGround,
@@ -163,7 +164,7 @@ class OrderService {
               {
                 model: Ground,
                 as: 'ground',
-                attributes: [],
+                attributes: ['id', 'title'],
                 required: true,
                 where: {
                   userId: user.id
