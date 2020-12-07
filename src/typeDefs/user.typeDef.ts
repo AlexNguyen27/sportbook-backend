@@ -13,6 +13,7 @@ const typeDef = `
       role: String!,
       firstName: String,
       lastName: String
+      avatar: String
     ): User
 
     updateUser(

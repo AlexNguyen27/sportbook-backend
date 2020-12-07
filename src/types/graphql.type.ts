@@ -426,6 +426,7 @@ export type MutationCreateUserArgs = {
   role: Scalars['String'];
   firstName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
+  avatar?: Maybe<Scalars['String']>;
 };
 
 

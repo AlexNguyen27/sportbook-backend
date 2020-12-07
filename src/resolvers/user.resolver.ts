@@ -25,11 +25,6 @@ const resolver: Resolvers = {
   },
   Mutation: {
     createUser: middleware(
-      schemaValidation({
-        email: joi.string().required(),
-        password: joi.string().required(),
-        role: joi.string().valid(Object.values(ROLE)),
-      }),
       (_: any, args: MutationCreateUserArgs): Promise<User> => UserService.register(args),
     ),
 
