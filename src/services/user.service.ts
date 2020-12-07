@@ -18,6 +18,7 @@ class UserService {
   static async getUsers(filter: any, user: any): Promise<User[]> {
     let whereCondition = {};
 
+    // GET LOYAL CUSTOMER
     if (filter.weekday) {
       const condtion: any = {
         [Op.and]: [
