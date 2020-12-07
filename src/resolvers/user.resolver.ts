@@ -14,6 +14,7 @@ const resolver: Resolvers = {
       (_: any, args: any, { user }: any): Promise<User[]> => UserService.getUsers(args, user),
     ),
     login: (_: any, args: QueryLoginArgs): Promise<any> => UserService.login(args),
+    checkExitsEmail: (_: any, args: any): Promise<any> => UserService.checkExitsEmail(args),
     getUserById: middleware(
       tokenValidation(ROLE.admin, ROLE.owner, ROLE.user),
       (_: any, args: any, { user }: any): Promise<User> => UserService.getUserInfo(args.id, user),

@@ -1,9 +1,10 @@
 const typeDef = `
   type Query {
     users(role: String): [User]
-    login(email: String!, password: String!): LoginOutput
+    login(email: String!, password: String, hashPassword: String): LoginOutput
     getUserById(id: String!): User
     loyalCustomers(weekday: String): [LoyalUser]
+    checkExitsEmail(email: String!): Exit
   }
 
   type Mutation {
@@ -67,6 +68,10 @@ const typeDef = `
     twitter: String
   }
 
+  type Exit {
+    status: Boolean
+    hashPassword: String
+  }
   type User {
     id: String
     email: String,
