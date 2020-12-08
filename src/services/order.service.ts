@@ -106,6 +106,7 @@ class OrderService {
         ]
       };
 
+      // USER: ORDER HISTORY
       if (status === 'all') {
         whereCondtionUser = {
           createdAt: {
@@ -136,8 +137,24 @@ class OrderService {
       });
     }
     if (user.role === ROLE.owner) {
+
+      let ownerWhereCondition = {};
+      if (filter.userId) {
+        ownerWhereCondition = {
+          ...filter,
+          userId: filter.userId,
+        };
+      }
+
       return OrderModel.findAll({
+        where: {
+          ...ownerWhereCondition,
+        },
         include: [
+          {
+            model: User,
+            as: 'user',
+          },
           {
             model: SubGround,
             as: 'subGround',

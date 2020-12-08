@@ -103,13 +103,11 @@ Order.init({
         if (startTime === null || startTime.trim() === '') return;
 
         const day = `${startDay} ${startTime}`;
-        // console.log('d--------------------', day);
-        // console.log('(moment(day).isBefore(moment())-----------', (moment(day, 'DD-MM-YYYY HH:mm:ss').isBefore(moment())));
         if (moment(day, 'DD-MM-YYYY HH:mm:ss').isBefore(moment())) {
           throw new Error('Start time or start day is invalied!');
         }
 
-        if (moment(startTime, 'HH:mm:ss').isAfter(moment(endTime, 'HH:mm:ss'))) {
+        if (moment(`${startDay} ${startTime}`, 'DD-MM-YYYY HH:mm:ss').isAfter(moment(`${startDay} ${endTime}`, 'DD-MM-YYYY HH:mm:ss'))) {
           throw new Error('Start time shoudld before End time!');
         }
       }
@@ -130,7 +128,8 @@ Order.init({
         if (moment(day, 'DD-MM-YYYY HH:mm:ss').isBefore(moment())) {
           throw new Error('End time or start day is invalid!');
         }
-        if (moment(endTime, 'HH:mm:ss').isBefore(moment(startTime, 'HH:mm:ss'))) {
+
+        if (moment(`${startDay} ${startTime}`, 'DD-MM-YYYY HH:mm:ss').isAfter(moment(`${startDay} ${endTime}`, 'DD-MM-YYYY HH:mm:ss'))) {
           throw new Error('End time shoudld after Start time!');
         }
       }

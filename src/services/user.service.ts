@@ -18,6 +18,7 @@ class UserService {
   static async getUsers(filter: any, user: any): Promise<User[]> {
     let whereCondition = {};
 
+    // GET LOYAL CUSTOMER
     if (filter.weekday) {
       const condtion: any = {
         [Op.and]: [
@@ -90,9 +91,17 @@ class UserService {
       throw new AuthenticationError('Email or password incorrect!');
     }
 
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) {
-      throw new AuthenticationError('Email or password is incorrect!');
+    if (!data.hashPassword) {
+      const match = await bcrypt.compare(password, user.password);
+      if (!match) {
+        throw new AuthenticationError('Email or password is incorrect!');
+      }
+    } else {
+      // compare user with hash password
+      const isMatch = data.hashPassword === user.password;
+      if (!isMatch) {
+        throw new AuthenticationError('Hash password is incorrect!');
+      }
     }
 
     const { id, role } = user;
@@ -145,6 +154,22 @@ class UserService {
     return UserModel.findOne({ where: { id } }).then((user) => {
       if (!user) throw new ExistsError('User not found');
       return { ...user.toJSON() };
+    });
+  }
+
+  static checkExitsEmail(filter: any) {
+    return UserModel.findOne({ where: { email: filter.email } }).then((user) => {
+      if (!user) {
+        return {
+          status: false,
+          hashPassword: '',
+        };
+      }
+
+      return {
+        status: true,
+        hashPassword: user.password
+      };
     });
   }
 

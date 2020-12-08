@@ -14,6 +14,7 @@ const resolver: Resolvers = {
       (_: any, args: any, { user }: any): Promise<User[]> => UserService.getUsers(args, user),
     ),
     login: (_: any, args: QueryLoginArgs): Promise<any> => UserService.login(args),
+    checkExitsEmail: (_: any, args: any): Promise<any> => UserService.checkExitsEmail(args),
     getUserById: middleware(
       tokenValidation(ROLE.admin, ROLE.owner, ROLE.user),
       (_: any, args: any, { user }: any): Promise<User> => UserService.getUserInfo(args.id, user),
@@ -25,11 +26,6 @@ const resolver: Resolvers = {
   },
   Mutation: {
     createUser: middleware(
-      schemaValidation({
-        email: joi.string().required(),
-        password: joi.string().required(),
-        role: joi.string().valid(Object.values(ROLE)),
-      }),
       (_: any, args: MutationCreateUserArgs): Promise<User> => UserService.register(args),
     ),
 
