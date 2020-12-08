@@ -31,7 +31,7 @@ class PriceService {
         },
       ],
       order: [
-        ['createdAt', 'DESC'],
+        ['startTime', 'ASC'],
       ],
     });
   }

@@ -11,6 +11,8 @@ const config = {
   pgDB: process.env.PG_DB || 'sport_booking',
   pgUser: process.env.PG_USER || 'postgres',
   pgPassword: process.env.PG_PASSWORD || 'postgres',
+  redisHost: process.env.REDIS_HOST || 'redis',
+  redisPort: (process.env.REDIS_PORT as number | undefined) || 6379,
 };
 
 export default config;

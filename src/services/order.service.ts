@@ -10,12 +10,12 @@ import SubGround from '../models/subGround.model';
 import { sequelize } from '../models/sequelize';
 import History from '../models/history.model';
 import Ground from '../models/ground.model';
+import { redis } from '../components/redis';
 
 const { Op } = require('sequelize');
 
 class OrderService {
   static async getOrderById(id: any, user: any) {
-
     // user => only get it own
     // owner get can get order detail of it ground
     let order: any;
@@ -137,7 +137,6 @@ class OrderService {
       });
     }
     if (user.role === ROLE.owner) {
-
       let ownerWhereCondition = {};
       if (filter.userId) {
         ownerWhereCondition = {
@@ -154,6 +153,7 @@ class OrderService {
           {
             model: User,
             as: 'user',
+            attributes: ['id', 'firstName', 'lastName', 'email', 'phone']
           },
           {
             model: SubGround,
@@ -163,7 +163,7 @@ class OrderService {
               {
                 model: Ground,
                 as: 'ground',
-                attributes: [],
+                attributes: ['id', 'title'],
                 required: true,
                 where: {
                   userId: user.id
@@ -303,10 +303,20 @@ class OrderService {
       }],
     });
 
+    // TODO
+    // SET REDIS KEY AND TIME OUT HERE
+    // KEY : ORDER ID
+    // VALUE: ORDER STATUS WAITING FOR APPROVE
+    // SET TIME OUT FOR THAT KEY
+    // TODO EX: 30 minutes
+    if (newOrder) {
+      redis.set(newOrder.id, newOrder.status, 'EX', 5 * 60); // TEST FOR 5 MINTUES
+    }
+
     return this.findOrderById({ id: newOrder.id });
   }
 
-  // todo: DONT NEED TO UPDATE ORDER
+  // todo: ADMIN DONT NEED TO UPDATE ORDER DETAIL
   static async updateOrder(data: any, user: any) {
     const { id, subGroundId } = data;
     // const { userId } = user;
