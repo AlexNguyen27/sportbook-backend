@@ -15,7 +15,6 @@ const { Op } = require('sequelize');
 
 class OrderService {
   static async getOrderById(id: any, user: any) {
-
     // user => only get it own
     // owner get can get order detail of it ground
     let order: any;
@@ -137,7 +136,6 @@ class OrderService {
       });
     }
     if (user.role === ROLE.owner) {
-
       let ownerWhereCondition = {};
       if (filter.userId) {
         ownerWhereCondition = {
@@ -303,6 +301,13 @@ class OrderService {
         as: 'histories',
       }],
     });
+
+    // TODO
+    // SET REDIS KEY AND TIME OUT HERE
+    // KEY : ORDER ID
+    // VALUE: ORDER STATUS WAITING FOR APPROVE
+    //
+
 
     return this.findOrderById({ id: newOrder.id });
   }
