@@ -4,16 +4,16 @@ FROM node:12 AS builder
 WORKDIR /home/node/app
 
 # Copy dependency information and install all dependencies
-COPY package.json yarn.lock ./
+COPY package.json package-lock.json ./
 
-RUN yarn install --frozen-lockfile
+RUN npm install --frozen-lockfile
 
 # Copy source code (and all other relevant files)
 COPY src ./src
 
 # Build code
 COPY tsconfig.json tsconfig.build.json ./
-RUN yarn build
+RUN npm run build
 
 # Run-time stage
 FROM node:12-alpine
@@ -24,8 +24,8 @@ EXPOSE 9000
 WORKDIR /home/node/app
 
 # Copy dependency information and install production-only dependencies
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile --production
+COPY package.json package-lock.json ./
+RUN npm install --frozen-lockfile --production
 
 # Copy results from previous stage
 RUN mkdir build
