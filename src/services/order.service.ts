@@ -11,6 +11,7 @@ import { sequelize } from '../models/sequelize';
 import History from '../models/history.model';
 import Ground from '../models/ground.model';
 import { redis } from '../components/redis';
+import HistoryService from './history.service';
 
 const { Op } = require('sequelize');
 
@@ -390,10 +391,11 @@ class OrderService {
 
     try {
       await OrderModel.update(data, { where: { id }, transaction });
-      await History.create({
+      await HistoryService.createHistory({
         orderId: id,
         orderStatus: data.status,
-      }, { transaction });
+      }, transaction);
+
       await transaction.commit();
     } catch (error) {
       await transaction.rollback();
