@@ -34,6 +34,9 @@ class HistoryService {
     });
   }
 
+  static createHistory(data: any, transaction: any) {
+    return HistoryModel.create(data, transaction);
+  }
 }
 
 export default HistoryService;
