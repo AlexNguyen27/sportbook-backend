@@ -10,7 +10,7 @@ import SubGround from '../models/subGround.model';
 import { sequelize } from '../models/sequelize';
 import History from '../models/history.model';
 import Ground from '../models/ground.model';
-import { redis } from '../components/redis';
+// import { redis } from '../components/redis';
 import HistoryService from './history.service';
 
 const { Op } = require('sequelize');
@@ -310,9 +310,9 @@ class OrderService {
     // VALUE: ORDER STATUS WAITING FOR APPROVE
     // SET TIME OUT FOR THAT KEY
     // TODO EX: 30 minutes
-    if (newOrder) {
-      redis.set(newOrder.id, newOrder.status, 'EX', 5 * 60); // TEST FOR 5 MINTUES
-    }
+    // if (newOrder) {
+    //   redis.set(newOrder.id, newOrder.status, 'EX', 5 * 60); // TEST FOR 5 MINTUES
+    // }
 
     return this.findOrderById({ id: newOrder.id });
   }

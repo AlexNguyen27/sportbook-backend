@@ -1,19 +1,19 @@
-import BaseRedis, { Redis } from 'ioredis';
-import { logger } from 'juno-js';
+// import BaseRedis, { Redis } from 'ioredis';
+// import { logger } from 'juno-js';
 
-import { config } from '.';
+// import { config } from '.';
 
-// eslint-disable-next-line import/no-mutable-exports
-let redis: Redis;
+// // eslint-disable-next-line import/no-mutable-exports
+// let redis: Redis;
 
-const initRedis = () => {
-  redis = new BaseRedis({ host: config.redisHost, port: config.redisPort });
+// const initRedis = () => {
+//   redis = new BaseRedis({ host: config.redisHost, port: config.redisPort });
 
-  logger.info('~~ Initial Redis ~~')
-  redis.on('error', (e: any) => {
-    logger.error('Redis connection failed', e);
-    process.exit(0);
-  });
-};
+//   logger.info('~~ Initial Redis ~~')
+//   redis.on('error', (e: any) => {
+//     logger.error('Redis connection failed', e);
+//     process.exit(0);
+//   });
+// };
 
-export { initRedis, redis };
+// export { initRedis, redis };
