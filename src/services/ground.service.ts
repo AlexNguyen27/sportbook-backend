@@ -101,7 +101,7 @@ class GroundService {
             subGround.orders.forEach((order: any) => {
               console.log('here------------------order.startDay--------', order.startDay, startDay);
               // compare start time with start day and start time of order
-              if (startTime === order.startTime && order.startDay === startDay) {
+              if (moment(startTime, 'HH:mm:ss').diff(moment(order.startTime, 'HH:mm:ss')) === 0 && moment(order.startDay).isSame(startDay)) {
                 isReady = false;
               }
             });
