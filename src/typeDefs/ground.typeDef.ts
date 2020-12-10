@@ -2,7 +2,8 @@ const typeDef = `
   extend type Query {
     grounds(date: String, startDate: String, endDate: String): [Ground],
     getGroundById(id: String!, startDay: String): Ground,
-    getAllGrounds(isAvailable: Boolean): [Ground]
+    getAllGrounds(isAvailable: Boolean): [Ground],
+    searchGrounds(search: String, districtName: String, startDay: String, startTime: String): [Ground]
   }
 
   extend type Mutation {
@@ -10,12 +11,9 @@ const typeDef = `
       title: String!
       description: String!
       phone: String!
-      address: String!,
+      address: AddressInput,
       benefit: String
       categoryId: String!
-      regionCode: String!
-      districtCode: String!
-      wardCode: String!
       image: String,
     ): Ground
 
@@ -24,16 +22,27 @@ const typeDef = `
       title: String!
       description: String!
       phone: String!
-      address: String!,
+      address: AddressInput,
       benefit: String
       categoryId: String!
-      regionCode: String!
-      districtCode: String!
-      wardCode: String!,
       image: String,
     ): Ground
 
     deleteGround(id: String!): SuccessMessage
+  }
+
+  type Address {
+    regionCode: String,
+    districtCode: String,
+    wardCode: String
+    address: String
+  }
+
+  input AddressInput {
+    regionCode: String,
+    districtCode: String,
+    wardCode: String
+    address: String
   }
 
   type Ground {
@@ -41,7 +50,7 @@ const typeDef = `
     title: String
     description: String
     phone: String
-    address: String,
+    address: Address,
     benefit: String
     image: String,
     isAvailable: Boolean,

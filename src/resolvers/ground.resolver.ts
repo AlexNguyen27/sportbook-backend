@@ -19,22 +19,13 @@ const resolver: Resolvers = {
     getAllGrounds: middleware(
       (_: any, args: any) => GroundService.getAllGrounds(args),
     ),
+    searchGrounds: middleware(
+      (_: any, args: any) => GroundService.searchGrounds(args),
+    ),
   },
   Mutation: {
     createGround: middleware(
       tokenValidation(ROLE.owner, ROLE.admin),
-      schemaValidation({
-        title: joi.string(),
-        description: joi.string(),
-        phone: joi.string(),
-        address: joi.string(),
-        benefit: joi.string(),
-        image: joi.string(),
-        categoryId: joi.string(),
-        regionCode: joi.string(),
-        districtCode: joi.string(),
-        wardCode: joi.string(),
-      }),
       (_: any, args: MutationCreateGroundArgs, { user: { userId } }: any): Promise<Ground> => GroundService.createGround(args, userId),
     ),
     updateGround: middleware(

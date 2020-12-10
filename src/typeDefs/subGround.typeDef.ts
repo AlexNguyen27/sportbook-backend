@@ -28,6 +28,7 @@ const typeDef = `
     ground: Ground
     createdAt: DateTime
     prices: [Price]
+    orders: [Order]
   }
 `;
 

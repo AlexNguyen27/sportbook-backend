@@ -13,12 +13,166 @@ import SubGround from '../models/subGround.model';
 import Order from '../models/order.model';
 import { sequelize } from '../models/sequelize';
 import Price from '../models/price.model';
+import DISTRICT from '../components/locales/districts.json';
+import REGION from '../components/locales/regions.json';
+import WARD from '../components/locales/wards.json';
 
 const { Op } = require('sequelize');
 
 const { Sequelize } = sequelize;
 
+// Tôi muốn tìm sân ở quận 12?
+// => trả về cho tui list sân ở quận 12 (có thể sort theo độ phổ biến trước), tui chỉ hiển thị ra 3-5 sân thôi
+
+// Tao muốn thuê sân đại châu vào chiều mai?
+// => Trả về true or false.
+// Nếu True: trả về cái link của sân đó để người ta đặt
+// Nếu False: không làm gì cả
+
+// Cho tao xin sdt của sân hiệp phú?
+// => Trả về số điện thoại của sân đó, (ở đây giả sử các sân có tên khác nhau rồi)
+
+// Địa chỉ sân chảo lửa?
+// => Trả về địa chỉ của sân.
+// Nếu không có sân trả về không có sân tên đó
+
 class GroundService {
+  static async searchGrounds(filter: any) {
+    const {
+      search,
+      districtName,
+      regionName,
+      wardName,
+      limit,
+      startTime,
+      startDay, // DD-MM-YYYYY
+    } = filter;
+
+    // ASKING TO ORDER
+    if (search && startTime && startDay) {
+      const condition: any = {
+        where: Sequelize.where(
+          Sequelize.fn('similarity',
+            Sequelize.col('"GROUND"."title"'),
+            `${search}`), { [Op.gte]: '0.1' }
+        ),
+        include: [
+          {
+            model: SubGround,
+            // attributes: ['id', 'name'], // misss
+            required: true,
+            as: 'subGrounds',
+            include: [
+              {
+                model: Price,
+                // attributes: ['id', 'startTime', 'endTime'],
+                as: 'prices',
+                where: {
+                  startTime: moment(startTime, 'HH:mm:ss').format('HH:mm:ss'),
+                }
+              },
+              {
+                model: Order,
+                // attributes: ['id', 'startTime', 'endTime'],
+                as: 'orders',
+                required: false,
+                where: {
+                  status: [ORDER_STATUS.approved, ORDER_STATUS.paid]
+                  // startTime: Sequelize.where(Sequelize.col('ORDER.startTime'), '=', Sequelize.col('PRICE.startTime')),
+                }
+              }
+            ]
+          }
+        ],
+        limit: limit || 5,
+      }
+
+      const list: any = await GroundModel.findAll({
+        ...condition
+      });
+
+      // eslint-disable-next-line array-callback-return
+      const formatData = list.reduce((acc: any, curr: any) => {
+        let isReady = true;
+        curr.subGrounds.forEach((subGround: any) => {
+          if (!subGround.orders.length) {
+            isReady = true;
+          } else {
+            subGround.orders.forEach((order: any) => {
+              console.log('here------------------order.startDay--------', order.startDay, startDay);
+              // compare start time with start day and start time of order
+              if (startTime === order.startTime && order.startDay === startDay) {
+                isReady = false;
+              }
+            });
+          }
+        });
+        if (isReady) {
+          return [...acc, curr];
+        }
+        return [...acc];
+      }, []);
+
+      return formatData;
+    }
+
+    // FIND REGION NAME
+    if (regionName) {
+      const region: any = Object.values(REGION).find((item: any) => item.name.localeCompare(regionName, 'vn', { sensitivity: 'base' }) === 0);
+      if (!region) return [];
+      return GroundModel.findAll({
+        where: {
+          address: {
+            [Op.contains]: Sequelize.cast(`{"regionCode": "${region.code}"}`, 'jsonb')
+          }
+        },
+        limit: limit || 5,
+      });
+    }
+    // FIND DISTRICT CODE
+    if (districtName) {
+      const district: any = Object.values(DISTRICT).find((item: any) => item.name.localeCompare(districtName, 'vn', { sensitivity: 'base' }) === 0);
+      if (!district) return [];
+      return GroundModel.findAll({
+        where: {
+          address: {
+            [Op.contains]: Sequelize.cast(`{"districtCode": "${district.code}"}`, 'jsonb')
+          }
+        },
+        limit: limit || 5,
+      });
+    }
+
+    // FIND WARD NAME
+    if (wardName) {
+      const ward: any = Object.values(WARD).find((item: any) => item.name.localeCompare(wardName, 'vn', { sensitivity: 'base' }) === 0);
+      if (!ward) return [];
+      return GroundModel.findAll({
+        where: {
+          address: {
+            [Op.contains]: Sequelize.cast(`{"wardCode": "${ward.code}"}`, 'jsonb')
+          }
+        },
+        limit: limit || 5,
+      });
+    }
+
+    // SEARCH WITH PHONE AND TITLE
+    const condition: any = {
+      where: Sequelize.where(
+        Sequelize.fn('similarity',
+          Sequelize.col('"GROUND"."title"'),
+          `${search}`), { [Op.gte]: '0.1' }
+      ),
+      limit: limit || 5,
+    }
+
+    const list = await GroundModel.findAll({
+      ...condition
+    });
+    return list;
+  }
+
   static async getGrounds(filter: any, user: any): Promise<Ground[]> {
     let whereCondition = {};
 
@@ -357,26 +511,12 @@ class GroundService {
   static async createGround(data: MutationCreateGroundArgs, userId: any): Promise<Ground> {
     const {
       categoryId,
-      regionCode,
-      districtCode,
-      wardCode,
-      address,
     } = data;
     // CHECK IF USER AND CATEGORY EXITS
     await UserService.findUserById(userId);
     await CategoryService.findCategoryById(categoryId);
 
-    const formatedData = {
-      ...data,
-      address: JSON.stringify({
-        regionCode,
-        districtCode,
-        wardCode,
-        address,
-      }),
-    };
-
-    const newGround = await GroundModel.create({ ...formatedData, userId });
+    const newGround = await GroundModel.create({ ...data, userId });
 
     return this.findGroundById({ id: newGround.id });
   }
@@ -385,10 +525,6 @@ class GroundService {
     const {
       id,
       categoryId,
-      regionCode,
-      districtCode,
-      wardCode,
-      address,
     } = data;
     const { role, userId } = user;
 
@@ -401,17 +537,7 @@ class GroundService {
       await CategoryService.findCategoryById(categoryId);
     }
 
-    const formatedData = {
-      ...data,
-      address: JSON.stringify({
-        regionCode,
-        districtCode,
-        wardCode,
-        address,
-      }),
-    };
-
-    await GroundModel.update({ ...formatedData }, { where: { id } });
+    await GroundModel.update({ ...data }, { where: { id } });
     const updatedGround = await this.findGroundById({ id });
     return updatedGround;
   }
