@@ -294,12 +294,14 @@ export type Query = {
   login?: Maybe<LoginOutput>;
   getUserById?: Maybe<User>;
   loyalCustomers?: Maybe<Array<Maybe<LoyalUser>>>;
+  checkExitsEmail?: Maybe<Exit>;
   benefits?: Maybe<Array<Maybe<Benefit>>>;
   categories?: Maybe<Array<Maybe<Category>>>;
   getCommentsbyGroundId?: Maybe<Array<Maybe<Comment>>>;
   grounds?: Maybe<Array<Maybe<Ground>>>;
   getGroundById?: Maybe<Ground>;
   getAllGrounds?: Maybe<Array<Maybe<Ground>>>;
+  searchGrounds?: Maybe<Array<Maybe<Ground>>>;
   histories?: Maybe<Array<Maybe<History>>>;
   orders?: Maybe<Array<Maybe<Order>>>;
   getOrderById?: Maybe<Order>;
@@ -316,7 +318,8 @@ export type QueryUsersArgs = {
 
 export type QueryLoginArgs = {
   email: Scalars['String'];
-  password: Scalars['String'];
+  password?: Maybe<Scalars['String']>;
+  hashPassword?: Maybe<Scalars['String']>;
 };
 
 
@@ -327,6 +330,11 @@ export type QueryGetUserByIdArgs = {
 
 export type QueryLoyalCustomersArgs = {
   weekday?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryCheckExitsEmailArgs = {
+  email: Scalars['String'];
 };
 
 
@@ -350,6 +358,11 @@ export type QueryGetGroundByIdArgs = {
 
 export type QueryGetAllGroundsArgs = {
   isAvailable?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type QuerySearchGroundsArgs = {
+  search?: Maybe<Scalars['String']>;
 };
 
 
@@ -660,6 +673,12 @@ export type SocialNetworkInput = {
   twitter?: Maybe<Scalars['String']>;
 };
 
+export type Exit = {
+  __typename?: 'Exit';
+  status?: Maybe<Scalars['Boolean']>;
+  hashPassword?: Maybe<Scalars['String']>;
+};
+
 export type User = {
   __typename?: 'User';
   id?: Maybe<Scalars['String']>;
@@ -852,6 +871,7 @@ export type ResolversTypes = ResolversObject<{
   Mutation: ResolverTypeWrapper<{}>;
   ExtraInfoInput: ExtraInfoInput;
   SocialNetworkInput: SocialNetworkInput;
+  Exit: ResolverTypeWrapper<Exit>;
   User: ResolverTypeWrapper<User>;
   LoyalUser: ResolverTypeWrapper<LoyalUser>;
   LoginOutput: ResolverTypeWrapper<LoginOutput>;
@@ -923,6 +943,7 @@ export type ResolversParentTypes = ResolversObject<{
   Mutation: {};
   ExtraInfoInput: ExtraInfoInput;
   SocialNetworkInput: SocialNetworkInput;
+  Exit: Exit;
   User: User;
   LoyalUser: LoyalUser;
   LoginOutput: LoginOutput;
@@ -1233,15 +1254,17 @@ export type SubGroundResolvers<ContextType = any, ParentType extends ResolversPa
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType, RequireFields<QueryUsersArgs, never>>;
-  login?: Resolver<Maybe<ResolversTypes['LoginOutput']>, ParentType, ContextType, RequireFields<QueryLoginArgs, 'email' | 'password'>>;
+  login?: Resolver<Maybe<ResolversTypes['LoginOutput']>, ParentType, ContextType, RequireFields<QueryLoginArgs, 'email'>>;
   getUserById?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryGetUserByIdArgs, 'id'>>;
   loyalCustomers?: Resolver<Maybe<Array<Maybe<ResolversTypes['LoyalUser']>>>, ParentType, ContextType, RequireFields<QueryLoyalCustomersArgs, never>>;
+  checkExitsEmail?: Resolver<Maybe<ResolversTypes['Exit']>, ParentType, ContextType, RequireFields<QueryCheckExitsEmailArgs, 'email'>>;
   benefits?: Resolver<Maybe<Array<Maybe<ResolversTypes['Benefit']>>>, ParentType, ContextType>;
   categories?: Resolver<Maybe<Array<Maybe<ResolversTypes['Category']>>>, ParentType, ContextType>;
   getCommentsbyGroundId?: Resolver<Maybe<Array<Maybe<ResolversTypes['Comment']>>>, ParentType, ContextType, RequireFields<QueryGetCommentsbyGroundIdArgs, 'groundId'>>;
   grounds?: Resolver<Maybe<Array<Maybe<ResolversTypes['Ground']>>>, ParentType, ContextType, RequireFields<QueryGroundsArgs, never>>;
   getGroundById?: Resolver<Maybe<ResolversTypes['Ground']>, ParentType, ContextType, RequireFields<QueryGetGroundByIdArgs, 'id'>>;
   getAllGrounds?: Resolver<Maybe<Array<Maybe<ResolversTypes['Ground']>>>, ParentType, ContextType, RequireFields<QueryGetAllGroundsArgs, never>>;
+  searchGrounds?: Resolver<Maybe<Array<Maybe<ResolversTypes['Ground']>>>, ParentType, ContextType, RequireFields<QuerySearchGroundsArgs, never>>;
   histories?: Resolver<Maybe<Array<Maybe<ResolversTypes['History']>>>, ParentType, ContextType, RequireFields<QueryHistoriesArgs, never>>;
   orders?: Resolver<Maybe<Array<Maybe<ResolversTypes['Order']>>>, ParentType, ContextType, RequireFields<QueryOrdersArgs, never>>;
   getOrderById?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<QueryGetOrderByIdArgs, 'id'>>;
@@ -1280,6 +1303,12 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createSubGround?: Resolver<Maybe<ResolversTypes['SubGround']>, ParentType, ContextType, RequireFields<MutationCreateSubGroundArgs, 'name'>>;
   updateSubGround?: Resolver<Maybe<ResolversTypes['SubGround']>, ParentType, ContextType, RequireFields<MutationUpdateSubGroundArgs, 'name'>>;
   deleteSubGround?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteSubGroundArgs, 'id'>>;
+}>;
+
+export type ExitResolvers<ContextType = any, ParentType extends ResolversParentTypes['Exit'] = ResolversParentTypes['Exit']> = ResolversObject<{
+  status?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  hashPassword?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
@@ -1390,6 +1419,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   SubGround?: SubGroundResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  Exit?: ExitResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   LoyalUser?: LoyalUserResolvers<ContextType>;
   LoginOutput?: LoginOutputResolvers<ContextType>;
