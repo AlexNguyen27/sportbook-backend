@@ -5,7 +5,7 @@ const subGroundStatus: any = Object.values(SUB_GROUND_STATUS);
 
 const orderStatus: any = Object.values(ORDER_STATUS);
 const migration = {
-  up: (queryInterface: QueryInterface) => queryInterface.sequelize.transaction(async transaction => {
+  up: (queryInterface: QueryInterface) => queryInterface.sequelize.transaction(async (transaction) => {
     await queryInterface.removeColumn('PRICE', 'status', { transaction });
     await queryInterface.removeColumn('ORDER', 'status', { transaction });
     await queryInterface.removeColumn('HISTORY', 'orderStatus', { transaction });
@@ -25,7 +25,7 @@ const migration = {
       allowNull: false,
     }, { transaction });
   }),
-  down: (queryInterface: QueryInterface) => queryInterface.sequelize.transaction(async transaction => {
+  down: (queryInterface: QueryInterface) => queryInterface.sequelize.transaction(async (transaction) => {
     await queryInterface.addColumn('PRICE', 'status', {
       type: DataTypes.ENUM(subGroundStatus),
       allowNull: false,
