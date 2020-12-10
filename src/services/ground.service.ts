@@ -118,7 +118,8 @@ class GroundService {
 
     // FIND REGION NAME
     if (regionName) {
-      const region: any = Object.values(REGION).find((item: any) => item.name.localeCompare(regionName, 'vn', { sensitivity: 'base' }) === 0);
+      const region: any = Object.values(REGION).find((item: any) => item.name.localeCompare(regionName, 'vn', { sensitivity: 'base' }) === 0
+        || item.name_with_type.localeCompare(regionName, 'vn', { sensitivity: 'base' }) === 0);
       if (!region) return [];
       return GroundModel.findAll({
         where: {
@@ -131,7 +132,8 @@ class GroundService {
     }
     // FIND DISTRICT CODE
     if (districtName) {
-      const district: any = Object.values(DISTRICT).find((item: any) => item.name.localeCompare(districtName, 'vn', { sensitivity: 'base' }) === 0);
+      const district: any = Object.values(DISTRICT).find((item: any) => item.name.localeCompare(districtName, 'vn', { sensitivity: 'base' }) === 0
+        || item.name_with_type.localeCompare(districtName, 'vn', { sensitivity: 'base' }) === 0);
       if (!district) return [];
       return GroundModel.findAll({
         where: {
@@ -145,7 +147,8 @@ class GroundService {
 
     // FIND WARD NAME
     if (wardName) {
-      const ward: any = Object.values(WARD).find((item: any) => item.name.localeCompare(wardName, 'vn', { sensitivity: 'base' }) === 0);
+      const ward: any = Object.values(WARD).find((item: any) => item.name.localeCompare(wardName, 'vn', { sensitivity: 'base' }) === 0
+        || item.name_with_type.localeCompare(wardName, 'vn', { sensitivity: 'base' }) === 0);
       if (!ward) return [];
       return GroundModel.findAll({
         where: {
