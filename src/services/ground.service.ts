@@ -47,6 +47,21 @@ class GroundService {
       startTime,
       startDay, // DD-MM-YYYYY
     } = filter;
+    console.log('filter----------------------', filter)
+
+    if (!search && !districtName && !regionName && !wardName && !startDay && !startTime) {
+      return GroundModel.findAll({
+        include: [
+          {
+            model: Category,
+            as: 'category'
+          }
+        ],
+        order: [
+          ['createdAt', 'ASC'],
+        ],
+      });
+    }
 
     // ASKING TO ORDER
     if (search && startTime && startDay) {
@@ -116,62 +131,92 @@ class GroundService {
       return formatData;
     }
 
-    // FIND REGION NAME
-    if (regionName) {
-      const region: any = Object.values(REGION).find((item: any) => item.name.localeCompare(regionName, 'vn', { sensitivity: 'base' }) === 0
-        || item.name_with_type.localeCompare(regionName, 'vn', { sensitivity: 'base' }) === 0);
-      if (!region) return [];
-      return GroundModel.findAll({
-        where: {
-          address: {
+    // FIND REGION, DISTRCT, WARD NAME
+    if (regionName || districtName || wardName) {
+      let andCondition = {};
+      if (regionName) {
+        const region: any = Object.values(REGION).find((item: any) => item.name.localeCompare(regionName, 'vn', { sensitivity: 'base' }) === 0
+          || item.name_with_type.localeCompare(regionName, 'vn', { sensitivity: 'base' }) === 0);
+
+        if (region) {
+          andCondition = {
             [Op.contains]: Sequelize.cast(`{"regionCode": "${region.code}"}`, 'jsonb')
           }
-        },
-        limit: limit || 5,
-      });
-    }
-    // FIND DISTRICT CODE
-    if (districtName) {
-      const district: any = Object.values(DISTRICT).find((item: any) => item.name.localeCompare(districtName, 'vn', { sensitivity: 'base' }) === 0
-        || item.name_with_type.localeCompare(districtName, 'vn', { sensitivity: 'base' }) === 0);
-      if (!district) return [];
-      return GroundModel.findAll({
-        where: {
-          address: {
+        }
+      }
+      if (districtName) {
+        const district: any = Object.values(DISTRICT).find((item: any) => item.name.localeCompare(districtName, 'vn', { sensitivity: 'base' }) === 0
+          || item.name_with_type.localeCompare(districtName, 'vn', { sensitivity: 'base' }) === 0);
+
+        if (district) {
+          andCondition = {
+            ...andCondition,
             [Op.contains]: Sequelize.cast(`{"districtCode": "${district.code}"}`, 'jsonb')
           }
-        },
-        limit: limit || 5,
-      });
-    }
+        }
+      }
 
-    // FIND WARD NAME
-    if (wardName) {
-      const ward: any = Object.values(WARD).find((item: any) => item.name.localeCompare(wardName, 'vn', { sensitivity: 'base' }) === 0
-        || item.name_with_type.localeCompare(wardName, 'vn', { sensitivity: 'base' }) === 0);
-      if (!ward) return [];
+      if (wardName) {
+        const ward: any = Object.values(WARD).find((item: any) => item.name.localeCompare(wardName, 'vn', { sensitivity: 'base' }) === 0
+          || item.name_with_type.localeCompare(wardName, 'vn', { sensitivity: 'base' }) === 0);
+
+        if (ward) {
+          andCondition = {
+            ...andCondition,
+            [Op.contains]: Sequelize.cast(`{"wardCode": "${ward.code}"}`, 'jsonb')
+          }
+        }
+      }
+
       return GroundModel.findAll({
         where: {
           address: {
-            [Op.contains]: Sequelize.cast(`{"wardCode": "${ward.code}"}`, 'jsonb')
+            ...andCondition
           }
         },
+        include: [
+          {
+            model: Category,
+            as: 'category'
+          }
+        ],
         limit: limit || 5,
+        order: [
+          ['createdAt', 'ASC'],
+        ],
       });
     }
 
     // SEARCH WITH PHONE AND TITLE
     const condition: any = {
-      where: Sequelize.where(
-        Sequelize.fn('similarity',
-          Sequelize.col('"GROUND"."title"'),
-          `${search}`), { [Op.gte]: '0.1' }
-      ),
+      where: {
+        [Op.or]: [
+          Sequelize.where(
+            Sequelize.fn('similarity',
+              Sequelize.col('"GROUND"."title"'),
+              `${search}`), { [Op.gte]: '0.1' }
+          ),
+          Sequelize.where(
+            Sequelize.fn('similarity',
+              Sequelize.col('"GROUND"."phone"'),
+              `${search}`), { [Op.gte]: '0.1' }
+          ),
+        ]
+      },
       limit: limit || 5,
     }
 
     const list = await GroundModel.findAll({
-      ...condition
+      ...condition,
+      include: [
+        {
+          model: Category,
+          as: 'category'
+        }
+      ],
+      order: [
+        ['createdAt', 'ASC'],
+      ],
     });
     return list;
   }

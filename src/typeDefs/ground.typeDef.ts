@@ -9,7 +9,8 @@ const typeDef = `
       startDay: String,
       startTime: String,
       regionName: String
-      wardName: String
+      wardName: String,
+      limit: Int
     ): [Ground]
   }
 
