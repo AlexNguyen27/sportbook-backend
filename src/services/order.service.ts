@@ -124,12 +124,17 @@ class OrderService {
         },
         include: [
           {
-            model: User,
-            as: 'user',
-          },
-          {
             model: SubGround,
             as: 'subGround',
+            attributes: ['id', 'name'],
+            include: [
+              {
+                model: Ground,
+                as: 'ground',
+                attributes: ['id', 'title'],
+                required: true,
+              }
+            ]
           },
         ],
         order: [

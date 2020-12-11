@@ -185,7 +185,7 @@ class GroundService {
         userId: user.id,
       };
     }
-    // FOR STATISTIC
+    // FOR REPORT SALES
     const { date, startDate, endDate } = filter;
     if (date || (startDate && endDate)) {
       const createdAtCondtions: any = {
@@ -198,7 +198,7 @@ class GroundService {
       if (date) {
         whereDateConditon = {
           [Op.and]: [
-            { status: ORDER_STATUS.approved }, // TODO should be finished
+            { status: ORDER_STATUS.paid }, // TODO should be finished
             {
               createdAt: {
                 [Op.gte]: createdAtCondtions[date],
@@ -211,7 +211,7 @@ class GroundService {
       if (startDate && endDate) {
         whereDateConditon = {
           [Op.and]: [
-            { status: ORDER_STATUS.approved }, // TODO should be finished
+            { status: ORDER_STATUS.paid }, // TODO should be finished
             {
               createdAt: {
                 [Op.gte]: moment(startDate).startOf('day'),
@@ -226,10 +226,13 @@ class GroundService {
           attributes: [
             'id',
             'title',
+            'address',
+            'benefit',
+            'phone',
             [Sequelize.literal('sum("subGrounds->orders"."price" * (100 - "subGrounds->orders"."discount") / 100)'), 'totalAmount'],
             [Sequelize.fn('COUNT', Sequelize.col('"subGrounds->orders"."id"')), 'orderCount']
           ],
-          group: ['GROUND.id', 'GROUND.title'],
+          group: ['GROUND.id', 'GROUND.title', 'GROUND.address', 'GROUND.phone', 'GROUND.benefit'],
           include: [
             {
               model: SubGround,
@@ -339,31 +342,7 @@ class GroundService {
       ],
     });
 
-    // const today = moment().format('DD-MM-YYYY');
-
-    const availableGroundIds = availableGrounds.reduce((acc: any, curr: any) =>
-    //  check price with startday today
-    // if dont have order => all available
-
-    // curr.subGrounds.map((sub: any) => {
-    //   sub.prices.forEach((price: any) => {
-    //     // DONT HAVE ORDER => PRICE STATUS ALL READY
-    //     sub.orders.forEach((order: any) => {
-    //       if (!(today === order.startDay
-    //         && order.startTime === price.startTime
-    //         && order.endTime === price.endTime
-    //         && (order.status === ORDER_STATUS.approved || order.status === ORDER_STATUS.paid))) {
-    //         console.log('today----------------', today);
-    //         console.log('order.startDay----------------', order.startDay);
-    //         return { ...acc, [curr.id]: true };
-    //       }
-    //     });
-    //   })
-    // });
-
-      // console.log('idd-----------------', curr.id)
-      ({ ...acc, [curr.id]: true }),
-    {});
+    const availableGroundIds = availableGrounds.reduce((acc: any, curr: any) => ({ ...acc, [curr.id]: true }), {});
 
     return groundList.map((ground: any) => {
       const groundItem = ground.toJSON();
@@ -394,7 +373,7 @@ class GroundService {
   }
 
   static async findGroundById(filter: any) {
-    const { id, startDay } = filter;
+    const { id, startDay, userId } = filter;
     let ground: any;
     try {
       ground = await GroundModel.findOne({
@@ -458,7 +437,7 @@ class GroundService {
           if (!sub.orders.length) {
             formatGround.subGrounds[index].prices[priceIndex] = {
               ...price,
-              status: SUB_GROUND_STATUS.ready
+              status: SUB_GROUND_STATUS.ready // ON THIS PRICE => DONT HAVE ORDER => READY TO BOOK
             }
           } else {
             sub.orders.forEach((order: any) => {
@@ -468,7 +447,15 @@ class GroundService {
                 && (order.status === ORDER_STATUS.approved || order.status === ORDER_STATUS.paid)) {
                 formatGround.subGrounds[index].prices[priceIndex] = {
                   ...price,
-                  status: SUB_GROUND_STATUS.reserved
+                  status: SUB_GROUND_STATUS.reserved // MAP ALL SUB GROUND => DONT HAVE STATUS APPOVED OR PAID => RESERVED => CAN'T BOOK
+                }
+              } else if (startDay === order.startDay
+                && order.startTime === price.startTime
+                && order.endTime === price.endTime
+                && order.userId === userId) { // USER ALREADY BOOK => STATUS CAN BE ALL
+                formatGround.subGrounds[index].prices[priceIndex] = {
+                  ...price,
+                  status: 'booked' // MAP ALL SUB GROUNDs => DONT HAVE STATUS APPOVED OR PAID => RESERVED => CAN'T BOOK
                 }
               }
             });
