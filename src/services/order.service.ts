@@ -10,11 +10,12 @@ import SubGround from '../models/subGround.model';
 import { sequelize } from '../models/sequelize';
 import History from '../models/history.model';
 import Ground from '../models/ground.model';
-// import { redis } from '../components/redis';
+import { redis } from '../components/redis';
 import HistoryService from './history.service';
 
 const { Op } = require('sequelize');
 
+const { Sequelize } = sequelize;
 class OrderService {
   static async getOrderById(id: any, user: any) {
     // user => only get it own
@@ -92,6 +93,15 @@ class OrderService {
     // IF ROLE OWNER OR ADMIN => GET ALL ORDER OF THE GROUND
     // IF ROLE USER GET ONLY ORDER OF THAT USER ID
     // GETTING ORDER FOR USER
+    const orderStatus = [Sequelize.literal(`
+        CASE
+        WHEN "ORDER"."status" = '${ORDER_STATUS.waiting_for_approve}' THEN 0
+        WHEN "ORDER"."status" = '${ORDER_STATUS.approved}' THEN 1
+        WHEN "ORDER"."status" = '${ORDER_STATUS.paid}' THEN 2
+        WHEN "ORDER"."status" = '${ORDER_STATUS.cancelled}' THEN 3
+        WHEN "ORDER"."status" = '${ORDER_STATUS.finished}' THEN 4
+        END ASC
+    `)]
     if (user.role === ROLE.user) {
       // all these field will pass on input
       const { status, fromDate, toDate } = filter;
@@ -127,6 +137,7 @@ class OrderService {
             model: SubGround,
             as: 'subGround',
             attributes: ['id', 'name'],
+            required: true,
             include: [
               {
                 model: Ground,
@@ -138,11 +149,13 @@ class OrderService {
           },
         ],
         order: [
+          ...orderStatus,
           ['createdAt', 'DESC'],
         ],
       });
     }
     if (user.role === ROLE.owner) {
+
       let ownerWhereCondition = {};
       if (filter.userId) {
         ownerWhereCondition = {
@@ -179,6 +192,7 @@ class OrderService {
           },
         ],
         order: [
+          ...orderStatus,
           ['createdAt', 'DESC'],
         ],
       });
@@ -315,9 +329,9 @@ class OrderService {
     // VALUE: ORDER STATUS WAITING FOR APPROVE
     // SET TIME OUT FOR THAT KEY
     // TODO EX: 30 minutes
-    // if (newOrder) {
-    //   redis.set(newOrder.id, newOrder.status, 'EX', 5 * 60); // TEST FOR 5 MINTUES
-    // }
+    if (newOrder) {
+      redis.set(newOrder.id, newOrder.status, 'EX', 30 * 60); // TEST FOR 5 MINTUES
+    }
 
     return this.findOrderById({ id: newOrder.id });
   }
