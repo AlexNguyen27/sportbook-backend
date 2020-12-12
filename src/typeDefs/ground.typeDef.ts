@@ -11,6 +11,7 @@ const typeDef = `
       regionName: String
       wardName: String,
       limit: Int
+      isAvailable: Boolean
     ): [Ground]
   }
 

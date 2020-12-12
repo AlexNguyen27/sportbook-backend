@@ -39,16 +39,20 @@ const { Sequelize } = sequelize;
 class GroundService {
   static async searchGrounds(filter: any) {
     const {
-      search,
+      search = '',
       districtName,
       regionName,
       wardName,
       limit,
       startTime,
       startDay, // DD-MM-YYYYY
+      isAvailable,
     } = filter;
-    console.log('filter----------------------', filter)
+    console.log('filter----------------------', filter);
 
+    // isAvailable  should go with startday
+    // SEARCH ALL GROUND
+    // IF HAVE ONE READY THEN THE GROUND IS READY TO BOOK
     if (!search && !districtName && !regionName && !wardName && !startDay && !startTime) {
       return GroundModel.findAll({
         include: [
@@ -63,8 +67,8 @@ class GroundService {
       });
     }
 
-    // ASKING TO ORDER
-    if (search && startTime && startDay) {
+    // ASKING TO ORDER => CHAT BOT
+    if (search && startTime && startDay && !isAvailable) {
       const condition: any = {
         where: Sequelize.where(
           Sequelize.fn('similarity',
@@ -132,92 +136,185 @@ class GroundService {
     }
 
     // FIND REGION, DISTRCT, WARD NAME
-    if (regionName || districtName || wardName) {
-      let andCondition = {};
-      if (regionName) {
-        const region: any = Object.values(REGION).find((item: any) => item.name.localeCompare(regionName, 'vn', { sensitivity: 'base' }) === 0
-          || item.name_with_type.localeCompare(regionName, 'vn', { sensitivity: 'base' }) === 0);
+    let addressCondition: any = {};
+    // if (regionName || districtName || wardName) {
+    if (regionName) {
+      const region: any = Object.values(REGION).find((item: any) => item.name.localeCompare(regionName, 'vn', { sensitivity: 'base' }) === 0
+        || item.name_with_type.localeCompare(regionName, 'vn', { sensitivity: 'base' }) === 0);
 
-        if (region) {
-          andCondition = {
+      if (region) {
+        addressCondition = {
+          address: {
             [Op.contains]: Sequelize.cast(`{"regionCode": "${region.code}"}`, 'jsonb')
           }
         }
       }
-      if (districtName) {
-        const district: any = Object.values(DISTRICT).find((item: any) => item.name.localeCompare(districtName, 'vn', { sensitivity: 'base' }) === 0
-          || item.name_with_type.localeCompare(districtName, 'vn', { sensitivity: 'base' }) === 0);
+    }
 
-        if (district) {
-          andCondition = {
-            ...andCondition,
+    if (districtName) {
+      const district: any = Object.values(DISTRICT).find((item: any) => item.name.localeCompare(districtName, 'vn', { sensitivity: 'base' }) === 0
+        || item.name_with_type.localeCompare(districtName, 'vn', { sensitivity: 'base' }) === 0);
+
+      if (district) {
+        addressCondition = {
+          address: {
+            ...addressCondition.address,
             [Op.contains]: Sequelize.cast(`{"districtCode": "${district.code}"}`, 'jsonb')
           }
         }
+        // addressCondition = {
+        //   ...addressCondition,
+        //   [Op.contains]: Sequelize.cast(`{"districtCode": "${district.code}"}`, 'jsonb')
+        // }
       }
+    }
 
-      if (wardName) {
-        const ward: any = Object.values(WARD).find((item: any) => item.name.localeCompare(wardName, 'vn', { sensitivity: 'base' }) === 0
-          || item.name_with_type.localeCompare(wardName, 'vn', { sensitivity: 'base' }) === 0);
+    if (wardName) {
+      const ward: any = Object.values(WARD).find((item: any) => item.name.localeCompare(wardName, 'vn', { sensitivity: 'base' }) === 0
+        || item.name_with_type.localeCompare(wardName, 'vn', { sensitivity: 'base' }) === 0);
 
-        if (ward) {
-          andCondition = {
-            ...andCondition,
+      if (ward) {
+        addressCondition = {
+          address: {
+            ...addressCondition.address,
             [Op.contains]: Sequelize.cast(`{"wardCode": "${ward.code}"}`, 'jsonb')
           }
         }
+        // addressCondition = {
+        //   ...addressCondition,
+        //   [Op.contains]: Sequelize.cast(`{"wardCode": "${ward.code}"}`, 'jsonb')
+        // }
       }
+      // }
 
-      return GroundModel.findAll({
-        where: {
-          address: {
-            ...andCondition
-          }
-        },
-        include: [
-          {
-            model: Category,
-            as: 'category'
-          }
-        ],
-        limit: limit || 5,
-        order: [
-          ['createdAt', 'ASC'],
-        ],
-      });
+      // return GroundModel.findAll({
+      //   where: {
+      //     address: {
+      //       ...addressCondition
+      //     }
+      //   },
+      //   include: [
+      //     {
+      //       model: Category,
+      //       as: 'category'
+      //     }
+      //   ],
+      //   limit: limit || 5,
+      //   order: [
+      //     ['createdAt', 'ASC'],
+      //   ],
+      // });
     }
 
     // SEARCH WITH PHONE AND TITLE
-    const condition: any = {
-      where: {
-        [Op.or]: [
-          Sequelize.where(
-            Sequelize.fn('similarity',
-              Sequelize.col('"GROUND"."title"'),
-              `${search}`), { [Op.gte]: '0.1' }
-          ),
-          Sequelize.where(
-            Sequelize.fn('similarity',
-              Sequelize.col('"GROUND"."phone"'),
-              `${search}`), { [Op.gte]: '0.1' }
-          ),
-        ]
-      },
-      limit: limit || 5,
+    let condition: any = {};
+    if (search) {
+      condition = {
+        where: {
+          [Op.or]: [
+            Sequelize.where(
+              Sequelize.fn('similarity',
+                Sequelize.col('"GROUND"."title"'),
+                `${search}`), { [Op.gte]: '0.1' }
+            ),
+            Sequelize.where(
+              Sequelize.fn('similarity',
+                Sequelize.col('"GROUND"."phone"'),
+                `${search}`), { [Op.gte]: '0.1' }
+            ),
+          ]
+        },
+      }
     }
 
-    const list = await GroundModel.findAll({
+    if (regionName || districtName || wardName) {
+      condition = {
+        where: {
+          ...condition.where,
+          ...addressCondition // AND
+        },
+      }
+    }
+
+    // FOR CHECK SEARCH ALL AVAILABLE GROUND
+    let includeCondition: any = [];
+    if (startTime && startDay && isAvailable) {
+      includeCondition = [
+        {
+          model: SubGround,
+          required: true,
+          as: 'subGrounds',
+          include: [
+            {
+              model: Price,
+              required: true, // CAN BOOK
+              attributes: ['id', 'startTime', 'endTime'],
+              as: 'prices',
+              where: {
+                startTime: {
+                  [Op.gte]: moment(startTime, 'HH:mm:ss').format('HH:mm:ss'), // ONLY GET SUBGROUND HAS PRICE AFTER NOW => CAN BOOK
+                },
+              }
+            },
+            {
+              model: Order,
+              as: 'orders',
+              required: false, // DONT HAVE ORDER => IS AVAILABLE
+              where: {
+                status: [ORDER_STATUS.approved, ORDER_STATUS.paid] // GET THIS FOR MAP EXIT ORDERS
+              }
+            }
+          ]
+        }
+      ]
+    }
+
+    // GET GROUND LIST
+    let list = [];
+    list = await GroundModel.findAll({
       ...condition,
       include: [
         {
           model: Category,
           as: 'category'
-        }
+        },
+        ...includeCondition,
       ],
       order: [
         ['createdAt', 'ASC'],
       ],
+      limit: limit || 5,
     });
+
+    // MAP AVAILABLE GROUND
+    if (startTime && startDay && isAvailable) {
+      // console.log('----------------------');
+      list = list.reduce((acc: any, curr: any) => {
+        let isReady = true;
+        curr.subGrounds.forEach((subGround: any) => {
+          if (!subGround.orders.length) {
+            isReady = true;
+          } else {
+            subGround.prices.map((price: any) => {
+              subGround.orders.forEach((order: any) => {
+                console.log('here------------------order.startDay--------', order.startDay, price.endTime, price.startTime);
+                // compare start time with start day and start time of order
+                if (moment(price.startTime, 'HH:mm:ss').diff(moment(order.startTime, 'HH:mm:ss')) === 0
+                  && moment(price.endTime, 'HH:mm:ss').diff(moment(order.endTime, 'HH:mm:ss')) === 0
+                  && moment(order.startDay).isSame(startDay)) {
+                  isReady = false;
+                }
+              });
+            })
+          }
+        });
+        if (isReady) {
+          return [...acc, curr];
+        }
+        return [...acc];
+      }, []);
+    }
+
     return list;
   }
 
