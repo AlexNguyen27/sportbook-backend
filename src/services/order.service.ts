@@ -155,7 +155,6 @@ class OrderService {
       });
     }
     if (user.role === ROLE.owner) {
-
       let ownerWhereCondition = {};
       if (filter.userId) {
         ownerWhereCondition = {
@@ -207,6 +206,14 @@ class OrderService {
         {
           model: SubGround,
           as: 'subGround',
+          include: [
+            {
+              model: Ground,
+              as: 'ground',
+              attributes: ['id', 'title'],
+              required: true,
+            }
+          ]
         },
       ],
       order: [
