@@ -7,6 +7,13 @@ import Rating from './rating.model';
 import Comment from './comment.model';
 import SubGround from './subGround.model';
 
+interface Address {
+  regionCode: string;
+  wardCode: string;
+  address: string;
+  districtCode: string;
+}
+
 class Ground extends Model {
   public id: string;
 
@@ -16,7 +23,7 @@ class Ground extends Model {
 
   public phone: string;
 
-  public address: string;
+  public address: Address;
 
   public benefit: string;
 

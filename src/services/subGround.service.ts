@@ -58,6 +58,9 @@ class SubGroundService {
 
     // ADMIN
     return SubGroundModel.findAll({
+      where: {
+        ...condition,
+      },
       include: [
         {
           model: Ground,

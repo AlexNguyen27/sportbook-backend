@@ -2,6 +2,9 @@ import { Model, DataTypes } from 'sequelize';
 
 import { sequelize } from './sequelize';
 import Ground from './ground.model';
+import { BENEFIT_STATUS } from '../components/constants';
+
+const benefitStatus: any = Object.values(BENEFIT_STATUS);
 
 class Category extends Model {
   public id: string;
@@ -9,6 +12,8 @@ class Category extends Model {
   public name: string;
 
   public createdAt: Date;
+
+  public status: string;
 
   static associate() {
     this.hasMany(Ground, {
@@ -31,6 +36,11 @@ Category.init({
     },
     unique: true,
     allowNull: false,
+  },
+  status: {
+    type: DataTypes.ENUM(benefitStatus),
+    allowNull: false,
+    defaultValue: BENEFIT_STATUS.enabled
   },
   createdAt: {
     type: DataTypes.DATEONLY,

@@ -15,7 +15,7 @@ const resolver = {
   },
   Mutation: {
     createComment: middleware(
-      tokenValidation(ROLE.admin, ROLE.user),
+      tokenValidation(ROLE.user),
       schemaValidation({
         comment: joi.string(),
         userId: joi.string().uuid(),
@@ -26,7 +26,7 @@ const resolver = {
     ),
 
     updateComment: middleware(
-      tokenValidation(ROLE.admin, ROLE.user),
+      tokenValidation(ROLE.user),
       schemaValidation({
         id: joi.string().uuid(),
         comment: joi.string(),
@@ -35,7 +35,7 @@ const resolver = {
     ),
 
     deleteComment: middleware(
-      tokenValidation(ROLE.admin, ROLE.user),
+      tokenValidation(ROLE.user),
       schemaValidation({
         id: joi.string().uuid(),
       }),
