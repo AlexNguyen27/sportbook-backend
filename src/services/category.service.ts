@@ -1,5 +1,4 @@
 import { sequelize } from '../models/sequelize';
-import GroundModel from '../models/ground.model';
 import CategoryModel from '../models/category.model';
 import { MutationCreateCategoryArgs, Category } from '../types/graphql.type';
 import { ExistsError } from '../components/errors';
@@ -7,21 +6,16 @@ import { ExistsError } from '../components/errors';
 class CategoryService {
   static getCategories(): Promise<Category[]> {
     return CategoryModel.findAll({
-      include: [
-        {
-          model: GroundModel,
-          as: 'grounds',
-        },
-      ],
       order: [
         ['createdAt', 'DESC'],
       ],
     });
   }
 
-  static createCategory({ name }: MutationCreateCategoryArgs): Promise<Category> {
+  static createCategory({ name, status }: MutationCreateCategoryArgs): Promise<Category> {
     return sequelize.transaction((transaction) => CategoryModel.create({
       name,
+      status
     }, { transaction }));
   }
 
@@ -32,9 +26,10 @@ class CategoryService {
     });
   }
 
-  static async updateCategory({ id, name }: { id: string; name: string }) {
+  static async updateCategory(data: any) {
+    const { id } = data;
     await this.findCategoryById(id);
-    await CategoryModel.update({ name }, { where: { id } });
+    await CategoryModel.update(data, { where: { id } });
 
     const currentCategory = await this.findCategoryById(id);
     return currentCategory;

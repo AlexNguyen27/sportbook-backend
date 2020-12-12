@@ -169,7 +169,7 @@ export type Benefit = {
   __typename?: 'Benefit';
   id?: Maybe<Scalars['Int']>;
   title?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
   createdAt?: Maybe<Scalars['DateTime']>;
 };
 
@@ -177,6 +177,7 @@ export type Category = {
   __typename?: 'Category';
   id?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
   grounds?: Maybe<Array<Maybe<Ground>>>;
   createdAt?: Maybe<Scalars['DateTime']>;
 };
@@ -208,13 +209,28 @@ export type SuccessMessage = {
   message?: Maybe<Scalars['String']>;
 };
 
+export type Address = {
+  __typename?: 'Address';
+  regionCode?: Maybe<Scalars['String']>;
+  districtCode?: Maybe<Scalars['String']>;
+  wardCode?: Maybe<Scalars['String']>;
+  address?: Maybe<Scalars['String']>;
+};
+
+export type AddressInput = {
+  regionCode?: Maybe<Scalars['String']>;
+  districtCode?: Maybe<Scalars['String']>;
+  wardCode?: Maybe<Scalars['String']>;
+  address?: Maybe<Scalars['String']>;
+};
+
 export type Ground = {
   __typename?: 'Ground';
   id?: Maybe<Scalars['String']>;
   title?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   phone?: Maybe<Scalars['String']>;
-  address?: Maybe<Scalars['String']>;
+  address?: Maybe<Address>;
   benefit?: Maybe<Scalars['String']>;
   image?: Maybe<Scalars['String']>;
   isAvailable?: Maybe<Scalars['Boolean']>;
@@ -286,6 +302,7 @@ export type SubGround = {
   ground?: Maybe<Ground>;
   createdAt?: Maybe<Scalars['DateTime']>;
   prices?: Maybe<Array<Maybe<Price>>>;
+  orders?: Maybe<Array<Maybe<Order>>>;
 };
 
 export type Query = {
@@ -353,6 +370,7 @@ export type QueryGroundsArgs = {
 export type QueryGetGroundByIdArgs = {
   id: Scalars['String'];
   startDay?: Maybe<Scalars['String']>;
+  userId?: Maybe<Scalars['String']>;
 };
 
 
@@ -363,6 +381,13 @@ export type QueryGetAllGroundsArgs = {
 
 export type QuerySearchGroundsArgs = {
   search?: Maybe<Scalars['String']>;
+  districtName?: Maybe<Scalars['String']>;
+  startDay?: Maybe<Scalars['String']>;
+  startTime?: Maybe<Scalars['String']>;
+  regionName?: Maybe<Scalars['String']>;
+  wardName?: Maybe<Scalars['String']>;
+  limit?: Maybe<Scalars['Int']>;
+  isAvailable?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -488,14 +513,14 @@ export type MutationUploadMomoQrCodeArgs = {
 
 export type MutationCreateBenefitArgs = {
   title: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
 };
 
 
 export type MutationUpdateBenefitArgs = {
   id: Scalars['Int'];
   title?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
 };
 
 
@@ -506,12 +531,14 @@ export type MutationDeleteBenefitArgs = {
 
 export type MutationCreateCategoryArgs = {
   name: Scalars['String'];
+  status?: Maybe<Scalars['String']>;
 };
 
 
 export type MutationUpdateCategoryArgs = {
   id: Scalars['String'];
   name?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
 };
 
 
@@ -543,12 +570,9 @@ export type MutationCreateGroundArgs = {
   title: Scalars['String'];
   description: Scalars['String'];
   phone: Scalars['String'];
-  address: Scalars['String'];
+  address?: Maybe<AddressInput>;
   benefit?: Maybe<Scalars['String']>;
   categoryId: Scalars['String'];
-  regionCode: Scalars['String'];
-  districtCode: Scalars['String'];
-  wardCode: Scalars['String'];
   image?: Maybe<Scalars['String']>;
 };
 
@@ -558,12 +582,9 @@ export type MutationUpdateGroundArgs = {
   title: Scalars['String'];
   description: Scalars['String'];
   phone: Scalars['String'];
-  address: Scalars['String'];
+  address?: Maybe<AddressInput>;
   benefit?: Maybe<Scalars['String']>;
   categoryId: Scalars['String'];
-  regionCode: Scalars['String'];
-  districtCode: Scalars['String'];
-  wardCode: Scalars['String'];
   image?: Maybe<Scalars['String']>;
 };
 
@@ -859,6 +880,8 @@ export type ResolversTypes = ResolversObject<{
   Comment: ResolverTypeWrapper<Comment>;
   UserComment: ResolverTypeWrapper<UserComment>;
   SuccessMessage: ResolverTypeWrapper<SuccessMessage>;
+  Address: ResolverTypeWrapper<Address>;
+  AddressInput: AddressInput;
   Ground: ResolverTypeWrapper<Ground>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
@@ -931,6 +954,8 @@ export type ResolversParentTypes = ResolversObject<{
   Comment: Comment;
   UserComment: UserComment;
   SuccessMessage: SuccessMessage;
+  Address: Address;
+  AddressInput: AddressInput;
   Ground: Ground;
   Boolean: Scalars['Boolean'];
   Float: Scalars['Float'];
@@ -1132,7 +1157,7 @@ export interface VoidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 export type BenefitResolvers<ContextType = any, ParentType extends ResolversParentTypes['Benefit'] = ResolversParentTypes['Benefit']> = ResolversObject<{
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -1140,6 +1165,7 @@ export type BenefitResolvers<ContextType = any, ParentType extends ResolversPare
 export type CategoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Category'] = ResolversParentTypes['Category']> = ResolversObject<{
   id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   grounds?: Resolver<Maybe<Array<Maybe<ResolversTypes['Ground']>>>, ParentType, ContextType>;
   createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1172,12 +1198,20 @@ export type SuccessMessageResolvers<ContextType = any, ParentType extends Resolv
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type AddressResolvers<ContextType = any, ParentType extends ResolversParentTypes['Address'] = ResolversParentTypes['Address']> = ResolversObject<{
+  regionCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  districtCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  wardCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  address?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type GroundResolvers<ContextType = any, ParentType extends ResolversParentTypes['Ground'] = ResolversParentTypes['Ground']> = ResolversObject<{
   id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   phone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  address?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  address?: Resolver<Maybe<ResolversTypes['Address']>, ParentType, ContextType>;
   benefit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   isAvailable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
@@ -1249,6 +1283,7 @@ export type SubGroundResolvers<ContextType = any, ParentType extends ResolversPa
   ground?: Resolver<Maybe<ResolversTypes['Ground']>, ParentType, ContextType>;
   createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   prices?: Resolver<Maybe<Array<Maybe<ResolversTypes['Price']>>>, ParentType, ContextType>;
+  orders?: Resolver<Maybe<Array<Maybe<ResolversTypes['Order']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1289,8 +1324,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createComment?: Resolver<Maybe<ResolversTypes['Comment']>, ParentType, ContextType, RequireFields<MutationCreateCommentArgs, 'comment' | 'userId' | 'groundId'>>;
   updateComment?: Resolver<Maybe<ResolversTypes['Comment']>, ParentType, ContextType, RequireFields<MutationUpdateCommentArgs, 'id' | 'comment'>>;
   deleteComment?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteCommentArgs, 'id'>>;
-  createGround?: Resolver<Maybe<ResolversTypes['Ground']>, ParentType, ContextType, RequireFields<MutationCreateGroundArgs, 'title' | 'description' | 'phone' | 'address' | 'categoryId' | 'regionCode' | 'districtCode' | 'wardCode'>>;
-  updateGround?: Resolver<Maybe<ResolversTypes['Ground']>, ParentType, ContextType, RequireFields<MutationUpdateGroundArgs, 'id' | 'title' | 'description' | 'phone' | 'address' | 'categoryId' | 'regionCode' | 'districtCode' | 'wardCode'>>;
+  createGround?: Resolver<Maybe<ResolversTypes['Ground']>, ParentType, ContextType, RequireFields<MutationCreateGroundArgs, 'title' | 'description' | 'phone' | 'categoryId'>>;
+  updateGround?: Resolver<Maybe<ResolversTypes['Ground']>, ParentType, ContextType, RequireFields<MutationUpdateGroundArgs, 'id' | 'title' | 'description' | 'phone' | 'categoryId'>>;
   deleteGround?: Resolver<Maybe<ResolversTypes['SuccessMessage']>, ParentType, ContextType, RequireFields<MutationDeleteGroundArgs, 'id'>>;
   createOrder?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<MutationCreateOrderArgs, 'subGroundId' | 'startDay' | 'startTime' | 'endTime' | 'paymentType' | 'price'>>;
   updateOrder?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<MutationUpdateOrderArgs, 'id' | 'subGroundId' | 'startDay' | 'startTime' | 'endTime' | 'paymentType' | 'price'>>;
@@ -1411,6 +1446,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Comment?: CommentResolvers<ContextType>;
   UserComment?: UserCommentResolvers<ContextType>;
   SuccessMessage?: SuccessMessageResolvers<ContextType>;
+  Address?: AddressResolvers<ContextType>;
   Ground?: GroundResolvers<ContextType>;
   History?: HistoryResolvers<ContextType>;
   Order?: OrderResolvers<ContextType>;

@@ -14,6 +14,8 @@ class Benefit extends Model {
 
   public createdAt: Date;
 
+  public status: string;
+
   static associate() {
     // this.hasMany(Cat, {
     //   as: 'cats',
