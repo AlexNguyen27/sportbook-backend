@@ -565,7 +565,7 @@ class GroundService {
         ],
       });
 
-      if (!startDay) {
+      if (!startDay && !userId) {
         return { ...ground.toJSON() }
       }
 
