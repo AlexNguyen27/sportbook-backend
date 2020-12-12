@@ -1,6 +1,9 @@
 import { Model, DataTypes } from 'sequelize';
 
 import { sequelize } from './sequelize';
+import { BENEFIT_STATUS } from '../components/constants';
+
+const benefitStatus: any = Object.values(BENEFIT_STATUS);
 
 class Benefit extends Model {
   public id: number;
@@ -33,11 +36,13 @@ Benefit.init({
     },
     unique: true,
   },
-  description: {
-    type: DataTypes.TEXT, // TODO: CHANGE DB TO TEXT
-  },
   createdAt: {
     type: DataTypes.DATEONLY,
+  },
+  status: {
+    type: DataTypes.ENUM(benefitStatus),
+    allowNull: false,
+    defaultValue: BENEFIT_STATUS.enabled
   },
 }, {
   sequelize,

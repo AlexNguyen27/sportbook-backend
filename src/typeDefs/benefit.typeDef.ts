@@ -4,15 +4,15 @@ const typeDef = `
   }
 
   extend type Mutation {
-    createBenefit(title: String!, description: String): Benefit
-    updateBenefit(id: Int!, title: String, description: String): Benefit,
+    createBenefit(title: String!, status: String): Benefit
+    updateBenefit(id: Int!, title: String, status: String): Benefit,
     deleteBenefit(id: Int!): SuccessMessage
   }
 
   type Benefit {
     id: Int
     title: String
-    description: String
+    status: String
     createdAt: DateTime
   }
 `;

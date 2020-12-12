@@ -45,3 +45,8 @@ export const ORDER_STATUS = {
 //   saturday: 6,
 //   sunday: 7
 // }
+
+export const BENEFIT_STATUS = {
+  enabled: 'enabled',
+  disabled: 'disabled',
+};
