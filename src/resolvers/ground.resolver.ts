@@ -30,19 +30,6 @@ const resolver: Resolvers = {
     ),
     updateGround: middleware(
       tokenValidation(ROLE.owner, ROLE.admin),
-      schemaValidation({
-        id: joi.string().uuid(),
-        title: joi.string(),
-        description: joi.string(),
-        phone: joi.string(),
-        address: joi.string(),
-        benefit: joi.string(),
-        image: joi.string(),
-        categoryId: joi.string(),
-        regionCode: joi.string(),
-        districtCode: joi.string(),
-        wardCode: joi.string(),
-      }),
       (_: any, args: MutationUpdateGroundArgs, { user }: any): Promise<Ground> => GroundService.updateGround(args, user),
     ),
     deleteGround: middleware(

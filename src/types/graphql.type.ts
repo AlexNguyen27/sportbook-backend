@@ -234,6 +234,7 @@ export type Ground = {
   benefit?: Maybe<Scalars['String']>;
   image?: Maybe<Scalars['String']>;
   isAvailable?: Maybe<Scalars['Boolean']>;
+  status?: Maybe<Scalars['String']>;
   user?: Maybe<User>;
   category?: Maybe<Category>;
   subGrounds?: Maybe<Array<Maybe<SubGround>>>;
@@ -298,6 +299,7 @@ export type SubGround = {
   id?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   numberOfPlayers?: Maybe<Scalars['Int']>;
+  status?: Maybe<Scalars['String']>;
   groundId?: Maybe<Scalars['String']>;
   ground?: Maybe<Ground>;
   createdAt?: Maybe<Scalars['DateTime']>;
@@ -574,6 +576,7 @@ export type MutationCreateGroundArgs = {
   benefit?: Maybe<Scalars['String']>;
   categoryId: Scalars['String'];
   image?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
 };
 
 
@@ -586,6 +589,7 @@ export type MutationUpdateGroundArgs = {
   benefit?: Maybe<Scalars['String']>;
   categoryId: Scalars['String'];
   image?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
 };
 
 
@@ -665,6 +669,7 @@ export type MutationCreateSubGroundArgs = {
   name: Scalars['String'];
   numberOfPlayers?: Maybe<Scalars['Int']>;
   groundId?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
 };
 
 
@@ -672,6 +677,7 @@ export type MutationUpdateSubGroundArgs = {
   id?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   numberOfPlayers?: Maybe<Scalars['Int']>;
+  status?: Maybe<Scalars['String']>;
   groundId?: Maybe<Scalars['String']>;
 };
 
@@ -712,6 +718,7 @@ export type User = {
   dob?: Maybe<Scalars['String']>;
   avatar?: Maybe<Scalars['String']>;
   role?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
   createdAt?: Maybe<Scalars['DateTime']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
   extraInfo?: Maybe<Scalars['String']>;
@@ -1215,6 +1222,7 @@ export type GroundResolvers<ContextType = any, ParentType extends ResolversParen
   benefit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   isAvailable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   category?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType>;
   subGrounds?: Resolver<Maybe<Array<Maybe<ResolversTypes['SubGround']>>>, ParentType, ContextType>;
@@ -1279,6 +1287,7 @@ export type SubGroundResolvers<ContextType = any, ParentType extends ResolversPa
   id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   numberOfPlayers?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   groundId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   ground?: Resolver<Maybe<ResolversTypes['Ground']>, ParentType, ContextType>;
   createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
@@ -1357,6 +1366,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   dob?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   role?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   extraInfo?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

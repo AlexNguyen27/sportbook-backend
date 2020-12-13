@@ -1,12 +1,13 @@
 import { Model, DataTypes } from 'sequelize';
 
 import { sequelize } from './sequelize';
-import { ROLE, GENDER } from '../components/constants';
+import { ROLE, GENDER, USER_STATUS } from '../components/constants';
 import Ground from './ground.model';
 import Comment from './comment.model';
 import Order from './order.model';
 import Rating from './rating.model';
 
+const userStatus: any = Object.values(USER_STATUS);
 const genderType: any = Object.values(GENDER);
 const role: any = Object.values(ROLE);
 // const favoriteFoot: any = Object.values(FAVORITE_FOOT);
@@ -38,6 +39,8 @@ class User extends Model {
   public momoQRCode: string;
 
   public role: string;
+
+  public status: string;
 
   public createdAt: Date;
 
@@ -144,6 +147,11 @@ User.init(
       validate: {
         notEmpty: true,
       },
+    },
+    status: {
+      type: DataTypes.ENUM(userStatus),
+      allowNull: false,
+      defaultValue: USER_STATUS.active
     },
     createdAt: {
       type: DataTypes.DATE,

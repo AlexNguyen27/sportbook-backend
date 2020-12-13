@@ -8,12 +8,14 @@ const typeDef = `
       name: String!
       numberOfPlayers: Int
       groundId: String,
+      status: String
     ): SubGround
 
     updateSubGround(
       id: String
       name: String!
       numberOfPlayers: Int
+      status: String
       groundId: String,
     ): SubGround
 
@@ -24,6 +26,7 @@ const typeDef = `
     id: String
     name: String
     numberOfPlayers: Int
+    status: String
     groundId: String
     ground: Ground
     createdAt: DateTime

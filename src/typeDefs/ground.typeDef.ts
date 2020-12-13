@@ -1,8 +1,11 @@
 const typeDef = `
   extend type Query {
     grounds(date: String, startDate: String, endDate: String): [Ground],
+
     getGroundById(id: String!, startDay: String, userId: String): Ground,
+
     getAllGrounds(isAvailable: Boolean): [Ground],
+
     searchGrounds(
       search: String,
       districtName: String,
@@ -24,6 +27,7 @@ const typeDef = `
       benefit: String
       categoryId: String!
       image: String,
+      status: String
     ): Ground
 
     updateGround(
@@ -35,6 +39,7 @@ const typeDef = `
       benefit: String
       categoryId: String!
       image: String,
+      status: String
     ): Ground
 
     deleteGround(id: String!): SuccessMessage
@@ -63,6 +68,7 @@ const typeDef = `
     benefit: String
     image: String,
     isAvailable: Boolean,
+    status: String,
     user: User
     category: Category
     subGrounds: [SubGround]

@@ -83,6 +83,7 @@ const typeDef = `
     dob: String,
     avatar: String,
     role: String
+    status: String,
     createdAt: DateTime
     updatedAt: DateTime
     extraInfo: String,

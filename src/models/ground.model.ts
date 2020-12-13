@@ -6,6 +6,7 @@ import User from './user.model';
 import Rating from './rating.model';
 import Comment from './comment.model';
 import SubGround from './subGround.model';
+import { GROUND_STATUS } from '../components/constants';
 
 interface Address {
   regionCode: string;
@@ -13,6 +14,8 @@ interface Address {
   address: string;
   districtCode: string;
 }
+
+const groundStatus: any = Object.values(GROUND_STATUS);
 
 class Ground extends Model {
   public id: string;
@@ -30,6 +33,8 @@ class Ground extends Model {
   public image: string;
 
   public userId: string;
+
+  public status: string;
 
   public categoryId: string;
 
@@ -126,6 +131,11 @@ Ground.init({
     },
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
+  },
+  status: {
+    type: DataTypes.ENUM(groundStatus),
+    allowNull: false,
+    defaultValue: GROUND_STATUS.public
   },
   createdAt: {
     type: DataTypes.DATE,
