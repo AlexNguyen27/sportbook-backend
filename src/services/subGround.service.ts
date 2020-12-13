@@ -1,12 +1,13 @@
 import Ground from '../models/ground.model';
 import User from '../models/user.model';
 import SubGroundModel from '../models/subGround.model';
-import { ExistsError, AuthenticationError } from '../components/errors';
+import { ExistsError, AuthenticationError, BusinessError } from '../components/errors';
 import {
   SubGround, MutationCreateSubGroundArgs, MutationUpdateSubGroundArgs,
 } from '../types/graphql.type';
 import GroundService from './ground.service';
 import { ROLE } from '../components/constants';
+import Order from '../models/order.model';
 
 class SubGroundService {
   static async getSubGrounds(filter: any, user: any) {
@@ -102,7 +103,7 @@ class SubGroundService {
   static async createSubGround(data: MutationCreateSubGroundArgs, user: any): Promise<SubGround> {
     const { groundId } = data;
     // cannot create subground of other people ground
-    const selectedGround = await GroundService.findGroundById({ id: groundId });
+    const selectedGround = await GroundService.checkGroundIdExit({ id: groundId });
     if (user.id !== selectedGround.userId) {
       throw new AuthenticationError('Could not create sub ground for this ground');
     }
@@ -133,6 +134,22 @@ class SubGroundService {
 
   static async deleteSubGround(id: any, user: any) {
     await this.findSubGroundById({ id });
+
+    const isExitsOrder = await SubGroundModel.findOne({
+      where: { id },
+      include: [
+        {
+          model: Order,
+          required: true,
+          as: 'orders',
+        },
+      ],
+    });
+
+    if (isExitsOrder) {
+      throw new BusinessError('Can not delete subground had orders!');
+    }
+
     if (ROLE.user === user.role) {
       throw new AuthenticationError('Your role is not allowed');
     }

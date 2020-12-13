@@ -4,6 +4,9 @@ import { sequelize } from './sequelize';
 import Ground from './ground.model';
 import Price from './price.model';
 import Order from './order.model';
+import { GROUND_STATUS } from '../components/constants';
+
+const groundStatus: any = Object.values(GROUND_STATUS);
 
 class SubGround extends Model {
   public id: string;
@@ -15,6 +18,8 @@ class SubGround extends Model {
   public groundId: string;
 
   public createdAt: Date;
+
+  public status: string;
 
   static associate() {
     this.belongsTo(Ground, {
@@ -48,6 +53,11 @@ SubGround.init({
   name: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  status: {
+    type: DataTypes.ENUM(groundStatus),
+    allowNull: false,
+    defaultValue: GROUND_STATUS.public
   },
   groundId: {
     type: DataTypes.UUID,

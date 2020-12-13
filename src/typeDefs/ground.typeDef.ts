@@ -63,6 +63,7 @@ const typeDef = `
     benefit: String
     image: String,
     isAvailable: Boolean,
+    status: String,
     user: User
     category: Category
     subGrounds: [SubGround]

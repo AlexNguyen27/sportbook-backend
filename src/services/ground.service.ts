@@ -8,7 +8,7 @@ import { ExistsError, AuthenticationError } from '../components/errors';
 import { Ground, MutationCreateGroundArgs } from '../types/graphql.type';
 import CategoryService from './category.service';
 import UserService from './user.service';
-import { ROLE, ORDER_STATUS, SUB_GROUND_STATUS, BENEFIT_STATUS } from '../components/constants';
+import { ROLE, ORDER_STATUS, SUB_GROUND_STATUS, BENEFIT_STATUS, GROUND_STATUS } from '../components/constants';
 import SubGround from '../models/subGround.model';
 import Order from '../models/order.model';
 import { sequelize } from '../models/sequelize';
@@ -508,6 +508,8 @@ class GroundService {
     });
   }
 
+  // ONLY GET WHAT NEEDED
+  // AND USER CANT GET GROUND ID PRIVATE => DONT NEED CATEGORY CONDITION
   static async checkGroundIdExit({ id }: any) {
     let ground: any;
     try {
@@ -518,6 +520,10 @@ class GroundService {
             model: User,
             as: 'user',
           },
+          {
+            model: Category,
+            as: 'category',
+          },
         ]
       });
       return { ...ground.toJSON() };
@@ -527,8 +533,10 @@ class GroundService {
     }
   }
 
+  // FOR USER ONLY
   static async findGroundById(filter: any) {
     const { id, startDay, userId } = filter;
+
     let ground: any;
     try {
       ground = await GroundModel.findOne({
@@ -562,6 +570,9 @@ class GroundService {
             model: SubGround,
             as: 'subGrounds',
             required: false,
+            where: {
+              status: GROUND_STATUS.public,
+            },
             include: [
               {
                 model: Price,
@@ -578,6 +589,7 @@ class GroundService {
         ],
       });
 
+      // FOR OWNER
       if (!startDay && !userId) {
         return { ...ground.toJSON() }
       }
@@ -663,7 +675,7 @@ class GroundService {
 
     const newGround = await GroundModel.create({ ...data, userId });
 
-    return this.findGroundById({ id: newGround.id });
+    return this.checkGroundIdExit({ id: newGround.id });
   }
 
   static async updateGround(data: any, user: any) {
@@ -673,7 +685,7 @@ class GroundService {
     } = data;
     const { role, userId } = user;
 
-    const currentGround: any = await this.findGroundById({ id: data.id });
+    const currentGround: any = await this.checkGroundIdExit({ id: data.id });
     // ONLY ADMIN CAN DELETE ALL PEOPLE GROUND
     if (role === ROLE.owner && currentGround.userId !== userId) {
       throw new AuthenticationError('Your role is not allowed');
@@ -683,12 +695,12 @@ class GroundService {
     }
 
     await GroundModel.update({ ...data }, { where: { id } });
-    const updatedGround = await this.findGroundById({ id });
+    const updatedGround = await this.checkGroundIdExit({ id });
     return updatedGround;
   }
 
   static async deleteGround(id: string, user: any) {
-    const ground = await this.findGroundById({ id });
+    const ground = await this.checkGroundIdExit({ id });
     if (ground.userId !== user.userId && user.role === ROLE.owner) {
       throw new AuthenticationError('Your role is not allowed');
     }

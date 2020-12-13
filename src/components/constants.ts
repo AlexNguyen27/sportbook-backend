@@ -36,17 +36,20 @@ export const ORDER_STATUS = {
   approved: 'approved', // owner approve and now waiting for paid
 };
 
-// export const WEEKDAY = {
-//   monday: 1,
-//   tuesday: 2,
-//   wednesday: 3,
-//   thursday: 4,
-//   friday: 5,
-//   saturday: 6,
-//   sunday: 7
-// }
-
+// CATEGORY AND BENEFIT
 export const BENEFIT_STATUS = {
   enabled: 'enabled',
+  disabled: 'disabled',
+};
+
+// SUB GROUND AND GROUND
+export const GROUND_STATUS = {
+  public: 'public',
+  private: 'private',
+};
+
+// USER
+export const USER_STATUS = {
+  active: 'active',
   disabled: 'disabled',
 };
