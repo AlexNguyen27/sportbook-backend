@@ -6,7 +6,7 @@ import config from '../components/config';
 import { AuthenticationError, ExistsError, BusinessError } from '../components/errors';
 import { User, MutationCreateUserArgs, MutationUpdateUserArgs } from '../types/graphql.type';
 
-import { ROLE, ORDER_STATUS } from '../components/constants';
+import { ROLE, ORDER_STATUS, USER_STATUS } from '../components/constants';
 import Order from '../models/order.model';
 import Ground from '../models/ground.model';
 import { sequelize } from '../models/sequelize';
@@ -85,9 +85,9 @@ class UserService {
 
   static async login(data: any) {
     const { email, password } = data;
-    const user = await UserModel.findOne({ where: { email } });
+    const user: any = await UserModel.findOne({ where: { email } });
 
-    if (!user) {
+    if (!user || (user && user.status === USER_STATUS.disabled)) {
       throw new AuthenticationError('Email or password incorrect!');
     }
 
@@ -182,6 +182,8 @@ class UserService {
     if ((userInfo.role || (userInfo.id && userInfo.id !== user.userId)) && user.role === 'user') {
       throw new AuthenticationError('Your role is not allowed');
     }
+
+    // if(userInfo.status && user.role )
 
     const userData: any = await this.findUserById(userId);
     if (userData.email === userInfo.email) {
