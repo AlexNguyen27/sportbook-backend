@@ -486,6 +486,7 @@ export type MutationUpdateUserArgs = {
   wardCode?: Maybe<Scalars['String']>;
   extraInfo?: Maybe<ExtraInfoInput>;
   socialNetwork?: Maybe<SocialNetworkInput>;
+  status?: Maybe<Scalars['String']>;
 };
 
 
@@ -749,6 +750,7 @@ export type LoginOutput = {
   dob?: Maybe<Scalars['String']>;
   avatar?: Maybe<Scalars['String']>;
   role?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
   momoQRCode?: Maybe<Scalars['String']>;
   socialNetwork?: Maybe<Scalars['String']>;
   extraInfo?: Maybe<Scalars['String']>;
@@ -1397,6 +1399,7 @@ export type LoginOutputResolvers<ContextType = any, ParentType extends Resolvers
   dob?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   role?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   momoQRCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   socialNetwork?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   extraInfo?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

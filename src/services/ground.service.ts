@@ -8,7 +8,7 @@ import { ExistsError, AuthenticationError, BusinessError } from '../components/e
 import { Ground, MutationCreateGroundArgs } from '../types/graphql.type';
 import CategoryService from './category.service';
 import UserService from './user.service';
-import { ROLE, ORDER_STATUS, SUB_GROUND_STATUS, BENEFIT_STATUS, GROUND_STATUS } from '../components/constants';
+import { ROLE, ORDER_STATUS, SUB_GROUND_STATUS, BENEFIT_STATUS, GROUND_STATUS, USER_STATUS } from '../components/constants';
 import SubGround from '../models/subGround.model';
 import Order from '../models/order.model';
 import { sequelize } from '../models/sequelize';
@@ -61,6 +61,13 @@ class GroundService {
         },
         include: [
           {
+            model: User,
+            as: 'user',
+            where: {
+              status: USER_STATUS.active // ONLY SHOW ACTIVE USER
+            }
+          },
+          {
             model: Category,
             as: 'category',
             required: true,
@@ -88,6 +95,13 @@ class GroundService {
           status: GROUND_STATUS.public, // ONLY GET GROUND STATUS PUBLIC
         },
         include: [
+          {
+            model: User,
+            as: 'user',
+            where: {
+              status: USER_STATUS.active // ONLY SHOW ACTIVE USER
+            }
+          },
           {
             model: Category,
             as: 'category',
@@ -279,6 +293,13 @@ class GroundService {
     list = await GroundModel.findAll({
       ...condition,
       include: [
+        {
+          model: User,
+          as: 'user',
+          where: {
+            status: USER_STATUS.active // ONLY SHOW ACTIVE USER
+          }
+        },
         {
           model: Category,
           as: 'category',
@@ -473,6 +494,9 @@ class GroundService {
         {
           model: User,
           as: 'user',
+          where: {
+            status: USER_STATUS.active // ONLY SHOW ACTIVE USER
+          }
         },
         {
           model: SubGround,
@@ -530,6 +554,9 @@ class GroundService {
           {
             model: User,
             as: 'user',
+            where: {
+              status: USER_STATUS.active // ONLY SHOW ACTIVE USER
+            }
           },
           {
             model: Category,

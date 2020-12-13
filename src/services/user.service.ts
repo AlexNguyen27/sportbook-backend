@@ -87,6 +87,7 @@ class UserService {
     const { email, password } = data;
     const user: any = await UserModel.findOne({ where: { email } });
 
+    //  ONLY CAN LOGIN ACTIVE USER
     if (!user || (user && user.status === USER_STATUS.disabled)) {
       throw new AuthenticationError('Email or password incorrect!');
     }
@@ -142,6 +143,7 @@ class UserService {
     if (user.role === ROLE.owner && user.id !== id) {
       throw new AuthenticationError('Your role is not allowed');
     }
+
     return UserModel.findOne({ where: { id } }).then((item) => {
       if (!item) throw new ExistsError('User not found');
       return { ...item.toJSON() };
@@ -157,6 +159,7 @@ class UserService {
     });
   }
 
+  // DONT NEED TO CHECK CUZ LOGIN WILL THROW ERROR
   static checkExitsEmail(filter: any) {
     return UserModel.findOne({ where: { email: filter.email } }).then((user) => {
       if (!user) {
@@ -183,7 +186,10 @@ class UserService {
       throw new AuthenticationError('Your role is not allowed');
     }
 
-    // if(userInfo.status && user.role )
+    // ONLY ADMIN CAN UPDATE STATUS
+    if (userInfo.status && user.role !== ROLE.admin) {
+      throw new AuthenticationError('Your role is not allowed');
+    }
 
     const userData: any = await this.findUserById(userId);
     if (userData.email === userInfo.email) {
@@ -218,6 +224,7 @@ class UserService {
     return currentUser;
   }
 
+  // TODO: CAN NOT DELETE USER
   static async deleteUser(id: string, user: any) {
     const { role } = user;
     // only admin can delete user

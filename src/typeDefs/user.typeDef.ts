@@ -33,6 +33,7 @@ const typeDef = `
       wardCode: String
       extraInfo: ExtraInfoInput
       socialNetwork: SocialNetworkInput
+      status: String
     ): User,
 
     deleteUser(id: String!): SuccessMessage,
@@ -113,6 +114,7 @@ const typeDef = `
     dob: String,
     avatar: String,
     role: String
+    status: String
     momoQRCode: String,
     socialNetwork: String
     extraInfo: String
