@@ -143,7 +143,9 @@ class GroundService {
             subGround.orders.forEach((order: any) => {
               console.log('here------------------order.startDay--------', order.startDay, startDay);
               // compare start time with start day and start time of order
-              if (moment(startTime, 'HH:mm:ss').diff(moment(order.startTime, 'HH:mm:ss')) === 0 && moment(order.startDay).isSame(startDay)) {
+              if (moment(startTime, 'HH:mm:ss').diff(moment(order.startTime, 'HH:mm:ss')) === 0
+                && moment(order.startDay, 'DD-MM-YYYY').diff(moment(startDay, 'DD-MM-YYYY')) === 0
+              ) {
                 isReady = false;
                 return [...acc]; // REMOVE GROUND ALSO
               }
@@ -488,38 +490,7 @@ class GroundService {
       ],
     });
 
-    // todo GET AVALABLE GROUND ON TODAY
-    // const availableGrounds = await GroundModel.findAll({
-    //   attributes: ['id'],
-    //   include: [
-    //     {
-    //       model: SubGround,
-    //       as: 'subGrounds',
-    //       attributes: ['id'],
-    //       required: true,
-    //       include: [
-    //         {
-    //           model: Price,
-    //           as: 'prices',
-    //           required: true,
-    //         },
-    //       ]
-    //     },
-    //   ],
-    //   order: [
-    //     ['createdAt', 'DESC'],
-    //   ],
-    // });
-
-    // const availableGroundIds = availableGrounds.reduce((acc: any, curr: any) => ({ ...acc, [curr.id]: true }), {});
     return groundList;
-    // return groundList.map((ground: any) => {
-    //   const groundItem = ground.toJSON();
-    //   return {
-    //     ...ground.toJSON(),
-    //     isAvailable: !!availableGroundIds[groundItem.id]
-    //   }
-    // });
   }
 
   // ONLY GET WHAT NEEDED
