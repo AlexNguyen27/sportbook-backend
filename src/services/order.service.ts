@@ -217,6 +217,7 @@ class OrderService {
         },
       ],
       order: [
+        ...orderStatus,
         ['createdAt', 'DESC'],
       ],
     });
