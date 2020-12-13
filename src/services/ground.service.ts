@@ -48,9 +48,16 @@ class GroundService {
       startTime,
       startDay, // DD-MM-YYYYY
       isAvailable,
+      categoryId
     } = filter;
     console.log('filter----------------------', filter);
 
+    let categoryCondition = {};
+    if (categoryId) {
+      categoryCondition = {
+        id: categoryId
+      }
+    }
     // isAvailable  should go with startday
     // SEARCH ALL GROUND
     // IF HAVE ONE READY THEN THE GROUND IS READY TO BOOK
@@ -73,6 +80,7 @@ class GroundService {
             required: true,
             where: {
               status: BENEFIT_STATUS.enabled,
+              ...categoryCondition,
             },
           },
         ],
@@ -82,8 +90,7 @@ class GroundService {
       });
     }
 
-    // TODO FIX LATER
-    // ASKING TO ORDER => CHAT BOT
+    // FOR CHAT BOT ONLY => ASKING TO ORDER => CHAT BOT
     if (search && startTime && startDay && !isAvailable) {
       const condition: any = {
         where: {
@@ -306,6 +313,7 @@ class GroundService {
           required: true,
           where: {
             status: BENEFIT_STATUS.enabled,
+            ...categoryCondition
           },
         },
         ...includeCondition,
