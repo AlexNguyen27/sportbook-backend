@@ -4,7 +4,7 @@ import Category from '../models/category.model';
 import Comment from '../models/comment.model';
 import Rating from '../models/rating.model';
 import User from '../models/user.model';
-import { ExistsError, AuthenticationError } from '../components/errors';
+import { ExistsError, AuthenticationError, BusinessError } from '../components/errors';
 import { Ground, MutationCreateGroundArgs } from '../types/graphql.type';
 import CategoryService from './category.service';
 import UserService from './user.service';
@@ -37,6 +37,7 @@ const { Sequelize } = sequelize;
 // Nếu không có sân trả về không có sân tên đó
 
 class GroundService {
+  // FOR SEARCH ONLY
   static async searchGrounds(filter: any) {
     const {
       search = '',
@@ -55,11 +56,18 @@ class GroundService {
     // IF HAVE ONE READY THEN THE GROUND IS READY TO BOOK
     if (!search && !districtName && !regionName && !wardName && !startDay && !startTime) {
       return GroundModel.findAll({
+        where: {
+          status: GROUND_STATUS.public,
+        },
         include: [
           {
             model: Category,
-            as: 'category'
-          }
+            as: 'category',
+            required: true,
+            where: {
+              status: BENEFIT_STATUS.enabled,
+            },
+          },
         ],
         order: [
           ['createdAt', 'ASC'],
@@ -67,23 +75,39 @@ class GroundService {
       });
     }
 
+    // TODO FIX LATER
     // ASKING TO ORDER => CHAT BOT
     if (search && startTime && startDay && !isAvailable) {
       const condition: any = {
-        where: Sequelize.where(
-          Sequelize.fn('similarity',
-            Sequelize.col('"GROUND"."title"'),
-            `${search}`), { [Op.gte]: '0.1' }
-        ),
+        where: {
+          title: Sequelize.where(
+            Sequelize.fn('similarity',
+              Sequelize.col('"GROUND"."title"'),
+              `${search}`), { [Op.gte]: '0.1' }
+          ),
+          status: GROUND_STATUS.public, // ONLY GET GROUND STATUS PUBLIC
+        },
         include: [
+          {
+            model: Category,
+            as: 'category',
+            required: true,
+            where: {
+              status: BENEFIT_STATUS.enabled, // STATUS ENABLE
+            },
+          },
           {
             model: SubGround,
             // attributes: ['id', 'name'], // misss
             required: true,
             as: 'subGrounds',
+            where: {
+              status: GROUND_STATUS.public, // ONLY GET SUB GROUND STATUS PUBLIC
+            },
             include: [
               {
                 model: Price,
+                required: true,
                 // attributes: ['id', 'startTime', 'endTime'],
                 as: 'prices',
                 where: {
@@ -97,13 +121,12 @@ class GroundService {
                 required: false,
                 where: {
                   status: [ORDER_STATUS.approved, ORDER_STATUS.paid]
-                  // startTime: Sequelize.where(Sequelize.col('ORDER.startTime'), '=', Sequelize.col('PRICE.startTime')),
                 }
               }
             ]
           }
         ],
-        limit: limit || 5,
+        limit,
       }
 
       const list: any = await GroundModel.findAll({
@@ -135,9 +158,8 @@ class GroundService {
       return formatData;
     }
 
-    // FIND REGION, DISTRCT, WARD NAME
+    // FIND REGION NAME
     let addressCondition: any = {};
-    // if (regionName || districtName || wardName) {
     if (regionName) {
       const region: any = Object.values(REGION).find((item: any) => item.name.localeCompare(regionName, 'vn', { sensitivity: 'base' }) === 0
         || item.name_with_type.localeCompare(regionName, 'vn', { sensitivity: 'base' }) === 0);
@@ -151,6 +173,7 @@ class GroundService {
       }
     }
 
+    // FIND DISTRICT NAME
     if (districtName) {
       const district: any = Object.values(DISTRICT).find((item: any) => item.name.localeCompare(districtName, 'vn', { sensitivity: 'base' }) === 0
         || item.name_with_type.localeCompare(districtName, 'vn', { sensitivity: 'base' }) === 0);
@@ -162,13 +185,10 @@ class GroundService {
             [Op.contains]: Sequelize.cast(`{"districtCode": "${district.code}"}`, 'jsonb')
           }
         }
-        // addressCondition = {
-        //   ...addressCondition,
-        //   [Op.contains]: Sequelize.cast(`{"districtCode": "${district.code}"}`, 'jsonb')
-        // }
       }
     }
 
+    // FIND WARD NAME
     if (wardName) {
       const ward: any = Object.values(WARD).find((item: any) => item.name.localeCompare(wardName, 'vn', { sensitivity: 'base' }) === 0
         || item.name_with_type.localeCompare(wardName, 'vn', { sensitivity: 'base' }) === 0);
@@ -180,33 +200,11 @@ class GroundService {
             [Op.contains]: Sequelize.cast(`{"wardCode": "${ward.code}"}`, 'jsonb')
           }
         }
-        // addressCondition = {
-        //   ...addressCondition,
-        //   [Op.contains]: Sequelize.cast(`{"wardCode": "${ward.code}"}`, 'jsonb')
-        // }
       }
-      // }
-
-      // return GroundModel.findAll({
-      //   where: {
-      //     address: {
-      //       ...addressCondition
-      //     }
-      //   },
-      //   include: [
-      //     {
-      //       model: Category,
-      //       as: 'category'
-      //     }
-      //   ],
-      //   limit: limit || 5,
-      //   order: [
-      //     ['createdAt', 'ASC'],
-      //   ],
-      // });
     }
 
     // SEARCH WITH PHONE AND TITLE
+    // GROUND CONDITION
     let condition: any = {};
     if (search) {
       condition = {
@@ -222,7 +220,8 @@ class GroundService {
                 Sequelize.col('"GROUND"."phone"'),
                 `${search}`), { [Op.gte]: '0.1' }
             ),
-          ]
+          ],
+          status: GROUND_STATUS.public,
         },
       }
     }
@@ -244,6 +243,9 @@ class GroundService {
           model: SubGround,
           required: true,
           as: 'subGrounds',
+          where: {
+            status: GROUND_STATUS.public,
+          },
           include: [
             {
               model: Price,
@@ -276,14 +278,18 @@ class GroundService {
       include: [
         {
           model: Category,
-          as: 'category'
+          as: 'category',
+          required: true,
+          where: {
+            status: BENEFIT_STATUS.enabled,
+          },
         },
         ...includeCondition,
       ],
       order: [
         ['createdAt', 'ASC'],
       ],
-      limit: limit || 5,
+      limit,
     });
 
     // MAP AVAILABLE GROUND
@@ -318,6 +324,7 @@ class GroundService {
     return list;
   }
 
+  // FOR ADMIN AND OWNER
   static async getGrounds(filter: any, user: any): Promise<Ground[]> {
     let whereCondition = {};
 
@@ -327,6 +334,8 @@ class GroundService {
         userId: user.id,
       };
     }
+
+    // TODO DONT CARE GROUND STATUS PUBLIC OR PRIVATE
     // FOR REPORT SALES
     const { date, startDate, endDate } = filter;
     if (date || (startDate && endDate)) {
@@ -442,10 +451,14 @@ class GroundService {
     });
   }
 
+  // FOR USER ONLY
+  // TODO REMOVE IS AVAILABE
   static async getAllGrounds(filter: any) {
-    // add value is avalable
-    // count subground has status ready
+    // ONLY SHOW GROUND STATUS PUBLIC
     const groundList = await GroundModel.findAll({
+      where: {
+        status: GROUND_STATUS.public,
+      },
       include: [
         {
           model: Category,
@@ -475,37 +488,37 @@ class GroundService {
     });
 
     // todo GET AVALABLE GROUND ON TODAY
-    const availableGrounds = await GroundModel.findAll({
-      attributes: ['id'],
-      include: [
-        {
-          model: SubGround,
-          as: 'subGrounds',
-          attributes: ['id'],
-          required: true,
-          include: [
-            {
-              model: Price,
-              as: 'prices',
-              required: true,
-            },
-          ]
-        },
-      ],
-      order: [
-        ['createdAt', 'DESC'],
-      ],
-    });
+    // const availableGrounds = await GroundModel.findAll({
+    //   attributes: ['id'],
+    //   include: [
+    //     {
+    //       model: SubGround,
+    //       as: 'subGrounds',
+    //       attributes: ['id'],
+    //       required: true,
+    //       include: [
+    //         {
+    //           model: Price,
+    //           as: 'prices',
+    //           required: true,
+    //         },
+    //       ]
+    //     },
+    //   ],
+    //   order: [
+    //     ['createdAt', 'DESC'],
+    //   ],
+    // });
 
-    const availableGroundIds = availableGrounds.reduce((acc: any, curr: any) => ({ ...acc, [curr.id]: true }), {});
-
-    return groundList.map((ground: any) => {
-      const groundItem = ground.toJSON();
-      return {
-        ...ground.toJSON(),
-        isAvailable: !!availableGroundIds[groundItem.id]
-      }
-    });
+    // const availableGroundIds = availableGrounds.reduce((acc: any, curr: any) => ({ ...acc, [curr.id]: true }), {});
+    return groundList;
+    // return groundList.map((ground: any) => {
+    //   const groundItem = ground.toJSON();
+    //   return {
+    //     ...ground.toJSON(),
+    //     isAvailable: !!availableGroundIds[groundItem.id]
+    //   }
+    // });
   }
 
   // ONLY GET WHAT NEEDED
@@ -540,7 +553,7 @@ class GroundService {
     let ground: any;
     try {
       ground = await GroundModel.findOne({
-        where: { id },
+        where: { id, status: GROUND_STATUS.public }, // USER CAN ONLY GET GROUND PUBLIC
         include: [
           {
             model: User,
@@ -701,6 +714,45 @@ class GroundService {
 
   static async deleteGround(id: string, user: any) {
     const ground = await this.checkGroundIdExit({ id });
+
+    const hasSubground = await GroundModel.findOne({
+      where: { id },
+      include: [
+        {
+          model: SubGround,
+          as: 'subGrounds',
+          required: true,
+        },
+      ],
+    });
+
+    if (hasSubground) {
+      const hasOrder = await GroundModel.findOne({
+        where: { id },
+        attributes: ['id'],
+        include: [
+          {
+            model: SubGround,
+            as: 'subGrounds',
+            required: true,
+            attributes: ['id'],
+            include: [
+              {
+                model: Order,
+                attributes: ['id'],
+                required: true,
+                as: 'orders',
+              },
+            ]
+          },
+        ],
+      });
+
+      if (hasOrder) {
+        throw new BusinessError('Can not delete ground has orders!');
+      }
+    }
+
     if (ground.userId !== user.userId && user.role === ROLE.owner) {
       throw new AuthenticationError('Your role is not allowed');
     }

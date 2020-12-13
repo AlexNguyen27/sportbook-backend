@@ -576,6 +576,7 @@ export type MutationCreateGroundArgs = {
   benefit?: Maybe<Scalars['String']>;
   categoryId: Scalars['String'];
   image?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
 };
 
 
@@ -588,6 +589,7 @@ export type MutationUpdateGroundArgs = {
   benefit?: Maybe<Scalars['String']>;
   categoryId: Scalars['String'];
   image?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
 };
 
 
