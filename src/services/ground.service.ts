@@ -50,7 +50,6 @@ class GroundService {
       isAvailable,
       categoryId
     } = filter;
-    console.log('filter----------------------', filter);
 
     let categoryCondition = {};
     if (categoryId) {
@@ -119,7 +118,6 @@ class GroundService {
           },
           {
             model: SubGround,
-            // attributes: ['id', 'name'], // misss
             required: true,
             as: 'subGrounds',
             where: {
@@ -129,7 +127,6 @@ class GroundService {
               {
                 model: Price,
                 required: true,
-                // attributes: ['id', 'startTime', 'endTime'],
                 as: 'prices',
                 where: {
                   startTime: moment(startTime, 'HH:mm:ss').format('HH:mm:ss'),
@@ -137,7 +134,6 @@ class GroundService {
               },
               {
                 model: Order,
-                // attributes: ['id', 'startTime', 'endTime'],
                 as: 'orders',
                 required: false,
                 where: {
@@ -381,7 +377,7 @@ class GroundService {
       if (date) {
         whereDateConditon = {
           [Op.and]: [
-            { status: ORDER_STATUS.paid }, // TODO should be finished
+            { status: [ORDER_STATUS.paid, ORDER_STATUS.finished] }, // COUNT FINISHED AND PAID ORDER
             {
               createdAt: {
                 [Op.gte]: createdAtCondtions[date],
@@ -394,7 +390,7 @@ class GroundService {
       if (startDate && endDate) {
         whereDateConditon = {
           [Op.and]: [
-            { status: ORDER_STATUS.paid }, // TODO should be finished
+            { status: [ORDER_STATUS.paid, ORDER_STATUS.finished] },
             {
               createdAt: {
                 [Op.gte]: moment(startDate).startOf('day'),

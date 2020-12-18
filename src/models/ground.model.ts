@@ -7,6 +7,7 @@ import Rating from './rating.model';
 import Comment from './comment.model';
 import SubGround from './subGround.model';
 import { GROUND_STATUS } from '../components/constants';
+import GroundBenefit from './groundBenefit.model';
 
 interface Address {
   regionCode: string;
@@ -74,6 +75,11 @@ class Ground extends Model {
       as: 'comments',
       foreignKey: 'groundId',
     });
+
+    this.hasMany(GroundBenefit, {
+      as: 'groundBenefits',
+      foreignKey: 'benefitId',
+    });
   }
 }
 
@@ -106,7 +112,7 @@ Ground.init({
   address: {
     type: DataTypes.JSONB,
   },
-  benefit: {
+  benefit: { // TODO FIX LATER
     type: DataTypes.STRING,
   },
   image: {

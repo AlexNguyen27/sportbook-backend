@@ -2,6 +2,7 @@ import { Model, DataTypes } from 'sequelize';
 
 import { sequelize } from './sequelize';
 import { BENEFIT_STATUS } from '../components/constants';
+import GroundBenefit from './groundBenefit.model';
 
 const benefitStatus: any = Object.values(BENEFIT_STATUS);
 
@@ -17,10 +18,10 @@ class Benefit extends Model {
   public status: string;
 
   static associate() {
-    // this.hasMany(Cat, {
-    //   as: 'cats',
-    //   foreignKey: 'categoryId',
-    // });
+    this.hasMany(GroundBenefit, {
+      as: 'groundBenefits',
+      foreignKey: 'benefitId',
+    });
   }
 }
 
