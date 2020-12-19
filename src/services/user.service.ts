@@ -22,7 +22,7 @@ class UserService {
     if (filter.weekday) {
       const condtion: any = {
         [Op.and]: [
-          { status: ORDER_STATUS.approved }, // TODO should be finished
+          { status: [ORDER_STATUS.paid, ORDER_STATUS.finished] },
           sequelize.Sequelize.where(
             sequelize.Sequelize.literal('to_char("orders"."startDay", \'day\')'),
             { [Op.like]: `%${filter.weekday}%` }
@@ -38,7 +38,7 @@ class UserService {
             attributes: ['status', 'createdAt', 'startDay', 'id'],
             as: 'orders',
             where: {
-              ...condtion // status approved and same search day
+              ...condtion
             },
             include: [
               {
