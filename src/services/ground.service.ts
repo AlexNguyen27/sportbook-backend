@@ -380,7 +380,7 @@ class GroundService {
             { status: [ORDER_STATUS.paid, ORDER_STATUS.finished] }, // COUNT FINISHED AND PAID ORDER
             {
               createdAt: {
-                [Op.gte]: createdAtCondtions[date],
+                [Op.gte]: createdAtCondtions[date], // thêm option tháng này
               }
             }
           ]

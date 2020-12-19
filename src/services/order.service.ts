@@ -102,102 +102,158 @@ class OrderService {
         WHEN "ORDER"."status" = '${ORDER_STATUS.finished}' THEN 4
         END ASC
     `)]
-    if (user.role === ROLE.user) {
-      // all these field will pass on input
-      const { status, fromDate, toDate } = filter;
-      let whereCondtionUser: any = {
+    // if (user.role === ROLE.user) {
+    //   // all these field will pass on input
+    //   const { status, fromDate, toDate } = filter;
+    //   let whereCondtionUser: any = {
+    //     [Op.and]: [
+    //       { status },
+    //       {
+    //         createdAt: {
+    //           [Op.gte]: moment(fromDate).startOf('day').add(7, 'hours'),
+    //           [Op.lte]: moment(toDate).endOf('day').add(7, 'hours'),
+    //         }
+    //       }
+    //     ]
+    //   };
+
+    //   // USER: ORDER HISTORY
+    //   if (status === 'all') {
+    //     whereCondtionUser = {
+    //       createdAt: {
+    //         [Op.gte]: moment(fromDate).startOf('day').add(7, 'hours'), // todo TESTING THIS
+    //         [Op.lte]: moment(toDate).endOf('day').add(7, 'hours'),
+    //       }
+    //     };
+    //   }
+
+    //   return OrderModel.findAll({
+    //     where: {
+    //       userId: user.id,
+    //       ...whereCondtionUser,
+    //     },
+    //     include: [
+    //       {
+    //         model: SubGround,
+    //         as: 'subGround',
+    //         attributes: ['id', 'name'],
+    //         required: true,
+    //         include: [
+    //           {
+    //             model: Ground,
+    //             as: 'ground',
+    //             attributes: ['id', 'title'],
+    //             required: true,
+    //           }
+    //         ]
+    //       },
+    //     ],
+    //     order: [
+    //       ...orderStatus,
+    //       ['createdAt', 'DESC'],
+    //     ],
+    //   });
+    // }
+
+    // FOR OWNER
+    let userCondition = {};
+    let statusCondition = {};
+    let createdAtCondtion = {};
+
+    // GET ALL ORDER OF THE USER ON LOYAL CUSTOMER
+    // FOR OWNER
+    if (filter.userId && ROLE.owner === user.role) {
+      userCondition = {
+        ...filter,
+        userId: filter.userId,
+      };
+    }
+
+    const { status, fromDate, toDate } = filter;
+    console.log('fitler----------------', filter);
+
+    if (status !== 'all') {
+      statusCondition = {
+        status
+      }
+    }
+
+    if (fromDate) {
+      createdAtCondtion = {
         [Op.and]: [
-          { status },
           {
             createdAt: {
-              [Op.gte]: moment(fromDate).startOf('day').subtract(1, 'days'),
-              [Op.lte]: moment(toDate).startOf('day').add(1, 'days'),
+              [Op.gte]: moment(fromDate).add(7, 'hours').format(),
             }
           }
         ]
-      };
-
-      // USER: ORDER HISTORY
-      if (status === 'all') {
-        whereCondtionUser = {
-          createdAt: {
-            [Op.gte]: moment(fromDate).startOf('day').subtract(1, 'days'),
-            [Op.lte]: moment(toDate).startOf('day').add(1, 'days'),
+      }
+    }
+    if (fromDate && toDate) {
+      createdAtCondtion = {
+        [Op.and]: [
+          {
+            createdAt: {
+              [Op.gte]: moment(fromDate).add(7, 'hours').format('YYYY-MM-DD HH:mm:ss'),
+              [Op.lte]: moment(toDate).add(7, 'hours').format('YYYY-MM-DD HH:mm:ss'),
+            }
           }
-        };
+        ]
       }
-
-      return OrderModel.findAll({
-        where: {
-          userId: user.id,
-          ...whereCondtionUser,
-        },
-        include: [
-          {
-            model: SubGround,
-            as: 'subGround',
-            attributes: ['id', 'name'],
-            required: true,
-            include: [
-              {
-                model: Ground,
-                as: 'ground',
-                attributes: ['id', 'title'],
-                required: true,
-              }
-            ]
-          },
-        ],
-        order: [
-          ...orderStatus,
-          ['createdAt', 'DESC'],
-        ],
-      });
-    }
-    if (user.role === ROLE.owner) {
-      let ownerWhereCondition = {};
-      if (filter.userId) {
-        ownerWhereCondition = {
-          ...filter,
-          userId: filter.userId,
-        };
-      }
-
-      return OrderModel.findAll({
-        where: {
-          ...ownerWhereCondition,
-        },
-        include: [
-          {
-            model: User,
-            as: 'user',
-            attributes: ['id', 'firstName', 'lastName', 'email', 'phone']
-          },
-          {
-            model: SubGround,
-            as: 'subGround',
-            required: true,
-            include: [
-              {
-                model: Ground,
-                as: 'ground',
-                attributes: ['id', 'title'],
-                required: true,
-                where: {
-                  userId: user.id
-                }
-              }
-            ]
-          },
-        ],
-        order: [
-          ...orderStatus,
-          ['createdAt', 'DESC'],
-        ],
-      });
     }
 
+    // return OrderModel.findAll({
+
+    //   include: [
+    //     {
+    //       model: User,
+    //       as: 'user',
+    //       attributes: ['id', 'firstName', 'lastName', 'email', 'phone']
+    //     },
+    //     {
+    //       model: SubGround,
+    //       as: 'subGround',
+    //       required: true,
+    //       include: [
+    //         {
+    //           model: Ground,
+    //           as: 'ground',
+    //           attributes: ['id', 'title'],
+    //           required: true,
+    //           where: {
+    //             userId: user.id
+    //           }
+    //         }
+    //       ]
+    //     },
+    //   ],
+    //   order: [
+    //     ...orderStatus,
+    //     ['createdAt', 'DESC'],
+    //   ],
+    // });
+
+    let isOwner = {};
+    let isUser = {};
+
+    if (user.role === ROLE.user) {
+      isUser = {
+        userId: user.id
+      }
+    }
+    if (ROLE.owner === user.role) {
+      isOwner = {
+        userId: user.id
+      }
+    }
+    // ADMIN
     return OrderModel.findAll({
+      where: {
+        ...isUser,
+        ...userCondition,
+        ...statusCondition,
+        ...createdAtCondtion
+      },
       include: [
         {
           model: User,
@@ -206,12 +262,16 @@ class OrderService {
         {
           model: SubGround,
           as: 'subGround',
+          required: true,
           include: [
             {
               model: Ground,
               as: 'ground',
               attributes: ['id', 'title'],
               required: true,
+              where: {
+                ...isOwner
+              }
             }
           ]
         },
