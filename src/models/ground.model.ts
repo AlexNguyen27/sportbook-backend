@@ -43,7 +43,6 @@ class Ground extends Model {
 
   public updatedAt: Date;
 
-  // TODO: SHOULD I ADD REPORTING POST
   static associate() {
     this.belongsTo(Category, {
       as: 'category',
@@ -106,6 +105,10 @@ Ground.init({
   phone: {
     type: DataTypes.STRING,
     validate: {
+      len: {
+        args: [10, 10],
+        msg: 'Phone number must be 10 numbers',
+      },
       is: /^[\\+]?[(]?[0-9]{3}[)]?[-\s\\.]?[0-9]{3}[-\s\\.]?[0-9]{4,6}$/im,
     },
   },
