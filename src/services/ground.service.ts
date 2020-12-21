@@ -393,8 +393,8 @@ class GroundService {
             { status: [ORDER_STATUS.paid, ORDER_STATUS.finished] },
             {
               createdAt: {
-                [Op.gte]: moment(startDate).startOf('day'),
-                [Op.lte]: moment(endDate).startOf('day').add(2, 'days'),
+                [Op.gte]: moment(startDate).add(7, 'hours').format('YYYY-MM-DD HH:mm:ss'),
+                [Op.lte]: moment(endDate).add(7, 'hours').format('YYYY-MM-DD HH:mm:ss'),
               }
             }
           ]
