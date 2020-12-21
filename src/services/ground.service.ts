@@ -10,6 +10,7 @@ import CategoryService from './category.service';
 import UserService from './user.service';
 import { ROLE, ORDER_STATUS, SUB_GROUND_STATUS, BENEFIT_STATUS, GROUND_STATUS, USER_STATUS } from '../components/constants';
 import SubGround from '../models/subGround.model';
+import GroundBenefit from '../models/groundBenefit.model';
 import Order from '../models/order.model';
 import { sequelize } from '../models/sequelize';
 import Price from '../models/price.model';
@@ -684,13 +685,28 @@ class GroundService {
   static async createGround(data: MutationCreateGroundArgs, userId: any): Promise<Ground> {
     const {
       categoryId,
+      benefit
     } = data;
     // CHECK IF USER AND CATEGORY EXITS
     await UserService.findUserById(userId);
     await CategoryService.findCategoryById(categoryId);
 
+    const transaction = await sequelize.transaction();
     const newGround = await GroundModel.create({ ...data, userId });
+    try {
+      const benefitIds = benefit ? benefit.split(',') : [];
 
+      const newGroundBenefitArr = benefitIds.map((item: any) => ({
+        benefitId: Number(item),
+        groundId: newGround.id
+      }));
+      await GroundBenefit.bulkCreate(newGroundBenefitArr, { transaction });
+
+      await transaction.commit();
+      // GET CREATED GROUND
+    } catch (error) {
+      await transaction.rollback();
+    }
     return this.checkGroundIdExit({ id: newGround.id });
   }
 
@@ -698,6 +714,7 @@ class GroundService {
     const {
       id,
       categoryId,
+      benefit
     } = data;
     const { role, userId } = user;
 
@@ -710,7 +727,28 @@ class GroundService {
       await CategoryService.findCategoryById(categoryId);
     }
 
-    await GroundModel.update({ ...data }, { where: { id } });
+    // ADD TO GROUND BENEFIT
+    const transaction = await sequelize.transaction();
+    try {
+      const benefitIds = benefit ? benefit.split(',') : [];
+      // delete all benefit of this ground
+      await GroundBenefit.destroy({ where: { groundId: currentGround.id }, transaction })
+      // add new benefit for the ground
+      const newGroundBenefitArr = benefitIds.map((item: any) => ({
+        benefitId: Number(item),
+        groundId: currentGround.id
+      }));
+      await GroundBenefit.bulkCreate(newGroundBenefitArr, { transaction });
+
+      // UPDATE GROUND
+      await GroundModel.update({ ...data }, { where: { id }, transaction });
+
+      await transaction.commit();
+    } catch (error) {
+      await transaction.rollback();
+    }
+
+    // GET UPDATED GROUND DATA
     const updatedGround = await this.checkGroundIdExit({ id });
     return updatedGround;
   }
