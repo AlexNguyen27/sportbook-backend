@@ -44,11 +44,13 @@ class UserService {
               {
                 model: SubGround,
                 as: 'subGround',
+                required: true,
                 attributes: [],
                 include: [
                   {
                     model: Ground,
                     as: 'ground',
+                    required: true,
                     attributes: [],
                     where: {
                       userId: user.id // id owner
