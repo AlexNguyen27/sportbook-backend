@@ -164,8 +164,8 @@ class OrderService {
     // FOR OWNER
     if (filter.userId && ROLE.owner === user.role) {
       userCondition = {
-        ...filter,
-        userId: filter.userId,
+        status: [ORDER_STATUS.paid, ORDER_STATUS.finished],
+        userId: filter.userId
       };
     }
 
@@ -238,7 +238,7 @@ class OrderService {
 
     if (user.role === ROLE.user) {
       isUser = {
-        userId: user.id
+        userId: user.id,
       }
     }
     if (ROLE.owner === user.role) {
@@ -246,6 +246,8 @@ class OrderService {
         userId: user.id
       }
     }
+
+    console.log(statusCondition, '0000000-----------------------')
     // ADMIN
     return OrderModel.findAll({
       where: {
