@@ -741,13 +741,12 @@ class GroundService {
       await GroundBenefit.bulkCreate(newGroundBenefitArr, { transaction });
 
       // UPDATE GROUND
-      await GroundModel.update({ ...data }, { where: { id }, transaction });
-
       await transaction.commit();
     } catch (error) {
       await transaction.rollback();
     }
 
+    await GroundModel.update({ ...data }, { where: { id } });
     // GET UPDATED GROUND DATA
     const updatedGround = await this.checkGroundIdExit({ id });
     return updatedGround;

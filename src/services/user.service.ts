@@ -108,7 +108,7 @@ class UserService {
     }
 
     const { id, role } = user;
-    const { secretKey } = config.jwt;
+    const { secretKey, expiresIn } = config.jwt;
     const payload = {
       id,
       userId: user.id,
@@ -116,7 +116,7 @@ class UserService {
     };
 
     // todo : add expired token
-    const token = jwt.sign(payload, secretKey, { algorithm: 'HS256' });
+    const token = jwt.sign(payload, secretKey, { algorithm: 'HS256', expiresIn });
     return {
       token,
       ...user.toJSON(),
