@@ -1,6 +1,6 @@
 const typeDef = `
   extend type Query {
-    orders(userId: String, subGroundId: String, status: String, fromDate: String, toDate: String): [Order]
+    orders(userId: String, subGroundId: String, status: String, fromDate: String, toDate: String, startDay: String): [Order]
     getOrderById(id: String!): Order
   }
 
