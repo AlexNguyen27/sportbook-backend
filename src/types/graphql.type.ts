@@ -390,6 +390,7 @@ export type QuerySearchGroundsArgs = {
   wardName?: Maybe<Scalars['String']>;
   limit?: Maybe<Scalars['Int']>;
   isAvailable?: Maybe<Scalars['Boolean']>;
+  categoryId?: Maybe<Scalars['String']>;
 };
 
 
@@ -404,6 +405,7 @@ export type QueryOrdersArgs = {
   status?: Maybe<Scalars['String']>;
   fromDate?: Maybe<Scalars['String']>;
   toDate?: Maybe<Scalars['String']>;
+  startDay?: Maybe<Scalars['String']>;
 };
 
 

@@ -169,10 +169,11 @@ class OrderService {
       };
     }
 
-    const { status, fromDate, toDate } = filter;
+    const {
+      status, fromDate, toDate, startDay
+    } = filter;
     console.log('fitler----------------', filter);
-
-    if (status !== 'all') {
+    if (status && status !== 'all') {
       statusCondition = {
         status
       }
@@ -235,6 +236,7 @@ class OrderService {
 
     let isOwner = {};
     let isUser = {};
+    let startDayCondition = {};
 
     if (user.role === ROLE.user) {
       isUser = {
@@ -245,16 +247,21 @@ class OrderService {
       isOwner = {
         userId: user.id
       }
+      if (startDay) {
+        startDayCondition = {
+          startDay: moment(startDay, 'DD/MM/YYYY'),
+        }
+      }
     }
 
-    console.log(statusCondition, '0000000-----------------------')
     // ADMIN
     return OrderModel.findAll({
       where: {
         ...isUser,
         ...userCondition,
         ...statusCondition,
-        ...createdAtCondtion
+        ...createdAtCondtion,
+        ...startDayCondition
       },
       include: [
         {

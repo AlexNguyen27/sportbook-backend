@@ -364,7 +364,7 @@ class GroundService {
       };
     }
 
-    // TODO DONT CARE GROUND STATUS PUBLIC OR PRIVATE
+    // DONT CARE GROUND STATUS PUBLIC OR PRIVATE
     // FOR REPORT SALES
     const { date, startDate, endDate } = filter;
     if (date || (startDate && endDate)) {
