@@ -387,7 +387,7 @@ class OrderService {
     });
 
     if (isExitOrder) {
-      throw new BusinessError('Same order is waiting for approve or waiting for paid!');
+      throw new BusinessError('Same order is approved or paid!');
     }
     const formatedData: any = { ...data, startDay: formatStartDay, status: ORDER_STATUS.waiting_for_approve };
     formatedData.histories = {
@@ -455,7 +455,7 @@ class OrderService {
         orderId: id,
       });
       if (isExitOrder && data.status === ORDER_STATUS.approved) {
-        throw new BusinessError('Same order is waiting for approve or waiting for paid!');
+        throw new BusinessError('Same order is approved or paid!');
       }
     }
 
