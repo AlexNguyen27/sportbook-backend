@@ -4,8 +4,19 @@ import { MutationCreateCategoryArgs, Category } from '../types/graphql.type';
 import { ExistsError } from '../components/errors';
 
 class CategoryService {
-  static getCategories(): Promise<Category[]> {
+  static getCategories(filter: any): Promise<Category[]> {
+    let whereCondition = {};
+
+    if (filter.status) {
+      whereCondition = {
+        status: filter.status
+      }
+    }
+
     return CategoryModel.findAll({
+      where: {
+        ...whereCondition,
+      },
       order: [
         ['createdAt', 'DESC'],
       ],

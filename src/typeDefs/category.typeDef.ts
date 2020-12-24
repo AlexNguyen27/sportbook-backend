@@ -1,6 +1,6 @@
 const typeDef = `
   extend type Query {
-    categories: [Category]
+    categories(status: String): [Category]
   }
 
   extend type Mutation {
