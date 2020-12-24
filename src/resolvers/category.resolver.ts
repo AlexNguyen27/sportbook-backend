@@ -5,7 +5,7 @@ import { ROLE } from '../components/constants';
 
 const resolver: Resolvers = {
   Query: {
-    categories: (): Promise<Category[]> => CategoryService.getCategories(),
+    categories: (_: any, args: any): Promise<Category[]> => CategoryService.getCategories(args),
   },
   Mutation: {
     createCategory: middleware(
