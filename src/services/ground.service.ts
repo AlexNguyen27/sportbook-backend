@@ -601,9 +601,12 @@ class GroundService {
                 as: 'orders',
                 required: false,
               }
-            ]
+            ],
           },
         ],
+        order: [
+          ['subGrounds', 'name', 'ASC'],
+        ]
       });
 
       // FOR OWNER
