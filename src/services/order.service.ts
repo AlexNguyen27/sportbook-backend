@@ -102,58 +102,6 @@ class OrderService {
         WHEN "ORDER"."status" = '${ORDER_STATUS.finished}' THEN 4
         END ASC
     `)]
-    // if (user.role === ROLE.user) {
-    //   // all these field will pass on input
-    //   const { status, fromDate, toDate } = filter;
-    //   let whereCondtionUser: any = {
-    //     [Op.and]: [
-    //       { status },
-    //       {
-    //         createdAt: {
-    //           [Op.gte]: moment(fromDate).startOf('day').add(7, 'hours'),
-    //           [Op.lte]: moment(toDate).endOf('day').add(7, 'hours'),
-    //         }
-    //       }
-    //     ]
-    //   };
-
-    //   // USER: ORDER HISTORY
-    //   if (status === 'all') {
-    //     whereCondtionUser = {
-    //       createdAt: {
-    //         [Op.gte]: moment(fromDate).startOf('day').add(7, 'hours'), // todo TESTING THIS
-    //         [Op.lte]: moment(toDate).endOf('day').add(7, 'hours'),
-    //       }
-    //     };
-    //   }
-
-    //   return OrderModel.findAll({
-    //     where: {
-    //       userId: user.id,
-    //       ...whereCondtionUser,
-    //     },
-    //     include: [
-    //       {
-    //         model: SubGround,
-    //         as: 'subGround',
-    //         attributes: ['id', 'name'],
-    //         required: true,
-    //         include: [
-    //           {
-    //             model: Ground,
-    //             as: 'ground',
-    //             attributes: ['id', 'title'],
-    //             required: true,
-    //           }
-    //         ]
-    //       },
-    //     ],
-    //     order: [
-    //       ...orderStatus,
-    //       ['createdAt', 'DESC'],
-    //     ],
-    //   });
-    // }
 
     // FOR OWNER
     let userCondition = {};
@@ -202,37 +150,6 @@ class OrderService {
         ]
       }
     }
-
-    // return OrderModel.findAll({
-
-    //   include: [
-    //     {
-    //       model: User,
-    //       as: 'user',
-    //       attributes: ['id', 'firstName', 'lastName', 'email', 'phone']
-    //     },
-    //     {
-    //       model: SubGround,
-    //       as: 'subGround',
-    //       required: true,
-    //       include: [
-    //         {
-    //           model: Ground,
-    //           as: 'ground',
-    //           attributes: ['id', 'title'],
-    //           required: true,
-    //           where: {
-    //             userId: user.id
-    //           }
-    //         }
-    //       ]
-    //     },
-    //   ],
-    //   order: [
-    //     ...orderStatus,
-    //     ['createdAt', 'DESC'],
-    //   ],
-    // });
 
     let isOwner = {};
     let isUser = {};
@@ -413,16 +330,9 @@ class OrderService {
     return this.findOrderById({ id: newOrder.id });
   }
 
-  // todo: ADMIN DONT NEED TO UPDATE ORDER DETAIL
+  // ADMIN DONT NEED TO UPDATE ORDER DETAIL
   static async updateOrder(data: any, user: any) {
     const { id, subGroundId } = data;
-    // const { userId } = user;
-    // const order = await this.findOrderById({ id });
-
-    // if (order.userId !== userId) {
-    //   throw new AuthenticationError('Your role is not allowed');
-    // }
-
     await SubGroundService.findSubGroundById({ id: subGroundId });
 
     await OrderModel.update({ ...data }, { where: { id } });
@@ -441,26 +351,25 @@ class OrderService {
     const formatOrder: any = { ...order };
     // Check if has order status been approved or paid of this order subground
     const {
-      subGroundId, startTime, startDay, endTime
+      subGroundId, startTime, startDay, endTime, status
     } = formatOrder;
 
-    // TODO: WHEN MANAGER CHECKOUT 1 STATUS IS APPROVED THEN OTHERS STATUS SHOULD BE CANCELLED
-    // FIND ALL AND UPDATE BUCK
-    if (formatOrder.status === ORDER_STATUS.waiting_for_approve) {
+    if (status === ORDER_STATUS.waiting_for_approve) {
       const isExitOrder = await this.checkExitsOthersOrder({
         subGroundId,
         startDay: moment(startDay, 'DD/MM/YYYY'),
         startTime,
         endTime,
-        orderId: id,
+        orderId: id, // NOT IN THIS ORDER ID
       });
+
       if (isExitOrder && data.status === ORDER_STATUS.approved) {
         throw new BusinessError('Same order is approved or paid!');
       }
     }
 
     if (user.role === ROLE.owner) {
-      // CHECK  SUBGROUND OWNER ID
+      // CHECK SUBGROUND OWNER ID
       const isExitsSubGround = SubGround.findOne({
         where: {
           id: order.subGroundId,
@@ -485,22 +394,54 @@ class OrderService {
       throw new BusinessError('Order has been finished!');
     }
 
+    let sameOrderArr: any = [];
     try {
       await OrderModel.update(data, { where: { id }, transaction });
+
+      // WHEN MANAGER CHECKOUT 1 STATUS TO APPROVED THEN OTHERS STATUS SHOULD BE CANCELLED
+      if (data?.status === ORDER_STATUS.approved) {
+        sameOrderArr = await OrderModel.findAll({
+          attributes: ['id'],
+          where: {
+            subGroundId,
+            startDay: moment(startDay, 'DD/MM/YYYY'),
+            startTime,
+            endTime,
+            status: ORDER_STATUS.waiting_for_approve, // ONLY UPDATE WHEN HAVE STATUS WAITING FOR APPOVE
+            id: {
+              [Op.not]: id
+            }
+          }
+        });
+        if (sameOrderArr.length) {
+          await OrderModel.update({ status: ORDER_STATUS.cancelled }, { where: { id: sameOrderArr.map((item: any) => item.id) }, transaction })
+
+          sameOrderArr.forEach(async (historyOrder: any) => {
+            await HistoryService.createHistory({
+              orderId: historyOrder.id,
+              orderStatus: ORDER_STATUS.cancelled,
+            }, transaction);
+          })
+        }
+      }
       await HistoryService.createHistory({
         orderId: id,
         orderStatus: data.status,
       }, transaction);
 
       await transaction.commit();
+      return {
+        status: 200,
+        message: 'Updated successfully',
+        cancelledIds: sameOrderArr.map((item: any) => item.id),
+      };
     } catch (error) {
       await transaction.rollback();
+      return {
+        status: 400,
+        message: 'An error occurred!',
+      };
     }
-
-    return {
-      status: 200,
-      message: 'Updated successfully',
-    };
   }
 }
 

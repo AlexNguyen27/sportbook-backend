@@ -29,7 +29,7 @@ const typeDef = `
     updateOrderStatus(
       id: String!
       status: String!
-    ): SuccessMessage
+    ): SuccessMessageOrder
   }
 
   type Order {
