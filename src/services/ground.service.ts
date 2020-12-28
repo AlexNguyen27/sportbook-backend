@@ -8,7 +8,7 @@ import { ExistsError, AuthenticationError, BusinessError } from '../components/e
 import { Ground, MutationCreateGroundArgs } from '../types/graphql.type';
 import CategoryService from './category.service';
 import UserService from './user.service';
-import { ROLE, ORDER_STATUS, SUB_GROUND_STATUS, BENEFIT_STATUS, GROUND_STATUS, USER_STATUS } from '../components/constants';
+import { ROLE, ORDER_STATUS, SUB_GROUND_STATUS, BENEFIT_STATUS, GROUND_STATUS, USER_STATUS, isBeforeDate } from '../components/constants';
 import SubGround from '../models/subGround.model';
 import GroundBenefit from '../models/groundBenefit.model';
 import Order from '../models/order.model';
@@ -92,6 +92,12 @@ class GroundService {
 
     // FOR CHAT BOT ONLY => ASKING TO ORDER => CHAT BOT
     if (search && startTime && startDay && !isAvailable) {
+      // CHECK LATE TIME
+      // DATETIME NOW SHOULD BE BEFORE ORDER DATE
+      if (isBeforeDate(startTime, startDay)) {
+        return [];
+      }
+
       const condition: any = {
         where: {
           title: Sequelize.where(
@@ -271,7 +277,7 @@ class GroundService {
             {
               model: Price,
               required: true, // CAN BOOK
-              attributes: ['id', 'startTime', 'endTime'],
+              attributes: ['id', 'startTime', 'endTime', 'price', 'discount'],
               as: 'prices',
               where: {
                 startTime: {

@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export const ROLE = {
   admin: 'admin',
   user: 'user',
@@ -52,4 +54,11 @@ export const GROUND_STATUS = {
 export const USER_STATUS = {
   active: 'active',
   disabled: 'disabled',
+};
+
+// moment('2010-10-20').isBefore('2010-10-21'); // true
+export const isBeforeDate = (startTime: any, selectedStartDay: any) => {
+  const day = `${selectedStartDay} ${startTime}`;
+  console.log(moment().add(7, 'hours').isAfter((moment(day, 'DD-MM-YYYY HH:mm:ss+00:00'))), moment().add(7, 'hours'), (moment(day, 'DD-MM-YYYY HH:mm:ss+00:00')));
+  return moment().add(7, 'hours').isAfter((moment(day, 'DD-MM-YYYY HH:mm:ss+00:00')));
 };
